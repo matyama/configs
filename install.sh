@@ -8,16 +8,19 @@ show_help() {
 
 cp_xinitrc() {
 	echo ">>> Copying init X config. Use 'source ~/.xinitrc' to apply changes in current shell"
+	# FIXME: .xintrc does not seem to have permanent effect (i.e. sometimes is not executed)
 	cp .xinitrc ~
 	source ~/.xinitrc
 }
 
 cp_zsh_custom() {
 	if [[ -z "${ZSH_CUSTOM}" ]]; then
-		echo ">>> Copying custom ZSH configs. Use 'source ~/.zshrc' to apply changes in current shell"
-		cp -a .oh-my-zsh/custom/. "${ZSH_CUSTOM}"
-		source ~/.zshrc
+		ZSH_CUSTOM=~/.oh-my-zsh/custom
+		echo ">>> Using default ZSH_CUSTOM=${ZSH_CUSTOM}"
 	fi
+	
+	echo ">>> Copying custom ZSH configs. Use 'source ~/.zshrc' to apply changes in current shell"
+	cp -a .oh-my-zsh/custom/. "${ZSH_CUSTOM}"
 }
 
 cp_nvim() {
