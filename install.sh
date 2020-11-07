@@ -3,7 +3,7 @@
 set -e 
 
 show_help() {
-	echo "install.sh <xinitrc|zsh-custom|nvim|all|-h|--help>"
+	echo "install.sh <xinitrc|zsh-custom|byobu|nvim|all|-h|--help>"
 }
 
 cp_xinitrc() {
@@ -23,9 +23,19 @@ cp_zsh_custom() {
 	cp -a .oh-my-zsh/custom/. "${ZSH_CUSTOM}"
 }
 
+cp_byobu() {
+	if [[ -z "${BYOBU_CONFIG_DIR}" ]]; then
+		BYOBU_CONFIG_DIR=~/.byobu
+		echo ">>> Using default BYOBU_CONFIG_DIR=${BYOBU_CONFIG_DIR}"
+	fi
+
+	echo ">>> Copying custom byobu and tmux configs"
+	cp -a .byobu/. "${BYOBU_CONFIG_DIR}"
+}
+
 cp_nvim() {
 	echo ">>> Copying NeoVim configs"
-	mkdir -p ~/.config/nvim
+	mkdir -p ~/.config/nvim ~/.config/nvim/vim-plug
 	cp -a .config/nvim/. ~/.config/nvim
 }
 
@@ -35,6 +45,9 @@ case "${1}" in
 		;;
 	zsh-custom)
 		cp_zsh_custom
+		;;
+	byobu)
+		cp_byobu
 		;;
 	nvim)
 		cp_nvim
