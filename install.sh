@@ -3,7 +3,7 @@
 set -e 
 
 show_help() {
-	echo "install.sh <xinitrc|zsh-custom|byobu|nvim|all|-h|--help>"
+	echo "install.sh <xinitrc|zsh-custom|byobu|nvim|git|all|-h|--help>"
 }
 
 cp_xinitrc() {
@@ -39,6 +39,11 @@ cp_nvim() {
 	cp -a .config/nvim/. ~/.config/nvim
 }
 
+cp_git() {
+	echo ">>> Copying git config"
+	cp .gitconfig ~
+}
+
 case "${1}" in
 	xinitrc)
 		cp_xinitrc
@@ -52,10 +57,16 @@ case "${1}" in
 	nvim)
 		cp_nvim
 		;;
+	git)
+		cp_git
+		;;
+
 	all)
 		cp_xinitrc
 		cp_zsh_custom
+		cp_byoby
 		cp_nvim
+		cp_git
 		;;
 	-h|--help)
 		show_help
