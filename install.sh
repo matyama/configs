@@ -64,7 +64,7 @@ case "${1}" in
 	all)
 		cp_xinitrc
 		cp_zsh_custom
-		cp_byoby
+		cp_byobu
 		cp_nvim
 		cp_git
 		;;
