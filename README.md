@@ -1,14 +1,14 @@
 # configs
 This repository contains various configuration files and scripts.
 
-## Install script
-There is an installation script that copies config files to dedicated locations.
+## Installation
+There is an installation make target that copies config files to dedicated locations.
 ```bash
-./install.sh all
+make install
 ```
 applies all configurations while e.g.
 ```bash
-./install.sh nvim
+make install-nvim
 ```
-sets just `nvim` config (see `./install.sh -h` for all the options).
+sets just `nvim` config (see `Makefile` for all the options).
 
