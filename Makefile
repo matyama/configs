@@ -18,10 +18,10 @@ install-xinitrc:
 	cp .xinitrc ~
 
 install-zsh-custom:
-	cp -a .oh-my-zsh/custom/. "$(ZSH_CUSTOM)"
+	cp -a .oh-my-zsh/custom/. $(ZSH_CUSTOM)
 
 install-byobu:
-	cp -a .byobu/. "$(BYOBU_CONFIG_DIR)"
+	cp -a .byobu/. $(BYOBU_CONFIG_DIR)
 
 install-nvim: ~/.config/nvim  ~/.config/nvim/vim-plug
 	cp -a .config/nvim/. ~/.config/nvim
