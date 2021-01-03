@@ -1,0 +1,50 @@
+# This file sets environment variables that should be globally set on the system
+# That is, across graphical and non-graphical logins, and across all shell types
+#
+# Note that it is _not_ important to set things like FZF_DEFAULT_COMMAND here since
+# that is only relevant when using an interactive shell, so we may as well just set
+# that directly in the shell config.
+#
+# Also note that pam_env is _really_ picky about formatting.
+# Lines can _either_ be KEY=VALUE (no spaces!)
+#  _or_ they can be KEY DEFAULT="VALUE" where VALUE can then have spaces
+#  KEY="VALUE" does _not_ work!
+#
+# Additionally, update pam.d login as follows: https://askubuntu.com/a/636544
+
+# Editor setup 
+VISUAL=nvim
+EDITOR=${VISUAL}
+VIMRC DEFAULT=@{HOME}/.config/nvim/init.vim
+
+# Personal user info
+NAME DEFAULT="Martin Matyášek"
+EMAIL=martin.matyasek@gmail.com
+
+# Poetry
+POETRY_BIN DEFAULT=@{HOME}/.poetry/bin
+
+# Rust stuff
+CARGO_BIN DEFAULT=@{HOME}/.cargo/bin
+CARGO_INCREMENTAL=1
+RUSTFLAGS DEFAULT="-C target-cpu=native"
+RUST_BACKTRACE=1
+
+# Go lang
+GOPATH DEFAULT=@{HOME}/go
+GOBIN DEFAULT=${GOPATH}/bin
+
+# Path extension
+PATH DEFAULT=${PATH}:@{HOME}/bin
+PATH DEFAULT=${PATH}:@{HOME}/.local/bin
+PATH DEFAULT=${PATH}:${CARGO_BIN}
+PATH DEFAULT=${PATH}:${POETRY_BIN}
+PATH DEFAULT=${PATH}:${GOBIN}
+PATH DEFAULT=${PATH}:/usr/local/bin
+
+# make less better
+# X = leave content on-screen
+# F = quit automatically if less than one screenfull
+# R = raw terminal characters (fixes git diff)
+#     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
+LESS DEFAULT="-F -X -R"
