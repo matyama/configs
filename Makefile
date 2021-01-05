@@ -1,4 +1,4 @@
-.PHONY: install install-pam-env install-xinitrc install-zsh-env install-zsh-custom install-byobu install-nvim install-git
+.PHONY: install install-pam-env install-xinitrc install-zsh-env install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
 
 ifndef ZSH_CUSTOM
 ZSH_CUSTOM=~/.oh-my-zsh/custom
@@ -13,6 +13,9 @@ endif
 
 ~/.config/nvim/vim-plug:
 	mkdir -p ~/.config/nvim/vim-plug
+
+~/.config/pypoetry:
+	mkdir -p ~/.config/pypoetry
 
 install-xinitrc:
 	cp .xinitrc ~
@@ -29,6 +32,10 @@ install-byobu:
 install-nvim: ~/.config/nvim  ~/.config/nvim/vim-plug
 	cp -a .config/nvim/. ~/.config/nvim
 
+install-poetry-cfg: ~/.config/pypoetry
+	cp -a .config/pypoetry/. ~/.config/pypoetry
+	@echo "Finish setup by manually configuring auth tokens - see https://python-poetry.org/docs/repositories/#configuring-credentials"
+
 install-git:
 	cp .gitconfig ~
 
@@ -36,5 +43,5 @@ install-pam-env:
 	cp .pam_environment ~
 	@echo "Finish setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 
-install: install-pam-env install-xinitrc install-zsh-env install-zsh-custom install-byobu install-nvim install-git
+install: install-pam-env install-xinitrc install-zsh-env install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
 
