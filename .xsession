@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# TODO: Esc setup below is disabled for now, follow this instead:
+# https://dev.to/yuyabu/how-to-use-caps-lock-key-as-esc-on-ubuntu-18-1g7l
+
 # Make CapsLock an extra Esc
-setxkbmap -option caps:escape
+# setxkbmap -option caps:escape
 
 # TODO
 
