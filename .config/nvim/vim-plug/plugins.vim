@@ -13,6 +13,12 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 
+	" Syntactic language support
+	Plug 'cespare/vim-toml'
+	Plug 'stephpy/vim-yaml'
+	Plug 'rust-lang/rust.vim'
+	Plug 'plasticboy/vim-markdown'
+
 	" TODO: Experiment with these
 	
 	" Better Syntax Support
