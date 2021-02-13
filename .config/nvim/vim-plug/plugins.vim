@@ -19,6 +19,12 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	Plug 'rust-lang/rust.vim'
 	Plug 'plasticboy/vim-markdown'
 
+	" Semantic language support
+	" https://github.com/neoclide/coc.nvim#quick-start
+	"  - https://github.com/fannheyward/coc-rust-analyzer
+	"  - https://rust-analyzer.github.io/manual.html#vimneovim
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 	" TODO: Experiment with these
 	
 	" Better Syntax Support
