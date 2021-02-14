@@ -13,6 +13,13 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 
+	" Auto pairs for '(' '[' '{'
+	Plug 'jiangmiao/auto-pairs'
+
+	" Better Syntax Support
+	" https://github.com/sheerun/vim-polyglot#installation
+	Plug 'sheerun/vim-polyglot'
+
 	" Syntactic language support
 	Plug 'cespare/vim-toml'
 	Plug 'stephpy/vim-yaml'
@@ -25,16 +32,10 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	"  - https://rust-analyzer.github.io/manual.html#vimneovim
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-	" TODO: Experiment with these
-	
-	" Better Syntax Support
-	" Plug 'sheerun/vim-polyglot'
+	" TODO: Experiment with 
 	
 	" File Explorer
 	" Plug 'scrooloose/NERDTree'
 	
-	" Auto pairs for '(' '[' '{'
-	" Plug 'jiangmiao/auto-pairs'
-
 call plug#end()
 

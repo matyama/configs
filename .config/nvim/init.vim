@@ -5,6 +5,9 @@ let mapleader = ","
 " # PLUGINS
 " =============================================================================
 
+" Necesary for lots of cool vim things
+set nocompatible
+
 " Setup plugins
 source ~/.config/nvim/vim-plug/plugins.vim
 
