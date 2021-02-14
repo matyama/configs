@@ -11,6 +11,26 @@ set nocompatible
 " Setup plugins
 source ~/.config/nvim/vim-plug/plugins.vim
 
+" Lightline
+"  - https://github.com/itchyny/lightline.vim#advanced-configuration
+"  - https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
+let g:lightline = {
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'filename': 'LightlineFilename',
+      \   'cocstatus': 'coc#status'
+      \ },
+      \ }
+function! LightlineFilename()
+  return expand('%:t') !=# '' ? @% : '[No Name]'
+endfunction
+
+" Use auocmd to force lightline update.
+autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+
 " Rust
 " https://github.com/rust-lang/rust.vim#features
 let g:rustfmt_autosave = 1

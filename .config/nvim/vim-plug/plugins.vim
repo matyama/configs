@@ -13,8 +13,21 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 
+	" VIM enhancements
+	
 	" Auto pairs for '(' '[' '{'
 	Plug 'jiangmiao/auto-pairs'
+
+	" GUI enhancements
+	
+	" A light and configurable statusline
+	Plug 'itchyny/lightline.vim'
+
+	" Make the yanked region apparent
+	Plug 'machakann/vim-highlightedyank'
+
+	" Navigate and highlight matching words
+	" Plug 'andymass/vim-matchup'
 
 	" Better Syntax Support
 	" https://github.com/sheerun/vim-polyglot#installation
