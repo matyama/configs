@@ -18,6 +18,11 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Auto pairs for '(' '[' '{'
 	Plug 'jiangmiao/auto-pairs'
 
+	" Visually select increasingly larger regions of text
+	"  - https://github.com/terryma/vim-expand-region
+	"  - https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+	Plug 'terryma/vim-expand-region'
+
 	" GUI enhancements
 	
 	" A light and configurable statusline

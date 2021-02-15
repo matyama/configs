@@ -1,5 +1,9 @@
+" Change <leader> from '/' to '<Space>'
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+let mapleader = "\<Space>"
+
 " Change <leader> from '/' to ','
-let mapleader = ","
+" let mapleader = ","
 
 " =============================================================================
 " # PLUGINS
@@ -179,6 +183,24 @@ set listchars=nbsp:¬,extends:»,precedes:«,trail:•
 
 " ; as :
 nnoremap ; :
+
+" Open a new file with <leader>+o
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+" TODO
+" nnoremap <Leader>o :CtrlP<CR>
+
+" Save file with <leader>+w
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+nnoremap <Leader>w :w<CR>
+
+" Enter visual mode with <leader><leader>
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+nmap <Leader><Leader> V
+
+" Press 'v' to expand the visual selection and C-v to shrink it.
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
 
 " Ctrl+h to stop searching
 vnoremap <C-h> :nohlsearch<cr>
