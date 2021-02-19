@@ -10,6 +10,9 @@ alias y="xclip -i -selection clipboard"
 alias c="xclip -i -selection clipboard"
 alias p="xclip -o -selection clipboard"
 
+# Command auto-correction
+alias f="fuck"
+
 # EDITOR
 alias e="nvim"
 alias v="nvim"
