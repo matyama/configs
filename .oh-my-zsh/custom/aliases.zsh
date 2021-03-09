@@ -21,3 +21,6 @@ alias vi="nvim"
 alias oldvim="\vim"
 alias vimdiff="nvim -d"
 
+# Python
+alias jl="jupyter lab --ContentsManager.allow_hidden=True"
+
