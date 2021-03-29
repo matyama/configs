@@ -9,6 +9,7 @@ alias o="xdg-open"
 alias y="xclip -i -selection clipboard"
 alias c="xclip -i -selection clipboard"
 alias p="xclip -o -selection clipboard"
+alias rmclip="echo '' | c"
 
 # Command auto-correction
 alias f="fuck"
