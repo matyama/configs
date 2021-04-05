@@ -1,4 +1,4 @@
-.PHONY: install install-pam-env install-xcfg install-zsh-env install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
+.PHONY: install install-pam-env install-xcfg install-zsh-cfg install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
 
 ifndef ZSH_CUSTOM
 ZSH_CUSTOM=~/.oh-my-zsh/custom
@@ -20,8 +20,8 @@ endif
 install-xcfg:
 	cp .xsession ~
 
-install-zsh-env:
-	cp .zshenv ~ 
+install-zsh-cfg:
+	cp .zshenv .zlogout ~ 
 
 install-zsh-custom:
 	cp -a .oh-my-zsh/custom/. $(ZSH_CUSTOM)
@@ -43,5 +43,5 @@ install-pam-env:
 	cp .pam_environment ~
 	@echo "Finish setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 
-install: install-pam-env install-xcfg install-zsh-env install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
+install: install-pam-env install-xcfg install-zsh-cfg install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git
 
