@@ -34,7 +34,7 @@ alias egrep='egrep --color=auto'
 
 # exa (https://the.exa.website/)
 if [ "$(command -v exa)" ]; then
-	alias l="exa -lahgF@ --git"
+	alias l="exa -lahg@ --git"
 fi
 
 # Python
