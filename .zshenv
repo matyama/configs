@@ -1,8 +1,23 @@
+# TODO: Move history management to .zshrc
 # History management
+#  - https://stackoverflow.com/a/38549502
+#  - https://unix.stackexchange.com/a/273863
 export HISTCONTROL=ignoreboth
 export HISTSIZE=5000
+export SAVEHIST="${HISTSIZE}"
 export HISTFILESIZE=10000
 export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:exit:date:w:* --help:h:ls:la:l:ll:exa"
+export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|exit|date|w|* --help|h|ls|la|l|ll|exa)"
+
+zshaddhistory() {
+  emulate -L zsh
+  ## uncomment if HISTORY_IGNORE should use EXTENDED_GLOB syntax
+  # setopt extendedglob
+  [[ $1 != ${~HISTORY_IGNORE} ]]
+}
+
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
 
 # Colored man output
 # See: http://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
