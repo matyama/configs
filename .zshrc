@@ -49,30 +49,34 @@ fi
 # setxkbmap -option caps:escape
 
 # direnv (https://direnv.net)
-eval "$(direnv hook zsh)"
+[ ! $(command -v direnv) ] || eval "$(direnv hook zsh)"
 
 # Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
 
 # pipx
-autoload -U bashcompinit
-bashcompinit
-eval "$(register-python-argcomplete pipx)"
+if [ $(command -v pipx) ]; then
+  autoload -U bashcompinit
+  bashcompinit
+  eval "$(register-python-argcomplete pipx)"
+fi
 
 # thefuck (shell command corrector)
-eval $(thefuck --alias)
+[ ! $(command -v fuck) ] || eval $(thefuck --alias)
 
 # minikube autocompletion
-source <(minikube completion zsh)
+[ ! $(command -v minikube) ] || source <(minikube completion zsh)
 
 # kubectl autocompletion
-source <(kubectl completion zsh)
-alias k=kubectl
-complete -F __start_kubectl k
+if [ $(command -v kubectl) ]; then
+  source <(kubectl completion zsh)
+  alias k=kubectl
+  complete -F __start_kubectl k
+fi
 
 # helm autocompletion
-source <(helm completion zsh)
+[ ! $(command -v helm) ] || source <(helm completion zsh)
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/matyama/.sdkman"
