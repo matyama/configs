@@ -21,7 +21,7 @@ install-xcfg:
 	cp .xsession ~
 
 install-zsh-cfg:
-	cp .zshenv .zlogout ~ 
+	cp .zshenv .zshrc .zlogout ~ 
 
 install-zsh-custom:
 	cp -a .oh-my-zsh/custom/. $(ZSH_CUSTOM)
