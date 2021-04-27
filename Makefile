@@ -1,4 +1,4 @@
-.PHONY: install install-pam-env install-xcfg install-zsh-cfg install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git install-guake
+.PHONY: install install-pam-env install-xcfg install-zsh-cfg install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git install-guake install-fonts
 
 ifndef ZSH_CUSTOM
 ZSH_CUSTOM=~/.oh-my-zsh/custom
@@ -16,6 +16,14 @@ endif
 
 ~/.config/pypoetry:
 	mkdir -p ~/.config/pypoetry
+
+~/.local/share/fonts:
+	mkdir -p ~/.local/share/fonts
+
+install-fonts: ~/.local/share/fonts
+	@echo "Downloading Meslo Nerd Font for Powerlevel10k"
+	curl "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" -o ~/.local/share/fonts/"MesloLGS NF #1.ttf"
+	mv ~/.local/share/fonts/MesloLGS\ NF\ Bold%20Italic.ttf ~/.local/share/fonts/MesloLGS\ NF\ Bold\ Italic.ttf
 
 install-xcfg:
 	cp .xsession ~

@@ -33,6 +33,9 @@ Typical configuration for `p10k configure`
 1. Instant Prompt Mode: Off
 1. Apply changes to `~/.zshrc`?: No if not using `.p10k.zsh` from this repo, otherwise Yes 
 
+Additionally one can download [Meslo Nerd Fonts](https://github.com/romkatv/powerlevel10k#meslo-nerd-font-patched-for-powerlevel10k) and 
+configure terminals as instructed. The font download is part of `make fonts`.
+
 ## Saving configurations
 
 ### Guake Terminal
