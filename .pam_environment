@@ -21,6 +21,9 @@ VIMRC DEFAULT=@{HOME}/.config/nvim/init.vim
 NAME DEFAULT="Martin Matyášek"
 EMAIL=martin.matyasek@gmail.com
 
+# Binenv
+BINENV_HOME DEFAULT=@{HOME}/.binenv
+
 # Poetry
 POETRY_BIN DEFAULT=@{HOME}/.poetry/bin
 
@@ -41,6 +44,7 @@ PATH DEFAULT=${PATH}:${CARGO_BIN}
 PATH DEFAULT=${PATH}:${POETRY_BIN}
 PATH DEFAULT=${PATH}:${GOBIN}
 PATH DEFAULT=${PATH}:/usr/local/bin
+PATH DEFAULT=${PATH}:${BINENV_HOME}
 
 # make less better
 # X = leave content on-screen

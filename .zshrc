@@ -55,6 +55,9 @@ bashcompinit
 autoload -U compinit
 compinit -i
 
+# binenv (https://github.com/devops-works/binenv#linux-bashzsh)
+[ ! $(command -v binenv) ] || source <(binenv completion zsh)
+
 # direnv (https://direnv.net)
 [ ! $(command -v direnv) ] || eval "$(direnv hook zsh)"
 
