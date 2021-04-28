@@ -48,6 +48,13 @@ fi
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
 
+# Initialize completions
+autoload -U bashcompinit
+bashcompinit
+
+autoload -U compinit
+compinit -i
+
 # direnv (https://direnv.net)
 [ ! $(command -v direnv) ] || eval "$(direnv hook zsh)"
 
@@ -57,8 +64,6 @@ fi
 
 # pipx
 if [ $(command -v pipx) ]; then
-  autoload -U bashcompinit
-  bashcompinit
   eval "$(register-python-argcomplete pipx)"
 fi
 
