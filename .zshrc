@@ -49,11 +49,8 @@ fi
 # setxkbmap -option caps:escape
 
 # Initialize completions
-autoload -U bashcompinit
-bashcompinit
-
-autoload -U compinit
-compinit -i
+autoload -U +X compinit && compinit -i
+autoload -U +X bashcompinit && bashcompinit
 
 # binenv (https://github.com/devops-works/binenv#linux-bashzsh)
 [ ! $(command -v binenv) ] || source <(binenv completion zsh)
@@ -72,6 +69,9 @@ fi
 
 # thefuck (shell command corrector)
 [ ! $(command -v fuck) ] || eval $(thefuck --alias)
+
+# Haskell stack (https://docs.haskellstack.org/en/stable/README/)
+[ ! $(command -v stack) ] || eval "$(stack --bash-completion-script stack)"
 
 # minikube autocompletion
 [ ! $(command -v minikube) ] || source <(minikube completion zsh)
