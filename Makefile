@@ -52,7 +52,8 @@ install-guake:
 
 install-pam-env:
 	cp .pam_environment ~
-	@echo "Finish setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
+	@[ "$$(grep 'user_readenv=1' /etc/pam.d/login)" ] || \
+		echo "Finish setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 
 install: install-pam-env install-xcfg install-zsh-cfg install-zsh-custom install-byobu install-nvim install-poetry-cfg install-git install-guake
 
