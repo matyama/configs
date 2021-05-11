@@ -86,6 +86,9 @@ fi
 # helm autocompletion
 [ ! $(command -v helm) ] || source <(helm completion zsh)
 
+# travis autocompletion
+[ ! -s $HOME/.travis/travis.sh ] || source $HOME/.travis/travis.sh
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/matyama/.sdkman"
 [[ -s "/home/matyama/.sdkman/bin/sdkman-init.sh" ]] && source "/home/matyama/.sdkman/bin/sdkman-init.sh"
