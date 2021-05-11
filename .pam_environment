@@ -40,7 +40,7 @@ GOBIN DEFAULT=${GOPATH}/bin
 # Ruby
 GEM_HOME DEFAULT=@{HOME}/.gem
 GEM_BIN DEFAULT=@{GEM_HOME}/bin
-RUBY_BIN DEFAULT=@{GEM_BIN}/ruby/3.0.0/bin
+RUBY_BIN DEFAULT=@{GEM_HOME}/ruby/3.0.0/bin
 
 # Path extension
 PATH DEFAULT=${PATH}:@{HOME}/bin
