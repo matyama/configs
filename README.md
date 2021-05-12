@@ -2,15 +2,11 @@
 This repository contains various configuration files and scripts.
 
 ## Installation
-There is an installation make target that copies config files to dedicated locations.
+There is an installation make target that links config files to dedicated locations.
+**WARN**: Note that original files will be overwritten!
 ```bash
 make config
 ```
-applies all configurations while e.g.
-```bash
-make nvim-cfg
-```
-sets just `nvim` config (see `Makefile` for all the options).
 
 ## Manual configurations
 
@@ -36,10 +32,19 @@ Typical configuration for `p10k configure`
 Additionally one can download [Meslo Nerd Fonts](https://github.com/romkatv/powerlevel10k#meslo-nerd-font-patched-for-powerlevel10k) and 
 configure terminals as instructed. The font download is part of `make fonts`.
 
+### PAM environment
+After linking `.pam_environment` for the first time, one should manually update 
+`/etc/pam.d/login` according to [these instructions](https://askubuntu.com/a/636544).
+
+### Poetry
+Finish Poetry setup by manually [configuring auth tokens](https://bit.ly/3fdpMNR).
+
 ## Saving configurations
+Edits to any linked configurations is automatically propagated here 
+(via the symlink). Then simply commit and push the changes. 
 
 ### Guake Terminal
 To save updated Guake preferences, run
 ```bash
-guake --save-preferences guake.conf
+make save-guake-conf
 ```
