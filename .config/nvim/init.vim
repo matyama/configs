@@ -35,6 +35,13 @@ endfunction
 " Use auocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
+" NERDTree
+" https://github.com/preservim/nerdtree#frequently-asked-questions
+
+" Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
+
 " Rust
 " https://github.com/rust-lang/rust.vim#features
 let g:rustfmt_autosave = 1
@@ -183,6 +190,13 @@ set listchars=nbsp:¬,extends:»,precedes:«,trail:•
 
 " ; as :
 nnoremap ; :
+
+" NERDTree shortcuts
+" https://github.com/preservim/nerdtree#frequently-asked-questions
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 " Open a new file with <leader>+o
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/

@@ -50,10 +50,10 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	"  - https://rust-analyzer.github.io/manual.html#vimneovim
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-	" TODO: Experiment with 
-	
 	" File Explorer
-	" Plug 'scrooloose/NERDTree'
+	Plug 'scrooloose/NERDTree'
+
+	" TODO: https://github.com/preservim/nerdtree#nerdtree-plugins
 	
 call plug#end()
 
