@@ -46,8 +46,12 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 
 	" Semantic language support
 	" https://github.com/neoclide/coc.nvim#quick-start
-	"  - https://github.com/fannheyward/coc-rust-analyzer
-	"  - https://rust-analyzer.github.io/manual.html#vimneovim
+	"  * Rust:
+	"    - https://github.com/fannheyward/coc-rust-analyzer
+	"    - https://rust-analyzer.github.io/manual.html#vimneovim
+	"  * Python:
+	"    - https://github.com/fannheyward/coc-pyright#install
+	"    - https://github.com/microsoft/pyright/blob/main/docs/configuration.md
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 	" NERDTree File Explorer

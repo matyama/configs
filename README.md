@@ -1,4 +1,5 @@
 # configs
+
 This repository contains various configuration files and scripts.
 
 ## Installation
@@ -38,6 +39,24 @@ After linking `.pam_environment` for the first time, one should manually update
 
 ### Poetry
 Finish Poetry setup by manually [configuring auth tokens](https://bit.ly/3fdpMNR).
+
+### Semantic language support for Neovim
+Nvim config automatically installs [coc.nvim](https://github.com/neoclide/coc.nvim) plugin.
+In order to setup language support for various languages, refer to corresponding sub-section.
+
+#### Rust Analyzer
+```vim
+:CocInstall coc-rust-analyzer
+```
+* https://github.com/fannheyward/coc-rust-analyzer
+* https://rust-analyzer.github.io/manual.html#vimneovim
+
+#### Python:
+```vim
+:CocInstall coc-pyright
+```
+* https://github.com/fannheyward/coc-pyright#install
+* https://github.com/microsoft/pyright/blob/main/docs/configuration.md
 
 ## Saving configurations
 Edits to any linked configurations is automatically propagated here 
