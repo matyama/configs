@@ -64,6 +64,10 @@ set cmdheight=2
 " You will have bad experience for diagnostic messages when it's default 4000.
 set updatetime=300
 
+" Fix folding and unfolding of Markdown files
+" https://github.com/plasticboy/vim-markdown/issues/414#issuecomment-519061229
+let g:vim_markdown_folding_style_pythonic = 1
+
 " =============================================================================
 " # Editor settings
 " =============================================================================
