@@ -37,10 +37,17 @@ autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
 " NERDTree
 " https://github.com/preservim/nerdtree#frequently-asked-questions
+"  - https://github.com/Xuyuanp/nerdtree-git-plugin#faq
 
 " Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
+
+" Enable NerdFonts for NERDTree
+let g:NERDTreeGitStatusUseNerdFonts = 1
+
+" Show git ignored status for files in NERDTree
+let g:NERDTreeGitStatusShowIgnored = 1
 
 " Rust
 " https://github.com/rust-lang/rust.vim#features

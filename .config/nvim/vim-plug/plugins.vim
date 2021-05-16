@@ -50,10 +50,13 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	"  - https://rust-analyzer.github.io/manual.html#vimneovim
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-	" File Explorer
-	Plug 'scrooloose/NERDTree'
+	" NERDTree File Explorer
+	" https://github.com/preservim/nerdtree
+	"  - Git status flags
+	"  - Filetype-specific icons
+	Plug 'preservim/nerdtree' |
+            \ Plug 'Xuyuanp/nerdtree-git-plugin' |
+            \ Plug 'ryanoasis/vim-devicons'
 
-	" TODO: https://github.com/preservim/nerdtree#nerdtree-plugins
-	
-call plug#end()
+	call plug#end()
 
