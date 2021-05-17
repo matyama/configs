@@ -30,6 +30,9 @@ $(ZSH_CUSTOM):
 ~/.config/pypoetry:
 	mkdir -p ~/.config/pypoetry
 
+~/.local/bin:
+	mkdir -p ~/.local/bin
+
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(FONTS_DIR)
 	@echo "Downloading Meslo Nerd Font for Powerlevel10k"
@@ -43,7 +46,7 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
-links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry $(ZSH_CUSTOM)
+links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
@@ -56,6 +59,9 @@ links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry $(ZSH_CUST
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
+	@ln -svft ~/.local/bin \
+		$(CFG_DIR)/.local/bin/increase_swap.sh \
+		$(CFG_DIR)/.local/bin/init_ubuntu.sh
 	@[ "$$(grep 'user_readenv=1' /etc/pam.d/login)" ] || \
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
