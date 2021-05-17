@@ -61,7 +61,8 @@ links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.local/b
 	}
 	@ln -svft ~/.local/bin \
 		$(CFG_DIR)/.local/bin/increase_swap.sh \
-		$(CFG_DIR)/.local/bin/init_ubuntu.sh
+		$(CFG_DIR)/.local/bin/init_ubuntu.sh \
+		$(CFG_DIR)/.local/bin/upgrade_kernel.sh
 	@[ "$$(grep 'user_readenv=1' /etc/pam.d/login)" ] || \
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"

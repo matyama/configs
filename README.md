@@ -2,7 +2,25 @@
 
 This repository contains various configuration files and scripts.
 
-## Installation
+## Ubuntu Installation
+
+### Partitioning
+See e.g. [Ubuntu Wiki](https://help.ubuntu.com/community/DiskSpace).
+
+By default Ubuntu with LVM and encryption creates following partitions:
+```
+LVM VG vgubuntu, LV root as ext 4
+LVM VG vgubuntu, LV swap_1 as swap
+partition #1 of /dev/nvme0n1 as ESP
+```
+The swap partition is by default only ~1G. In order to resize the root logical 
+volume and increase swap do the following:
+1. Install Ubuntu with LVM and encryption
+1. Restart to 'Try Ubuntu', i.e. 'Live CD' so that root is not actively used
+1. Run the `increase_swap.sh` script that moves 40G space from root to swap
+1. Reboot to installed Ubuntu and continue the setup
+
+## Config Installation
 There is an installation make target that links config files to dedicated locations.
 **WARN**: Note that original files will be overwritten!
 ```bash
