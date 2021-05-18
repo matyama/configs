@@ -124,6 +124,10 @@ set nowrap
 " Join lines without an extra space
 set nojoinspaces
 
+" Go to next search match with another 's'
+" https://github.com/justinmk/vim-sneak#usage
+let g:sneak#s_next = 1
+
 " Print config
 set printfont=:h10
 set printencoding=utf-8

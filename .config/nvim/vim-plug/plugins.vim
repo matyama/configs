@@ -19,6 +19,10 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" https://www.vim.org/scripts/script.php?script_id=1876
 	Plug 'ciaranm/securemodelines'
 
+	" Jump to any location specified by two characters
+	" https://github.com/justinmk/vim-sneak
+	Plug 'justinmk/vim-sneak'
+
 	" Auto pairs for '(' '[' '{'
 	Plug 'jiangmiao/auto-pairs'
 
