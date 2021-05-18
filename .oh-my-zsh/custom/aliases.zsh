@@ -27,6 +27,9 @@ alias vimdiff="nvim -d"
 # Git
 alias gah="git stash && git pull --rebase && git stash pop"
 
+# make
+alias m="make"
+
 # grep
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
