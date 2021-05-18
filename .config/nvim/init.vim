@@ -150,7 +150,7 @@ set gdefault
 set showcmd
 
 " Enable automatic file reload
-" See: https://vi.stackexchange.com/questions/444/how-do-i-reload-the-current-file
+" https://vi.stackexchange.com/questions/444/how-do-i-reload-the-current-file
 set autoread
 
 " Trigger autoread when changing buffers inside while inside vim
@@ -191,7 +191,7 @@ set diffopt+=algorithm:patience
 set diffopt+=indent-heuristic
 
 " Show red vertical bar at coloumn 80
-" set colorcolumn=80
+set colorcolumn=80
 
 " Show (partial) command in status line.
 set showcmd
