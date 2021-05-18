@@ -284,6 +284,9 @@ command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, {'source': s:list_cmd(),
   \                               'options': '--tiebreak=index'}, <bang>0)
 
+" Open new file located in the same direactory as current file
+nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
 " Mappings to move line up with Alt+k and down with Alt+j
 " https://vim.fandom.com/wiki/Moving_lines_up_or_down
 nnoremap <A-j> :m .+1<CR>==
