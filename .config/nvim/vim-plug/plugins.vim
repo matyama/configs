@@ -40,7 +40,8 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	Plug 'machakann/vim-highlightedyank'
 
 	" Navigate and highlight matching words
-	" Plug 'andymass/vim-matchup'
+	" https://github.com/andymass/vim-matchup
+	Plug 'andymass/vim-matchup'
 
 	" Better Syntax Support
 	" https://github.com/sheerun/vim-polyglot#installation
