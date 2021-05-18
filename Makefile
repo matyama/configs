@@ -42,7 +42,8 @@
 	zoom \
 	set-swappiness \
 	crawl \
-	games
+	games \
+	fix-ssh-perms
 
 # Absolute path to the directory containing this Makefile
 #  - This path remains the same even when invoked with 'make -f ...'
@@ -769,3 +770,15 @@ else
 	sudo apt update
 	sudo apt install -y crawl crawl-tiles
 endif
+
+fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
+fix-ssh-perms:
+	@echo ">>> Setting appropriate file permissions for files in '$(SSH_DIR)'"
+	chmod 700 $(SSH_DIR)
+	chmod 644 "$(SSH_DIR)/authorized_keys"
+	chmod 644 "$(SSH_DIR)/*.pub"
+	chmod 600 "$(SSH_DIR)/id_rsa*"
+	chmod 600 "$(SSH_DIR)/config"
+	chmod 600 "$(SSH_DIR)/known_hosts*"
+	chmod 400 "$(SSH_DIR)/*.pem"
+
