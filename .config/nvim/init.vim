@@ -225,7 +225,7 @@ set listchars=nbsp:¬,extends:»,precedes:«,trail:•
 " =============================================================================
 
 " Reload nvim config
-" nnoremap <leader>sv :source $VIMRC<CR>
+nnoremap <leader>sv :source $VIMRC<CR>
 
 " ; as :
 nnoremap ; :
@@ -240,15 +240,15 @@ nnoremap <C-f> :NERDTreeFind<CR>
 " Open a new file with <leader>+o
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 " TODO
-" nnoremap <Leader>o :CtrlP<CR>
+nnoremap <leader>o :CtrlP<CR>
 
 " Save file with <leader>+w
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-nnoremap <Leader>w :w<CR>
+nnoremap <leader>w :w<CR>
 
 " Enter visual mode with <leader><leader>
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-nmap <Leader><Leader> V
+nmap <leader><leader> V
 
 " Press 'v' to expand the visual selection and C-v to shrink it.
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
@@ -264,12 +264,18 @@ map H ^
 map L $
 
 " Neat X clipboard integration
-" ,p will paste clipboard into buffer
-" ,c will copy entire buffer into clipboard
-noremap <leader>p :read !xsel --clipboard --output<cr>
-noremap <leader>c :w !xsel -ib<cr><cr>
+" <leader>p will paste clipboard into buffer
+" <leader>c will copy entire buffer into clipboard
+"noremap <leader>p :read !xsel --clipboard --output<cr>
+"noremap <leader>c :w !xsel -ib<cr><cr>
+vnoremap <leader>y "+y
+vnoremap <leader>d "+d
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
 
-" <leader>s for Rg search
+" Use <leader>s for Rg search
 noremap <leader>s :Rg
 let g:fzf_layout = { 'down': '~20%' }
 command! -bang -nargs=* Rg
