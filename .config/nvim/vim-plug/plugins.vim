@@ -58,7 +58,7 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 
 	" Use RipGrep in Vim
 	" https://github.com/jremmen/vim-ripgrep
-	" Plug 'jremmen/vim-ripgrep'
+	Plug 'jremmen/vim-ripgrep'
 
 	" Syntactic language support
 	Plug 'cespare/vim-toml'

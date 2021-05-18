@@ -584,6 +584,10 @@ endif
 # Installed tools:
 #  - click: Command Line Interactive Controller for Kubernetes
 #  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
+#  - fd: A simple, fast and user-friendly alternative to 'find'
+#    (https://github.com/sharkdp/fd)
+#  - proximity-search: Simple command-line utility for sorting inputs by
+#    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
 rust-tools: rust
@@ -591,6 +595,10 @@ rust-tools: rust
 	cargo install cargo-readme
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
+	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
+	cargo install fd-find
+	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
+	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"

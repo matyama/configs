@@ -237,10 +237,9 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
-" Open a new file with <leader>+o
-" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-" TODO
-nnoremap <leader>o :CtrlP<CR>
+" Open a new file with <leader>+o and replicate with <leader>+op
+nnoremap <leader>o :vnew<CR>
+nnoremap <leader>op :vsp<CR>
 
 " Save file with <leader>+w
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
@@ -266,14 +265,15 @@ map L $
 " Neat X clipboard integration
 " <leader>p will paste clipboard into buffer
 " <leader>c will copy entire buffer into clipboard
-"noremap <leader>p :read !xsel --clipboard --output<cr>
-"noremap <leader>c :w !xsel -ib<cr><cr>
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 vnoremap <leader>y "+y
 vnoremap <leader>d "+d
 nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 vnoremap <leader>p "+p
 vnoremap <leader>P "+P
+"noremap <leader>p :read !xsel --clipboard --output<cr>
+"noremap <leader>c :w !xsel -ib<cr><cr>
 
 " Use <leader>s for Rg search
 noremap <leader>s :Rg
