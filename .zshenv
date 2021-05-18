@@ -29,5 +29,12 @@ export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
 export LESS_TERMCAP_ue=$'\e[0m'           # end underline
 export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
 
+# fzf
+# https://github.com/junegunn/fzf#layout
+export FZF_DEFAULT_COMMAND="fd --type file --follow"
+export FZF_CTRL_T_COMMAND="fd --type file --follow"
+export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
+	
+# FIXME: KREW_ROOT seems to be duplicated in PATH
 # Kubernetes krew
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"

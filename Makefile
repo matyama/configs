@@ -202,6 +202,8 @@ python:
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
 # Installed tools:
+#  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
+#  - silversearcher-ag: A code-searching tool (http://geoff.greer.fm/ag/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
 #  - tshark: Terminal version of wireshark
@@ -219,6 +221,8 @@ basic-tools: net-tools core-utils apt-utils python
 		byobu \
 		tree \
 		xclip \
+		fzf \
+		silversearcher-ag \
 		gparted \
 		gnome-tweaks \
 		blueman \
@@ -577,6 +581,11 @@ ifndef RUSTC_CMD
 endif
 	rustup show
 
+# Installed tools:
+#  - click: Command Line Interactive Controller for Kubernetes
+#  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
+#  - ripgrep: Recursively searches directories for a regex pattern
+#    (https://github.com/BurntSushi/ripgrep)
 rust-tools: rust
 	@echo ">>> Installing cargo-readme"
 	cargo install cargo-readme
@@ -584,6 +593,8 @@ rust-tools: rust
 	cargo install exa
 	@echo ">>> Installing click: https://github.com/databricks/click"
 	cargo install click
+	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
+	cargo install ripgrep
 
 nodejs: net-tools
 	@echo ">>> Installing nodejs (LTS)"

@@ -10,7 +10,7 @@ ZSH_THEME=powerlevel10k/powerlevel10k
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(aws cargo direnv docker docker-compose git helm history kubectl minikube pip poetry pipenv rust sbt scala sdk stack)
+plugins=(aws cargo direnv docker docker-compose fzf git helm history kubectl minikube pip poetry pipenv rust sbt scala sdk stack)
 
 source $ZSH/oh-my-zsh.sh
 

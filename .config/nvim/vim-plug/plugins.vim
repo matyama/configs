@@ -10,15 +10,15 @@ endif
 
 call plug#begin('~/.config/nvim/autoload/plugged')
 
-	" Secure modeline support
-	" https://www.vim.org/scripts/script.php?script_id=1876
-	Plug 'ciaranm/securemodelines'
-
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 
 	" VIM enhancements
 	
+	" Secure modeline support
+	" https://www.vim.org/scripts/script.php?script_id=1876
+	Plug 'ciaranm/securemodelines'
+
 	" Auto pairs for '(' '[' '{'
 	Plug 'jiangmiao/auto-pairs'
 
@@ -41,6 +41,20 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Better Syntax Support
 	" https://github.com/sheerun/vim-polyglot#installation
 	Plug 'sheerun/vim-polyglot'
+
+	" Search
+
+	" Change Vim working directory to project root
+	" https://github.com/airblade/vim-rooter
+	Plug 'airblade/vim-rooter'
+	
+	" Command-line fuzzy finder
+	" https://github.com/junegunn/fzf
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+
+	" Use RipGrep in Vim
+	" https://github.com/jremmen/vim-ripgrep
+	" Plug 'jremmen/vim-ripgrep'
 
 	" Syntactic language support
 	Plug 'cespare/vim-toml'
