@@ -62,9 +62,13 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" https://github.com/preservim/nerdtree
 	"  - Git status flags
 	"  - Filetype-specific icons
+	"  - Syntax highlighting based on filetype
+	"  - Enable open, delete, move, or copy of visually-selected files
 	Plug 'preservim/nerdtree' |
             \ Plug 'Xuyuanp/nerdtree-git-plugin' |
-            \ Plug 'ryanoasis/vim-devicons'
+            \ Plug 'ryanoasis/vim-devicons' |
+						\ Plug 'tiagofumo/vim-nerdtree-syntax-highlight' |
+						\ Plug 'PhilRunninger/nerdtree-visual-selection'
 
 	call plug#end()
 
