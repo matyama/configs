@@ -10,6 +10,10 @@ endif
 
 call plug#begin('~/.config/nvim/autoload/plugged')
 
+	" Secure modeline support
+	" https://www.vim.org/scripts/script.php?script_id=1876
+	Plug 'ciaranm/securemodelines'
+
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 

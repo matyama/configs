@@ -85,3 +85,13 @@ To save updated Guake preferences, run
 ```bash
 make save-guake-conf
 ```
+
+## Troubleshooting
+
+### Vim-plug plugin installation
+Some vim-plug plugins require the `init.vim` file (the config file) to be sourced again 
+for the plugin installation to work.
+```vim
+:source $VIMRC
+:PlugInstall
+```

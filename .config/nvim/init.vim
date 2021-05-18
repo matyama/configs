@@ -15,6 +15,21 @@ set nocompatible
 " Setup plugins
 source ~/.config/nvim/vim-plug/plugins.vim
 
+" Secure modeline config
+" https://www.vim.org/scripts/script.php?script_id=1876
+let g:secure_modelines_allowed_items = [
+      \ "textwidth",   "tw",
+      \ "softtabstop", "sts",
+      \ "tabstop",     "ts",
+      \ "shiftwidth",  "sw",
+      \ "expandtab",   "et",   "noexpandtab", "noet",
+      \ "filetype",    "ft",
+      \ "foldmethod",  "fdm",
+      \ "readonly",    "ro",   "noreadonly", "noro",
+      \ "rightleft",   "rl",   "norightleft", "norl",
+      \ "colorcolumn"
+      \ ]
+
 " Lightline
 "  - https://github.com/itchyny/lightline.vim#advanced-configuration
 "  - https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
