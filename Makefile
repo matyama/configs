@@ -93,6 +93,9 @@ $(ZSH_CUSTOM):
 ~/.config/pypoetry:
 	mkdir -p ~/.config/pypoetry
 
+~/.stack:
+	mkdir -p ~/.stack
+
 ~/.local/bin:
 	mkdir -p ~/.local/bin
 
@@ -161,7 +164,7 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
-links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.local/bin $(ZSH_CUSTOM)
+links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
@@ -170,7 +173,7 @@ links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.local/b
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.p10k.zsh
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.byobu $(CFG_DIR)/.config $(CFG_DIR)/.oh-my-zsh/custom -type f); do \
+		for cfg in $$(find $(CFG_DIR)/.byobu $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}

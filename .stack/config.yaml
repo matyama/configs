@@ -1,0 +1,17 @@
+# Cross-project configurations for "stack".
+# See https://docs.haskellstack.org/en/stable/yaml_configuration/
+
+# Template configuration used by "stack new" to fill fields in cabal config.
+# See https://docs.haskellstack.org/en/stable/yaml_configuration/#templates
+templates:
+  params:
+    author-name: Martin Matyášek
+    author-email: martin.matyasek@gmail.com
+    copyright: 'Copyright (c) 2021 Martin Matyášek'
+    github-username: matyama
+    scm-init: git
+
+# Stack colors set to "Solarized Dark"
+# See https://docs.haskellstack.org/en/stable/yaml_configuration/#stack-colors
+color: auto
+stack-colors: error=31:good=32:shell=35:dir=34:recommendation=32:target=95:module=35:package-component=95:secondary=92:highlight=32
