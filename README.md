@@ -82,6 +82,21 @@ language support for various languages, refer to corresponding sub-section.
 * https://github.com/fannheyward/coc-pyright#install
 * https://github.com/microsoft/pyright/blob/main/docs/configuration.md
 
+#### Haskell
+[Haskell Language Server (HLS)](https://github.com/haskell/haskell-language-server)
+is configured in `~/.config/coc/coc-settings.json`.
+
+The installation of HLS is done as part of `ghcup` installation in
+```bash
+make haskell
+```
+
+#### JSON
+[Json language extension for coc.nvim](https://github.com/neoclide/coc-json)
+```vim
+:CocInstall coc-json
+```
+
 ## Saving configurations
 Edits to any linked configurations is automatically propagated here 
 (via the symlink). Then simply commit and push the changes. 
