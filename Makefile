@@ -90,6 +90,9 @@ $(ZSH_CUSTOM):
 ~/.config/nvim/vim-plug:
 	mkdir -p ~/.config/nvim/vim-plug
 
+~/.config/coc:
+	mkdir -p ~/.config/coc
+
 ~/.config/pypoetry:
 	mkdir -p ~/.config/pypoetry
 
@@ -134,6 +137,7 @@ KAGGLE_CMD := $(shell command -v kaggle 2> /dev/null)
 
 POETRY_CMD := $(shell command -v poetry 2> /dev/null)
 
+GHCUP_CMD := $(shell command -v ghcup 2> /dev/null)
 STACK_CMD := $(shell command -v stack 2> /dev/null)
 RUSTC_CMD := $(shell command -v rustc 2> /dev/null)
 
@@ -164,7 +168,7 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
-links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
+links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
@@ -566,9 +570,17 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 		sdk install visualvm;\
 	}
 
+# Haskell toolchain and project builder
+#  - [ghcup](https://www.haskell.org/ghcup/)
+#  - [stack](https://docs.haskellstack.org/en/stable/README/)
+# Additional notes:
+#  - ghcup also installs the Haskell Language Server
+#  - ghcup-zsh instegration is already present in .zshrc
 haskell: net-tools
-	@echo ">>> Installing Haskell platform"
-	sudo apt install -y haskell-platform
+ifndef GHCUP_CMD
+	@echo ">>> Installing Haskell toolchain installer"
+	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+endif
 ifndef STACK_CMD
 	@echo ">>> Installing Haskell Stack"
 	curl -sSL https://get.haskellstack.org/ | sh

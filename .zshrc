@@ -70,6 +70,9 @@ fi
 # thefuck (shell command corrector)
 [ ! $(command -v fuck) ] || eval $(thefuck --alias)
 
+# Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
+[ -f "/home/matyama/.ghcup/env" ] && source "/home/matyama/.ghcup/env"
+
 # Haskell stack (https://docs.haskellstack.org/en/stable/README/)
 [ ! $(command -v stack) ] || eval "$(stack --bash-completion-script stack)"
 
