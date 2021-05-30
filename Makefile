@@ -482,6 +482,8 @@ snaps: $(GOPATH)
 	sudo snap install dbeaver-ce
 	@echo ">>> Installing Visual Studio Code"
 	sudo snap install code --classic
+	@echo ">>> Installing googler: https://github.com/jarun/googler"
+	sudo snap install googler
 
 pipx: python
 ifdef PIPX_CMD

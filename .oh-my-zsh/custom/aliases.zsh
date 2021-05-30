@@ -40,6 +40,11 @@ if [ "$(command -v exa)" ]; then
 	alias l="exa -lahg@ --git"
 fi
 
+# googler (https://github.com/jarun/googler)
+if [ "$(command -v googler)" ]; then
+	alias s="googler"
+fi
+
 # Python
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
