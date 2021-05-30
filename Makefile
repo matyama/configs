@@ -90,6 +90,9 @@ $(ZSH_CUSTOM):
 ~/.config/nvim/vim-plug:
 	mkdir -p ~/.config/nvim/vim-plug
 
+~/.config/nvim/scripts:
+	mkdir -p ~/.config/nvim/scripts
+
 ~/.config/coc:
 	mkdir -p ~/.config/coc
 
@@ -168,7 +171,7 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
-links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
+links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/nvim/scripts ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
