@@ -67,6 +67,10 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	Plug 'rust-lang/rust.vim'
 	Plug 'plasticboy/vim-markdown'
 
+	" A (Neo)vim plugin for formatting code
+	" https://github.com/sbdchd/neoformat
+	Plug 'sbdchd/neoformat'
+
 	" Semantic language support
 	" https://github.com/neoclide/coc.nvim#quick-start
 	"  * Rust:

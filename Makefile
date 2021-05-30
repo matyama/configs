@@ -20,6 +20,7 @@
 	sdk \
 	jvm-tools \
 	haskell \
+	haskell-tools \
 	rust \
 	rust-tools \
 	nodejs \
@@ -590,6 +591,13 @@ ifndef STACK_CMD
 	@echo ">>> Installing Haskell Stack"
 	curl -sSL https://get.haskellstack.org/ | sh
 endif
+
+# Installed tools:
+#  - brittany: Haskell source code formatter
+#  - data-tree-print: Installed as a brittany dependency
+haskell-tools: haskell
+	@echo ">>> Installing brittany: https://github.com/lspitzner/brittany/"
+	stack install data-tree-print brittany
 
 rust: net-tools
 ifndef RUSTC_CMD
