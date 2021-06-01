@@ -71,6 +71,10 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" https://github.com/sbdchd/neoformat
 	Plug 'sbdchd/neoformat'
 
+	" Bindings for Haskell hlint code refactoring
+	" https://github.com/mpickering/hlint-refactor-vim
+	Plug 'mpickering/hlint-refactor-vim'
+
 	" Semantic language support
 	" https://github.com/neoclide/coc.nvim#quick-start
 	"  * Rust:

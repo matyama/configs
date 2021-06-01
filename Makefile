@@ -594,10 +594,14 @@ endif
 
 # Installed tools:
 #  - brittany: Haskell source code formatter
+#  - hlint: Haskell source code suggestions
+#  - apply-refact: Refactor Haskell source files
 #  - data-tree-print: Installed as a brittany dependency
 haskell-tools: haskell
 	@echo ">>> Installing brittany: https://github.com/lspitzner/brittany/"
 	stack install data-tree-print brittany
+	@echo ">>> Installing hlint: https://github.com/ndmitchell/hlint"
+	stack install hlint apply-refact
 
 rust: net-tools
 ifndef RUSTC_CMD
