@@ -80,45 +80,45 @@ DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 FONTS_DIR := ~/.local/share/fonts
 
 $(FONTS_DIR):
-	mkdir -p $(FONTS_DIR)
+	mkdir -p $@
 
 $(BYOBU_CONFIG_DIR):
-	mkdir -p $(BYOBU_CONFIG_DIR)
+	mkdir -p $@
 
 $(ZSH_CUSTOM):
-	mkdir -p $(ZSH_CUSTOM)
+	mkdir -p $@
 
 ~/.config/nvim/vim-plug:
-	mkdir -p ~/.config/nvim/vim-plug
+	mkdir -p $@
 
 ~/.config/nvim/scripts:
-	mkdir -p ~/.config/nvim/scripts
+	mkdir -p $@
 
 ~/.config/coc:
-	mkdir -p ~/.config/coc
+	mkdir -p $@
 
 ~/.config/pypoetry:
-	mkdir -p ~/.config/pypoetry
+	mkdir -p $@
 
 ~/.stack:
-	mkdir -p ~/.stack
+	mkdir -p $@
 
 ~/.local/bin:
-	mkdir -p ~/.local/bin
+	mkdir -p $@
 
 ~/vm:
-	mkdir -p ~/vm
+	mkdir -p $@
 
 ~/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
 ~/vm/$(DEBIAN_ISO): ~/vm net-tools
 	@echo ">>> Downloading Debian Buster net installer for x86_64" 
-	@[ -f ~/vm/$(DEBIAN_ISO) ] || wget -O ~/vm/$(DEBIAN_ISO) $(ISO_URL)/$(DEBIAN_ISO)
+	@[ -f $@ ] || wget -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
 $(GOPATH):
-	mkdir -p ~/go
+	mkdir -p $@
 
 $(ZSH)/plugins/poetry:
-	mkdir -p $(ZSH)/plugins/poetry
+	mkdir -p $@
 
 INTEL_CPU := $(shell egrep 'model name\s+: Intel' /proc/cpuinfo 2> /dev/null)
 
@@ -163,11 +163,11 @@ install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/ma
 install-fonts: $(FONTS_DIR)
 	@echo "Downloading Meslo Nerd Font for Powerlevel10k"
 	curl "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
-		-o $(FONTS_DIR)/"MesloLGS NF #1.ttf"
-	mv $(FONTS_DIR)/MesloLGS\ NF\ Bold%20Italic.ttf $(FONTS_DIR)/MesloLGS\ NF\ Bold\ Italic.ttf
+		-o $</"MesloLGS NF #1.ttf"
+	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 
 guake.conf:
-	guake --restore-preferences guake.conf
+	guake --restore-preferences $@
 
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
@@ -300,8 +300,8 @@ test-kvm: ~/vm/$(DEBIAN_ISO)
 		--ram 8192 \
 		--vcpus=4 \
 		--hvm \
-		--cdrom ~/vm/$(DEBIAN_ISO) \
-		--disk path=$(HOME)/vm/debian_buster.img,bus=virtio,size=40 \
+		--cdrom $< \
+		--disk path=$(<D)/debian_buster.img,bus=virtio,size=40 \
 		--network network=default,model=virtio \
 		--graphics vnc,listen=0.0.0.0 \
 		--video=vmvga \
@@ -318,7 +318,7 @@ test-kvm: ~/vm/$(DEBIAN_ISO)
 	virsh pool-list --details
 	virsh pool-autostart vm --disable
 	virsh pool-destroy vm
-	sudo rm -f ~/vm/debian_buster.img
+	sudo rm -f $(<D)/debian_buster.img
 	virsh pool-undefine vm
 	virsh pool-list --details
 	@echo ">>> KVM test was successful!"
@@ -412,37 +412,40 @@ test-k8s: net-tools
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
 python3.6: python
 ifdef PYTHON36_CMD
-	@echo ">>> $$(python3.6 --version) already installed"
+	@echo ">>> $$($@ --version) already installed"
 else
-	@echo ">>> Installing Python 3.6"
+	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
 	sudo apt update
-	sudo apt install -y python3.6-dev python3.6-venv
+	sudo apt install -y $@-dev $@-venv
 endif
 
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
 python3.7: python
 ifdef PYTHON37_CMD
-	@echo ">>> $$(python3.7 --version) already installed"
+	@echo ">>> $$($@ --version) already installed"
 else
-	@echo ">>> Installing Python 3.7"
+	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
 	sudo apt update
-	sudo apt install -y python3.7-dev python3.7-venv
+	sudo apt install -y $@-dev $@-venv
 endif
 
 # https://github.com/devops-works/binenv#linux-bashzsh
+binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
+binenv: BINENV_BIN := $(shell mktemp)
 binenv: net-tools
 ifdef BINENV_CMD
-	@echo ">>> binenv already installed to '$(BINENV_HOME)'"
+	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
 else
-	@echo ">>> Downloading and installing binenv"
-	wget -q -O /tmp/binenv https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
-	chmod +x /tmp/binenv
-	/tmp/binenv update
-	/tmp/binenv install binenv
+	@echo ">>> Downloading and installing $@"
+	wget -q -O $(BINENV_BIN) $(BINENV_URL)
+	chmod +x $(BINENV_BIN)
+	$(BINENV_BIN) update
+	$(BINENV_BIN) install $@
 	exec $$SHELL
 endif
+	@rm -rf $(BINENV_BIN)
 
 # See: https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
 zsh: core-utils net-tools
@@ -450,10 +453,10 @@ ifdef ZSH_CMD
 	@echo ">>> zsh already installed"
 else
 	@echo ">>> Installing zsh and oh-my-zsh"
-	sudo apt install -y zsh
-	zsh --version
+	sudo apt install -y $@
+	$@ --version
 	sh -c "$$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-	sudo chsh -s $$(which zsh)
+	sudo chsh -s $$(which $@)
 	@echo ">>> Setting up powerlevel10k theme"
 	git clone https://github.com/romkatv/powerlevel10k.git $(ZSH_CUSTOM)/themes/powerlevel10k
 	sudo apt install -y fonts-powerline
@@ -491,11 +494,11 @@ snaps: $(GOPATH)
 
 pipx: python
 ifdef PIPX_CMD
-	@echo ">>> pipx $$(pipx --version) already installed"
+	@echo ">>> $@ $$($@ --version) already installed"
 else
-	@echo ">>> Installing pipx"
-	python3 -m pip install --user pipx
-	python3 -m pipx ensurepath
+	@echo ">>> Installing $@"
+	python3 -m pip install --user $@
+	python3 -m $@ ensurepath
 endif
 
 python-tools: pipx
@@ -534,13 +537,13 @@ endif
 
 poetry: python zsh $(ZSH)/plugins/poetry
 ifdef POETRY_CMD
-	@echo ">>> $$(poetry --version) already installed"
+	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing Poetry: https://python-poetry.org/docs/"
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
 	. $(HOME)/.poetry/env
-	poetry self update --preview
-	poetry completions zsh > $(ZSH)/plugins/poetry/_poetry
+	$@ self update --preview
+	$@ completions zsh > $(ZSH)/plugins/poetry/_poetry
 endif
 
 sdk: SHELL := /bin/bash
@@ -642,7 +645,7 @@ nodejs: net-tools
 
 ruby:
 	@echo ">>> Installing Ruby"
-	sudo snap install --classic ruby 
+	sudo snap install --classic $@
 
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
@@ -654,27 +657,27 @@ docker: core-utils apt-utils
 	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' and configuring apt sources"
 	curl -fsSL $(DOCKER_URL)/gpg | gpg --dearmor | sudo tee $(DOCKER_GPG) > /dev/null
 	echo "deb [arch=amd64 signed-by=$(DOCKER_GPG)] $(DOCKER_URL) $$(lsb_release -cs) stable" \
-		| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+		| sudo tee /etc/apt/sources.list.d/$@.list > /dev/null
 	sudo apt-get update
 	sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-	@echo ">>> Setting up 'docker' user group with current user '$(USER)'"
-	sudo groupadd -f docker
-	sudo gpasswd -a $(USER) docker
-	sudo usermod -aG docker $(USER)
+	@echo ">>> Setting up '$@' user group with current user '$(USER)'"
+	sudo groupadd -f $@
+	sudo gpasswd -a $(USER) $@
+	sudo usermod -aG $@ $(USER)
 	@echo ">>> Configuring Docker to start on boot"
-	sudo systemctl enable docker.service
+	sudo systemctl enable $@.service
 	sudo systemctl enable containerd.service
 	@echo ">>> Finishing Docker installation"
-	sudo service docker restart
-	newgrp docker
+	sudo service $@ restart
+	newgrp $@
 
 # NOTE: This target installs docker-compose using pipx for easier version handling.
 docker-compose:
 ifdef DOCKER_COMPOSE_CMD
-	@echo ">>> Already installed $$(docker-compose --version)"
+	@echo ">>> Already installed $$($@ --version)"
 else
-	@echo ">>> Installing docker-compose: https://docs.docker.com/compose/install/"
-	pipx install docker-compose
+	@echo ">>> Installing $@: https://docs.docker.com/compose/install/"
+	pipx install $@
 endif
 
 test-docker:
@@ -731,41 +734,41 @@ endif
 # https://github.com/cli/cli
 gh: zsh
 ifdef GH_CMD
-	@echo ">>> gh already installed"
+	@echo ">>> $@ already installed"
 else
 	@echo ">>> Installing Github CLI"
 	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
 	sudo apt-add-repository https://cli.github.com/packages
 	sudo apt update
-	sudo apt install -y gh
+	sudo apt install -y $@
 	@echo ">>> Adding ZSH autocompletion for Github CLI"
-	gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh > /dev/null
+	$@ completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_$@ > /dev/null
 endif
 
 travis: ruby
 	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
-	gem install travis --no-document --user-install
+	gem install $@ --no-document --user-install
 
 # TODO: Install via binenv when it's available as a dependency
 aws-vault: AWS_VAULT_BIN := /usr/local/bin/aws-vault
 aws-vault: AWS_VAULT_URL := https://github.com/99designs/aws-vault/releases
 aws-vault: net-tools
-	@echo ">>> Installing latest aws-vault: $(AWS_VAULT_URL)"
+	@echo ">>> Installing latest $@: $(AWS_VAULT_URL)"
 	@{ \
 		TAG=$$(curl -sL -H "Accept: application/json" "$(AWS_VAULT_URL)/latest" | jq -r '.tag_name');\
-		echo ">>> Downloading aws-vault $$TAG binary as '$(AWS_VAULT_BIN)'";\
+		echo ">>> Downloading $@ $$TAG binary as '$(AWS_VAULT_BIN)'";\
 		sudo curl -Lo $(AWS_VAULT_BIN) "$(AWS_VAULT_URL)/download/$$TAG/aws-vault-linux-amd64";\
 	}
 	sudo chmod 755 $(AWS_VAULT_BIN)
 
 bat: ~/.local/bin
 ifdef BAT_CMD
-	@echo ">>> $$(bat --version) already installed"
+	@echo ">>> $$($@ --version) already installed"
 else
-	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
-	sudo apt install -y bat
-	ln -s /usr/bin/batcat ~/.local/bin/bat
-	@echo ">>> Installed $$(bat --version)"
+	@echo ">>> Installing $@: https://github.com/sharkdp/bat"
+	sudo apt install -y $@
+	ln -s /usr/bin/batcat $</$@
+	@echo ">>> Installed $$($@ --version)"
 endif
 
 set-swappiness:
@@ -787,7 +790,7 @@ else
 	@echo ">>> Downloading and unpacking $(TOOLBOX_URL)"
 	curl -sL $(TOOLBOX_URL) | tar -xvzf - --strip-components=1 -C $(TOOLBOX_DIR)
 	@echo ">>> Installing JetBrains Toolbox"
-	$(TOOLBOX_DIR)/jetbrains-toolbox
+	$(TOOLBOX_DIR)/$@
 endif
 	rm -rf $(TOOLBOX_DIR)
 
@@ -795,7 +798,7 @@ keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_amd64.deb
 keybase: KEYBASE_PKG := $(shell mktemp)
 keybase: net-tools
 ifdef KEYBASE_CMD
-	@echo ">>> $$(keybase --version) already installed"
+	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing Keybase: https://keybase.io/docs/the_app/install_linux"
 	curl -o $(KEYBASE_PKG) --remote-name $(KEYBASE_URI)
@@ -813,13 +816,13 @@ games: crawl
 
 crawl: net-tools
 ifdef CRAWL_CMD
-	@echo ">>> $$(crawl --version | head -n1) already installed"
+	@echo ">>> $$($@ --version | head -n1) already installed"
 else
 	@echo ">>> Installing Dungeon Crawl Stone Soup: https://crawl.develz.org/"
 	echo 'deb https://crawl.develz.org/debian crawl 0.23' | sudo tee -a /etc/apt/sources.list
 	wget https://crawl.develz.org/debian/pubkey -O - | sudo apt-key add -
 	sudo apt update
-	sudo apt install -y crawl crawl-tiles
+	sudo apt install -y $@ $@-tiles
 endif
 
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
