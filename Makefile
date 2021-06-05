@@ -33,7 +33,7 @@
 	zsh \
 	zsh-theme \
 	snaps \
-	chrome \
+	google-chrome \
 	gh \
 	travis \
 	bat \
@@ -63,10 +63,6 @@ ifndef BYOBU_CONFIG_DIR
 BYOBU_CONFIG_DIR=~/.byobu
 endif
 
-ifndef SWAPPINESS
-SWAPPINESS=10
-endif
-
 ifndef SDKMAN_DIR
 SDKMAN_DIR=~/.sdkman
 endif
@@ -79,34 +75,19 @@ DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 
 FONTS_DIR := ~/.local/share/fonts
 
-$(FONTS_DIR):
-	mkdir -p $@
-
-$(BYOBU_CONFIG_DIR):
-	mkdir -p $@
-
-$(ZSH_CUSTOM):
-	mkdir -p $@
-
-~/.config/nvim/vim-plug:
-	mkdir -p $@
-
-~/.config/nvim/scripts:
-	mkdir -p $@
-
-~/.config/coc:
-	mkdir -p $@
-
-~/.config/pypoetry:
-	mkdir -p $@
-
-~/.stack:
-	mkdir -p $@
-
-~/.local/bin:
-	mkdir -p $@
-
-~/vm:
+# Ensure necessary paths exist
+$(FONTS_DIR) \
+	$(BYOBU_CONFIG_DIR) \
+	$(GOPATH) \
+	$(ZSH_CUSTOM) \
+	$(ZSH)/plugins/poetry \
+	~/.config/coc \
+	~/.local/bin \
+	~/.config/nvim/scripts \
+	~/.config/nvim/vim-plug \
+	~/.config/pypoetry \
+	~/.stack \
+	~/vm:
 	mkdir -p $@
 
 ~/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
@@ -114,47 +95,11 @@ $(ZSH_CUSTOM):
 	@echo ">>> Downloading Debian Buster net installer for x86_64" 
 	@[ -f $@ ] || wget -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
-$(GOPATH):
-	mkdir -p $@
-
-$(ZSH)/plugins/poetry:
-	mkdir -p $@
+DOCKER_CMD := $(shell command -v docker 2> /dev/null)
 
 INTEL_CPU := $(shell egrep 'model name\s+: Intel' /proc/cpuinfo 2> /dev/null)
 
-ZSH_CMD := $(shell command -v zsh 2> /dev/null)
-
-BINENV_CMD := $(shell command -v binenv 2> /dev/null)
-
-PIPX_CMD := $(shell command -v pipx 2> /dev/null)
-
-VENV_CMD := $(shell command -v virtualenv 2> /dev/null)
-AWSCLI_CMD := $(shell command -v aws 2> /dev/null)
-PZ_CMD := $(shell command -v pz 2> /dev/null)
-FUCK_CMD := $(shell command -v fuck 2> /dev/null)
-PRE_COMMIT_CMD := $(shell command -v pre-commit 2> /dev/null)
-BLACK_CMD := $(shell command -v black 2> /dev/null)
-KAGGLE_CMD := $(shell command -v kaggle 2> /dev/null)
-
-POETRY_CMD := $(shell command -v poetry 2> /dev/null)
-
-GHCUP_CMD := $(shell command -v ghcup 2> /dev/null)
-STACK_CMD := $(shell command -v stack 2> /dev/null)
-RUSTC_CMD := $(shell command -v rustc 2> /dev/null)
-
-GH_CMD := $(shell command -v gh 2> /dev/null)
-BAT_CMD := $(shell command -v bat 2> /dev/null)
-
-DOCKER_CMD := $(shell command -v docker 2> /dev/null)
-DOCKER_COMPOSE_CMD := $(shell command -v docker-compose 2> /dev/null)
-
 NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
-
-CHROME_CMD := $(shell command -v google-chrome 2> /dev/null)
-JETBRAINS_TOOLBOX_CMD := $(shell command -v jetbrains-toolbox 2> /dev/null)
-KEYBASE_CMD := $(shell command -v keybase 2> /dev/null)
-
-CRAWL_CMD := $(shell command -v crawl 2> /dev/null)
 
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(FONTS_DIR)
@@ -209,6 +154,7 @@ python:
 	@echo ">>> Installing standard Python libraries"
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
+# FIXME: automatic var for target name is not set when which is called
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
 python3.6 python3.7: python
 ifneq ($(shell which $@ 2> /dev/null),)
@@ -421,7 +367,7 @@ test-k8s: net-tools
 binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
 binenv: BINENV_BIN := $(shell mktemp)
 binenv: net-tools
-ifdef BINENV_CMD
+ifneq ($(shell which binenv 2> /dev/null),)
 	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
 else
 	@echo ">>> Downloading and installing $@"
@@ -435,7 +381,7 @@ endif
 
 # See: https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
 zsh: core-utils net-tools
-ifdef ZSH_CMD
+ifneq ($(shell which zsh 2> /dev/null),)
 	@echo ">>> zsh already installed"
 else
 	@echo ">>> Installing zsh and oh-my-zsh"
@@ -479,7 +425,7 @@ snaps: $(GOPATH)
 	sudo snap install googler
 
 pipx: python
-ifdef PIPX_CMD
+ifneq ($(shell which pipx 2> /dev/null),)
 	@echo ">>> $@ $$($@ --version) already installed"
 else
 	@echo ">>> Installing $@"
@@ -487,42 +433,29 @@ else
 	python3 -m $@ ensurepath
 endif
 
+python-tools: OPS :=
 python-tools: pipx
-ifndef VENV_CMD
 	@echo ">>> Installing Python virtual environment"
-	pipx install virtualenv
-endif
+	pipx install virtualenv $(OPS)
 	# @echo ">>> Installing Pipenv: https://pipenv.pypa.io/"
-	# pipx install pipenv
-ifndef AWSCLI_CMD
+	# pipx install pipenv $(OPS)  
 	@echo ">>> Installing AWS CLI"
-	pipx install awscli
-endif
-ifndef PZ_CMD
+	pipx install awscli $(OPS)
 	@echo ">>> Installing Pythonize: https://github.com/CZ-NIC/pz"
-	pipx install pz
-endif
-ifndef FUCK_CMD
+	pipx install pz $(OPS)
 	@echo ">>> Installing The Fuck shell command corrector: https://github.com/nvbn/thefuck"
-	pipx install thefuck
-endif
-ifndef PRE_COMMIT_CMD
+	pipx install thefuck $(OPS)
 	@echo ">>> Installing pre-commit hooks globally"
-	pipx install pre-commit
-endif
-#ifndef BLACK_CMD
+	pipx install pre-commit $(OPS)
 #	@echo ">>> Installing black formatter for Python"
-#	pipx install black
-#endif
+#	pipx install black $(OPS)
 #	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"
-#	pipx install wemake-python-styleguide --include-deps
-ifndef KAGGLE_CMD
+#	pipx install wemake-python-styleguide --include-deps $(OPS)
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
-	pipx install kaggle
-endif
+	pipx install kaggle $(OPS)
 
 poetry: python zsh $(ZSH)/plugins/poetry
-ifdef POETRY_CMD
+ifneq ($(shell which poetry 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing Poetry: https://python-poetry.org/docs/"
@@ -572,11 +505,11 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 #  - ghcup also installs the Haskell Language Server
 #  - ghcup-zsh instegration is already present in .zshrc
 haskell: net-tools
-ifndef GHCUP_CMD
+ifeq ($(shell which ghcup 2> /dev/null),)
 	@echo ">>> Installing Haskell toolchain installer"
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 endif
-ifndef STACK_CMD
+ifeq ($(shell which stack 2> /dev/null),)
 	@echo ">>> Installing Haskell Stack"
 	curl -sSL https://get.haskellstack.org/ | sh
 endif
@@ -593,7 +526,7 @@ haskell-tools: haskell
 	stack install hlint apply-refact
 
 rust: net-tools
-ifndef RUSTC_CMD
+ifeq ($(shell which rustc 2> /dev/null),)
 	@echo ">>> Installing Rust toolchain"
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	. $(HOME)/.cargo/env
@@ -659,7 +592,7 @@ docker: core-utils apt-utils
 
 # NOTE: This target installs docker-compose using pipx for easier version handling.
 docker-compose:
-ifdef DOCKER_COMPOSE_CMD
+ifneq ($(shell which docker-compose 2> /dev/null),)
 	@echo ">>> Already installed $$($@ --version)"
 else
 	@echo ">>> Installing $@: https://docs.docker.com/compose/install/"
@@ -707,19 +640,20 @@ else
 	$(error >>> No NVIDIA GPU available)
 endif
 
-chrome: CHROME_PKG := google-chrome-stable_current_amd64.deb
-chrome: net-tools
-ifdef CHROME_CMD
+google-chrome: CHROME_PKG := google-chrome-stable_current_amd64.deb
+google-chrome: net-tools
+ifneq ($(shell which google-chrome 2> /dev/null),)
 	@echo ">>> Google Chrome already installed"
 else
 	@echo ">>> Downloading and installing Google Chrome"
 	wget -O /tmp/$(CHROME_PKG) https://dl.google.com/linux/direct/$(CHROME_PKG)
 	sudo apt install -y /tmp/$(CHROME_PKG)
 endif
+	rm -rf /tmp/$(CHROME_PKG)
 
 # https://github.com/cli/cli
 gh: zsh
-ifdef GH_CMD
+ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
 	@echo ">>> Installing Github CLI"
@@ -748,15 +682,16 @@ aws-vault: net-tools
 	sudo chmod 755 $(AWS_VAULT_BIN)
 
 bat: ~/.local/bin
-ifdef BAT_CMD
+ifneq ($(shell which bat 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing $@: https://github.com/sharkdp/bat"
 	sudo apt install -y $@
-	ln -s /usr/bin/batcat $</$@
+	ln -svf /usr/bin/batcat $</$@
 	@echo ">>> Installed $$($@ --version)"
 endif
 
+set-swappiness: SWAPPINESS := 10
 set-swappiness:
 ifeq ($(shell grep "vm.swappiness" /etc/sysctl.conf),)
 	@echo ">>> Setting swappiness to $(SWAPPINESS)"
@@ -770,7 +705,7 @@ endif
 jetbrains-toolbox: TOOLBOX_URL := "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA"
 jetbrains-toolbox: TOOLBOX_DIR := $(shell mktemp -d)
 jetbrains-toolbox: net-tools
-ifdef JETBRAINS_TOOLBOX_CMD
+ifneq ($(shell which jetbrains-toolbox 2> /dev/null),)
 	@echo ">>> JetBrains Toolbox already installed"
 else
 	@echo ">>> Downloading and unpacking $(TOOLBOX_URL)"
@@ -783,7 +718,7 @@ endif
 keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_amd64.deb
 keybase: KEYBASE_PKG := $(shell mktemp)
 keybase: net-tools
-ifdef KEYBASE_CMD
+ifneq ($(shell which keybase 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing Keybase: https://keybase.io/docs/the_app/install_linux"
@@ -801,7 +736,7 @@ zoom:
 games: crawl
 
 crawl: net-tools
-ifdef CRAWL_CMD
+ifneq ($(shell which crawl 2> /dev/null),)
 	@echo ">>> $$($@ --version | head -n1) already installed"
 else
 	@echo ">>> Installing Dungeon Crawl Stone Soup: https://crawl.develz.org/"
