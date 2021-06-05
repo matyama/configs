@@ -126,9 +126,6 @@ ZSH_CMD := $(shell command -v zsh 2> /dev/null)
 
 BINENV_CMD := $(shell command -v binenv 2> /dev/null)
 
-PYTHON36_CMD := $(shell command -v python3.6 2> /dev/null)
-PYTHON37_CMD := $(shell command -v python3.7 2> /dev/null)
-
 PIPX_CMD := $(shell command -v pipx 2> /dev/null)
 
 VENV_CMD := $(shell command -v virtualenv 2> /dev/null)
@@ -211,6 +208,17 @@ apt-utils:
 python:
 	@echo ">>> Installing standard Python libraries"
 	sudo apt install -y python3-pip python3-venv python-is-python3
+
+# TODO: Possibly better option could be https://github.com/pyenv/pyenv
+python3.6 python3.7: python
+ifneq ($(shell which $@ 2> /dev/null),)
+	@echo ">>> $$($@ --version) already installed"
+else
+	@echo ">>> Installing $@"
+	sudo add-apt-repository -y ppa:deadsnakes/ppa
+	sudo apt update
+	sudo apt install -y $@-dev $@-venv
+endif
 
 # Installed tools:
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
@@ -408,28 +416,6 @@ test-k8s: net-tools
 	minikube stop
 	minikube status || true
 	@echo ">>> Verified kubectl $$(kubectl version --client --short)"
-
-# TODO: Possibly better option could be https://github.com/pyenv/pyenv
-python3.6: python
-ifdef PYTHON36_CMD
-	@echo ">>> $$($@ --version) already installed"
-else
-	@echo ">>> Installing $@"
-	sudo add-apt-repository -y ppa:deadsnakes/ppa
-	sudo apt update
-	sudo apt install -y $@-dev $@-venv
-endif
-
-# TODO: Possibly better option could be https://github.com/pyenv/pyenv
-python3.7: python
-ifdef PYTHON37_CMD
-	@echo ">>> $$($@ --version) already installed"
-else
-	@echo ">>> Installing $@"
-	sudo add-apt-repository -y ppa:deadsnakes/ppa
-	sudo apt update
-	sudo apt install -y $@-dev $@-venv
-endif
 
 # https://github.com/devops-works/binenv#linux-bashzsh
 binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
