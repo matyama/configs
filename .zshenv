@@ -34,7 +34,3 @@ export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
 export FZF_DEFAULT_COMMAND="fd --type file --follow"
 export FZF_CTRL_T_COMMAND="fd --type file --follow"
 export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
-	
-# FIXME: KREW_ROOT seems to be duplicated in PATH
-# Kubernetes krew
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
