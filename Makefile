@@ -154,17 +154,12 @@ python:
 	@echo ">>> Installing standard Python libraries"
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
-# FIXME: automatic var for target name is not set when which is called
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
 python3.6 python3.7: python
-ifneq ($(shell which $@ 2> /dev/null),)
-	@echo ">>> $$($@ --version) already installed"
-else
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
 	sudo apt update
 	sudo apt install -y $@-dev $@-venv
-endif
 
 # Installed tools:
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
