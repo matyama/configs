@@ -19,6 +19,8 @@
 	poetry \
 	sdk \
 	jvm-tools \
+	ghcup \
+	stack \
 	haskell \
 	haskell-tools \
 	rust \
@@ -80,6 +82,7 @@ $(FONTS_DIR) \
 	$(BYOBU_CONFIG_DIR) \
 	$(GOPATH) \
 	$(ZSH_CUSTOM) \
+	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
 	~/.config/coc \
 	~/.local/bin \
@@ -499,12 +502,25 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 # Additional notes:
 #  - ghcup also installs the Haskell Language Server
 #  - ghcup-zsh instegration is already present in .zshrc
-haskell: net-tools
-ifeq ($(shell which ghcup 2> /dev/null),)
+haskell: ghcup stack
+
+ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
+ghcup: $(ZSH)/completions net-tools
+ifneq ($(shell which ghcup 2> /dev/null),)
+	@echo ">>> $$($@ --version) already installed"
+else
 	@echo ">>> Installing Haskell toolchain installer"
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+	@echo ">>> Dowloading zsh completions for $@"
+	curl -sSL -o $</_$@ \
+		"$(GHCUP_URL)/-/raw/v$$($@ --numeric-version)/shell-completions/zsh"
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 endif
-ifeq ($(shell which stack 2> /dev/null),)
+
+stack: net-tools
+ifneq ($(shell which stack 2> /dev/null),)
+	@echo ">>> $@ $$($@ --numeric-version) already installed"
+else
 	@echo ">>> Installing Haskell Stack"
 	curl -sSL https://get.haskellstack.org/ | sh
 endif
