@@ -76,6 +76,7 @@ endif
 DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 
 FONTS_DIR := ~/.local/share/fonts
+ZSH_FUNC_DIR := /usr/local/share/zsh/site-functions
 
 # Ensure necessary paths exist
 $(FONTS_DIR) \
@@ -543,6 +544,8 @@ ifeq ($(shell which rustc 2> /dev/null),)
 	. $(HOME)/.cargo/env
 	@echo ">>> Installing Rust nightly toolchain"
 	rustup install nightly
+	@echo ">>> Adding ZSH autocompletion for 'rustup'"
+	rustup completions zsh | sudo tee $(ZSH_FUNC_DIR)/_rustup > /dev/null
 endif
 	rustup show
 
@@ -673,7 +676,7 @@ else
 	sudo apt update
 	sudo apt install -y $@
 	@echo ">>> Adding ZSH autocompletion for Github CLI"
-	$@ completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_$@ > /dev/null
+	$@ completion -s zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
 endif
 
 travis: ruby
