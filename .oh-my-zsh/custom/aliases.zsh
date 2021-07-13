@@ -26,7 +26,7 @@ alias vimdiff="nvim -d"
 
 # PDF
 
-# Concatentate pdf files passed as arugmets and output final pdf to stdout
+# Concatenate pdf files passed as arguments and output final pdf to stdout
 alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dPDFSETTINGS=/prepress -sOutputFile=/dev/stdout"
 
 # Git
