@@ -24,6 +24,11 @@ alias vi="nvim"
 alias oldvim="\vim"
 alias vimdiff="nvim -d"
 
+# PDF
+
+# Concatentate pdf files passed as arugmets and output final pdf to stdout
+alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dPDFSETTINGS=/prepress -sOutputFile=/dev/stdout"
+
 # Git
 alias gah="git stash && git pull --rebase && git stash pop"
 
