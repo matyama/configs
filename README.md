@@ -97,6 +97,10 @@ make haskell
 :CocInstall coc-json
 ```
 
+### Visual Studio Code
+Settings are automatically synchronized via [build-in mechanism](https://code.visualstudio.com/docs/editor/settings-sync)
+so one can just login to GitHub.
+
 ## Saving configurations
 Edits to any linked configurations is automatically propagated here 
 (via the symlink). Then simply commit and push the changes. 
