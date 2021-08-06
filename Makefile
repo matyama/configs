@@ -142,6 +142,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		done;\
 	}
 	@ln -svft ~/.local/bin \
+		$(CFG_DIR)/.local/bin/alacritty_toggle.sh \
 		$(CFG_DIR)/.local/bin/increase_swap.sh \
 		$(CFG_DIR)/.local/bin/init_ubuntu.sh \
 		$(CFG_DIR)/.local/bin/upgrade_kernel.sh
@@ -176,6 +177,7 @@ python3.6 python3.7: python
 	sudo apt install -y $@-dev $@-venv
 
 # Installed tools:
+#  - xdotool: X11 automation tool (https://github.com/jordansissel/xdotool)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
 #  - silversearcher-ag: A code-searching tool (http://geoff.greer.fm/ag/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
@@ -195,6 +197,7 @@ basic-tools: net-tools core-utils apt-utils python
 		byobu \
 		tree \
 		xclip \
+		xdotool \
 		fzf \
 		silversearcher-ag \
 		gparted \

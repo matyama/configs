@@ -31,6 +31,18 @@ make config
 
 ## Manual configurations
 
+### Alacritty terminal
+1. Link script `alacritty_toggle.sh` to an executable path (e.g. with
+   `make links`)
+1. Manually configure toggle keybinging in 'Settings > Keyboard
+   Shortcuts' - for example like this:
+   ```
+   Name: Alacritty terminal
+   Command: /home/matyama/.local/bin/alacritty_toggle.sh
+   Shortcut: F12
+   ```
+1. Add Alacritty to 'Tweaks > Startup Applications'
+
 ### Making CapsLock an extra Esc
 1. Make sure [GNOME Tweaks](https://wiki.gnome.org/Apps/Tweaks) is installed
 1. Follow [these instructions](https://bit.ly/33QDcdB)
