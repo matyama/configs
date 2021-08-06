@@ -96,6 +96,38 @@ let g:vim_markdown_folding_style_pythonic = 1
 " # Editor settings
 " =============================================================================
 
+" Color setup
+" https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
+
+if has('nvim')
+    set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+    set inccommand=nosplit
+    noremap <C-q> :confirm qall<CR>
+end
+
+if !has('gui_running')
+  set t_Co=256
+endif
+if (match($TERM, "-256color") != -1) && (match($TERM, "screen-256color") == -1)
+  " screen does not (yet) support truecolor
+  set termguicolors
+endif
+
+" FIXME: custom color scheme
+"  - https://vi.stackexchange.com/a/24382
+"
+"func! s:custom_colors_setup() abort
+"    hi Pmenu guibg=#d7e5dc gui=NONE
+"    hi PmenuSel guibg=#b7c7b7 gui=NONE
+"    hi PmenuSbar guibg=#bcbcbc
+"    hi PmenuThumb guibg=#585858
+"endfunc
+"
+"augroup colorscheme_coc_setup | au!
+"    au ColorScheme * call s:custom_colors_setup()
+"augroup END
+"
+
 " https://github.com/rust-lang/rust.vim#installation
 syntax enable
 " or `syntax on`
