@@ -1,0 +1,91 @@
+window:
+  # Window decorations
+  #  - none | full (borders and title bar)
+  decorations: none
+
+  # Startup Mode (changes require restart)
+  #  - Windowed | Maximized | Fullscreen
+  startup_mode: Maximized
+
+  # GTK theme variant
+  #  - dark | light | None (default theme variant)
+  gtk_theme_variant: None
+
+scrolling:
+  # Maximum number of lines in the scrollback buffer ('0' means no scrolling).
+  history: 0
+
+# Font configuration
+font:
+  # Normal (roman) font face
+  normal:
+    #family: "Noto Sans Mono"
+    family: "MesloLGS NF"
+    style: Regular
+
+  # Bold font face
+  bold:
+    family: "MesloLGS NF"
+    style: Bold
+
+  # Italic font face
+  italic:
+    family: "MesloLGS NF"
+    style: Italic
+
+  # Bold italic font face
+  bold_italic:
+    family: "MesloLGS NF"
+    style: Bold Italic
+
+# Base16 Gruvbox dark, hard 256 - alacritty color config
+# Dawid Kurek (dawikur@gmail.com), morhetz (https://github.com/morhetz/gruvbox)
+colors:
+  # Default colors
+  primary:
+    background: '#1d2021'
+    foreground: '#d5c4a1'
+
+  # Cursor colors
+  cursor:
+    text: '#1d2021'
+    cursor: '#d5c4a1'
+
+  # Normal colors
+  normal:
+    black:   '#1d2021'
+    red:     '#fb4934'
+    green:   '#b8bb26'
+    yellow:  '#fabd2f'
+    blue:    '#83a598'
+    magenta: '#d3869b'
+    cyan:    '#8ec07c'
+    white:   '#d5c4a1'
+
+  # Bright colors
+  bright:
+    black:   '#665c54'
+    red:     '#fb4934'
+    green:   '#b8bb26'
+    yellow:  '#fabd2f'
+    blue:    '#83a598'
+    magenta: '#d3869b'
+    cyan:    '#8ec07c'
+    white:   '#fbf1c7'
+
+  # Indexed Colors
+  indexed_colors:
+    - { index: 16, color: '#fe8019' }
+    - { index: 17, color: '#d65d0e' }
+    - { index: 18, color: '#3c3836' }
+    - { index: 19, color: '#504945' }
+    - { index: 20, color: '#bdae93' }
+    - { index: 21, color: '#ebdbb2' }
+
+# Live config reload (changes require restart)
+live_config_reload: true
+
+# Key bindings
+key_bindings:
+  - { key: F11, action: ToggleFullscreen }
+

@@ -25,6 +25,7 @@
 	haskell-tools \
 	rust \
 	rust-tools \
+	alacritty \
 	nodejs \
 	ruby \
 	docker \
@@ -61,6 +62,10 @@ ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
 endif
 
+ifndef ALACRITTY_CONFIG_DIR 
+ALACRITTY_CONFIG_DIR=~/.config/alacritty
+endif
+
 ifndef BYOBU_CONFIG_DIR 
 BYOBU_CONFIG_DIR=~/.byobu
 endif
@@ -76,10 +81,12 @@ endif
 DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 
 FONTS_DIR := ~/.local/share/fonts
+MAN1_DIR := /usr/local/share/man/man1
 ZSH_FUNC_DIR := /usr/local/share/zsh/site-functions
 
 # Ensure necessary paths exist
 $(FONTS_DIR) \
+	$(ALACRITTY_CONFIG_DIR) \
 	$(BYOBU_CONFIG_DIR) \
 	$(GOPATH) \
 	$(ZSH_CUSTOM) \
@@ -93,6 +100,9 @@ $(FONTS_DIR) \
 	~/.stack \
 	~/vm:
 	mkdir -p $@
+
+$(MAN1_DIR):
+	sudo mkdir -p $@
 
 ~/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
 ~/vm/$(DEBIAN_ISO): ~/vm net-tools
@@ -118,7 +128,7 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
-links: $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/nvim/scripts ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
+links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/nvim/scripts ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
@@ -571,6 +581,27 @@ rust-tools: rust
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
+
+alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
+alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools
+ifeq ($(shell which alacritty 2> /dev/null),)
+	@echo ">>> Installing $@: https://github.com/alacritty/alacritty"
+	sudo snap install --classic $@
+	@echo ">>> Configuring $@"
+	@{ \
+		for cfg in $$(find $(CFG_DIR)/.config/$@ -type f); do \
+			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
+		done;\
+	}
+else
+	@echo ">>> Updating $@"
+	sudo snap refresh $@
+endif
+	@echo ">>> Fetching man pages for $$($@ -V)"
+	@sudo wget -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
+	@echo ">>> Fetching zsh completions for $$($@ -V)"
+	@sudo wget -qcNP $(ZSH_FUNC_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 
 nodejs: net-tools
 	@echo ">>> Installing nodejs (LTS)"
