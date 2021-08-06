@@ -156,12 +156,14 @@ minikube start --cpus 4 --memory 8192 --vm-driver kvm2
 ```
 
 Note that the `test-k8s` make target sometimes fails due to timeout after
-waiting on minikube. It may also leave some resources when it does not succeed.
+waiting on minikube. It may also leave some resources when it does not
+succeed.
 
 ## Troubleshooting
 
 ### Nvidia Drivers
-Missing `nvidia-smi` after some updates (which was working after installation):
+Missing `nvidia-smi` after some updates (which was working after
+installation):
 ```
 ❯ nvidi-smi
 zsh: command not found: nvidi-smi
@@ -171,16 +173,44 @@ Fixed by running following and then rebooting.
 ```bash
 sudo ubuntu-drivers autoinstall
 ```
-Advised [here](https://askubuntu.com/a/1237598) and empirically might work even 
-without restart.
+Advised [here](https://askubuntu.com/a/1237598) and empirically might
+work even without restart.
+
+Other [option](https://askubuntu.com/a/602) which might work (although 
+one should be careful with this one) is to run dist upgrade:
+```bash
+sudo apt dist-upgrade
+```
+
+#### Nvidia packages are kept back
+The issue with "missing" drivers is that the driver packages are "kept
+back" (shown in the snippet below). This is due to an incompatibility
+between driver libs and the kernel which `apt` cannot resolve on its own.
+```
+❯ sudo apt upgrade 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Calculating upgrade... Done
+The following packages have been kept back:
+  libnvidia-cfg1-460 libnvidia-compute-460 [...]
+  libnvidia-gl-460 libnvidia-gl-460:i386 libnvidia-ifr1-460 [...]
+  nvidia-utils-460 xserver-xorg-video-nvidia-460
+0 upgraded, 0 newly installed, 0 to remove and 21 not upgraded.
+```
+As a consequence `nvidia-smi` is unable to communicate to the driver and
+fails (see [this post](https://bit.ly/3lI2PYd)).
+
+The solution is as described above (possibly combination of both
+approaches). Also, reboot might be necessary for the fix to take effect.
 
 ### Minikube fails to start
-If minikube continously fails to boot, and as a last resort, one can clean up
-the whole minikube by running:
+If minikube continously fails to boot, and as a last resort, one can
+clean up the whole minikube by running:
 ```bash
 minikube delete
 ```
-or even more excessive cleanup which also deletes the `~/.minikube` folder
+or even more excessive cleanup which also deletes the `~/.minikube` dir
 ```bash
 minikube delete --purge
 ```
