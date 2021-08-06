@@ -37,9 +37,10 @@ make config
 1. Manually configure toggle keybinging in 'Settings > Keyboard
    Shortcuts' - for example like this:
    ```
-   Name: Alacritty terminal
-   Command: /home/matyama/.local/bin/alacritty_toggle.sh
-   Shortcut: F12
+   [custom0]
+   binding='F12'
+   command='/home/matyama/.local/bin/alacritty_toggle.sh'
+   name='Toggle Alacritty terminal'
    ```
 1. Add Alacritty to 'Tweaks > Startup Applications'
 

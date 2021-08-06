@@ -8,6 +8,7 @@
 	net-tools \
 	core-utils \
 	apt-utils \
+	x-utils \
 	kvm \
 	test-kvm \
 	k8s \
@@ -164,6 +165,13 @@ apt-utils:
 	@echo ">>> Installing utilities that let apt use packages over HTTPS"
 	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 
+# Installed tools:
+#  - xclip: X11 clipboard selection
+#  - xdotool: X11 automation tool (https://github.com/jordansissel/xdotool)
+x-utils:
+	@echo ">>> Installing X11 utilities"
+	sudo apt install -y xclip xdotool
+
 # NOTE: python-is-python3 makes python available as python3
 python:
 	@echo ">>> Installing standard Python libraries"
@@ -177,13 +185,12 @@ python3.6 python3.7: python
 	sudo apt install -y $@-dev $@-venv
 
 # Installed tools:
-#  - xdotool: X11 automation tool (https://github.com/jordansissel/xdotool)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
 #  - silversearcher-ag: A code-searching tool (http://geoff.greer.fm/ag/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
 #  - tshark: Terminal version of wireshark
-basic-tools: net-tools core-utils apt-utils python
+basic-tools: net-tools core-utils apt-utils x-utils python
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		htop \
@@ -196,8 +203,6 @@ basic-tools: net-tools core-utils apt-utils python
 		tmux \
 		byobu \
 		tree \
-		xclip \
-		xdotool \
 		fzf \
 		silversearcher-ag \
 		gparted \
@@ -586,7 +591,7 @@ rust-tools: rust
 	cargo install ripgrep
 
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
-alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools
+alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@: https://github.com/alacritty/alacritty"
 	sudo snap install --classic $@
