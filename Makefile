@@ -3,6 +3,8 @@
 	links \
 	guake.conf \
 	save-guake-conf \
+	dconf-dump \
+	dconf-load \
 	install-fonts \
 	basic-tools \
 	net-tools \
@@ -129,6 +131,31 @@ guake.conf:
 save-guake-conf:
 	guake --save-preferences $(CFG_DIR)/guake.conf
 
+# Resources:
+#  - [dconf backup/restore](https://askubuntu.com/a/844907)
+#  - [Ubuntu wiki](https://wiki.ubuntu.com/Keybindings)
+dconf-dump:
+	@echo "Saving Gnome keybindings:"
+	@echo "'/org/gnome/desktop/wm/keybindings/'"
+	@dconf dump \
+		'/org/gnome/desktop/wm/keybindings/' > \
+		$(CFG_DIR)/.config/dconf/gnome-keybindings.dconf
+	@echo "'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/'"
+	@dconf dump \
+		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' > \
+		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
+
+dconf-load:
+	@echo "Restoring Gnome keybindings:"
+	@echo "'/org/gnome/desktop/wm/keybindings/'"
+	@dconf load \
+		'/org/gnome/desktop/wm/keybindings/' < \
+		$(CFG_DIR)/.config/dconf/gnome-keybindings.dconf
+	@echo "'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/'"
+	@dconf load \
+		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' < \
+		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
+
 links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/nvim/scripts ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
@@ -138,7 +165,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.p10k.zsh
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.byobu $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f); do \
+		for cfg in $$(find $(CFG_DIR)/.byobu $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
@@ -151,7 +178,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
-config: guake.conf links 
+config: guake.conf dconf-load links 
 
 net-tools:
 	@echo ">>> Installing basic network tools"
