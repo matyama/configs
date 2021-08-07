@@ -38,7 +38,7 @@ make config
    Shortcuts' - for example like this:
    ```
    [custom0]
-   binding='F12'
+   binding='F1'
    command='/home/matyama/.local/bin/alacritty_toggle.sh'
    name='Toggle Alacritty terminal'
    ```
