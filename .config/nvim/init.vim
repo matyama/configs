@@ -313,6 +313,7 @@ vnoremap <leader>P "+P
 "noremap <leader>p :read !xsel --clipboard --output<cr>
 "noremap <leader>c :w !xsel -ib<cr><cr>
 
+" FIXME
 " Use <leader>s for Rg search
 noremap <leader>s :Rg
 let g:fzf_layout = { 'down': '~20%' }

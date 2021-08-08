@@ -49,7 +49,8 @@ GEM_HOME DEFAULT=@{HOME}/.gem
 #GEM_BIN DEFAULT=@{GEM_HOME}/bin
 RUBY_BIN DEFAULT=@{GEM_HOME}/ruby/3.0.0/bin
 
-# Base16 Shell
+# Base16
+BASE16_FZF_HOME DEFAULT=@{HOME}/.config/base16-fzf
 BASE16_SHELL_HOME DEFAULT=@{HOME}/.config/base16-shell
 
 # Path extension

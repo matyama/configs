@@ -51,6 +51,17 @@ BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${HOME}/.config/base16-shell}"
     [ -s "$BASE16_SHELL_HOME/profile_helper.sh" ] && \
     eval "$("$BASE16_SHELL_HOME/profile_helper.sh")"
 
+# NOTE: Do not add this to `.pam_environment` as it is altered by the Base16
+# `profile_helper.sh` (hooked above) when the theme is changed and then it 
+# might missmatch colors in `~/.base16_theme` if the shell config is reloaded.
+BASE16_THEME="${BASE16_THEME:-gruvbox-dark-hard}"
+
+# Base16 fzf (https://github.com/fnune/base16-fzf)
+BASE16_FZF_HOME="${BASE16_FZF_HOME:-${HOME}/.config/base16-fzf}"
+[[ ! -d "$BASE16_FZF_HOME" ]] || \
+  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
+  source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"
+
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
 

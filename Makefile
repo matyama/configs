@@ -7,6 +7,7 @@
 	dconf-load \
 	install-fonts \
 	base16-shell \
+	base16-fzf\
 	basic-tools \
 	net-tools \
 	core-utils \
@@ -64,6 +65,10 @@ endif
 
 ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
+endif
+
+ifndef BASE16_FZF_HOME
+BASE16_FZF_HOME=$(HOME)/.config/base16-fzf
 endif
 
 ifndef BASE16_SHELL_HOME
@@ -133,13 +138,20 @@ install-fonts: $(FONTS_DIR)
 # Resources:
 #  - [Base16 Shell](https://github.com/chriskempson/base16-shell)
 base16-shell: BASE16_SHELL_REPO := https://github.com/chriskempson/base16-shell.git
-base16-shell: BASE16_COLOR_SCHEME := gruvbox-dark-hard
+base16-shell: BASE16_THEME := gruvbox-dark-hard
 base16-shell:
 	@echo ">>> Cloning Base16 Shell repository to '$(BASE16_SHELL_HOME)'"
 	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_HOME)
 	@echo ">>> Testing default Base16 color scheme"
 	@$(BASE16_SHELL_HOME)/colortest
-	@echo ">>> Select color scheme by running: 'base16_$(BASE16_COLOR_SCHEME)'"
+	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
+
+# Resources:
+#  - [Base16 fzf](https://github.com/fnune/base16-fzf)
+base16-fzf: BASE16_FZF_REPO := https://github.com/fnune/base16-fzf.git
+base16-fzf:
+	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
+	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
 
 guake.conf:
 	guake --restore-preferences $@
