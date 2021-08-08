@@ -45,6 +45,12 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# Base16 Shell (https://github.com/chriskempson/base16-shell)
+BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${HOME}/.config/base16-shell}"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL_HOME/profile_helper.sh" ] && \
+    eval "$("$BASE16_SHELL_HOME/profile_helper.sh")"
+
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
 

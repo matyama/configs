@@ -59,7 +59,7 @@ Typical configuration for `p10k configure`
 1. Prompt Frame: No frame
 1. Prompt Spacing: Sparse
 1. Prompt Flow: Concise
-1. Enable Tranisent Prompt?: No
+1. Enable Transient Prompt?: No
 1. Instant Prompt Mode: Off
 1. Apply changes to `~/.zshrc`?: No (we're using `.p10k.zsh` from this repo)
 
@@ -71,6 +71,31 @@ instructed. The font download is part of `make fonts`.
 After linking `.pam_environment` for the first time, one should manually update 
 `/etc/pam.d/login` according to
 [these instructions](https://askubuntu.com/a/636544).
+
+### Base16 colors
+
+#### Base16 Shell
+[Base16 Shell](https://github.com/chriskempson/base16-shell) can be
+installed with `make base16-shell`. One can then manually
+[switch themes](https://github.com/chriskempson/base16-shell#configuration)
+with `base16_<theme>` which creates/updates a link
+`~/.base16_theme`.
+
+Note that the shell hook is already added to and liked with `.zshrc`, so
+after installation with `make` one just needs to reload zsh and pick a
+theme:
+```bash
+zshreload
+base16_gruvbox-dark-hard
+```
+
+One can also [test](https://github.com/chriskempson/base16-shell#troubleshooting)
+the themes with included `colortest` tool.
+
+#### Alacritty terminal
+Note that when changing the [Base16 theme](https://github.com/chriskempson/base16)
+one has to [manually update](https://github.com/aarowill/base16-alacritty#installation)
+`alacritty.yml` with appropriate colors from that color scheme.
 
 ### Poetry
 Finish Poetry setup by manually

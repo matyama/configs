@@ -6,6 +6,7 @@
 	dconf-dump \
 	dconf-load \
 	install-fonts \
+	base16-shell \
 	basic-tools \
 	net-tools \
 	core-utils \
@@ -65,6 +66,10 @@ ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
 endif
 
+ifndef BASE16_SHELL_HOME
+BASE16_SHELL_HOME=$(HOME)/.config/base16-shell
+endif
+
 ifndef ALACRITTY_CONFIG_DIR 
 ALACRITTY_CONFIG_DIR=~/.config/alacritty
 endif
@@ -120,10 +125,21 @@ NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
 
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(FONTS_DIR)
-	@echo "Downloading Meslo Nerd Font for Powerlevel10k"
+	@echo ">>> Downloading Meslo Nerd Font for Powerlevel10k"
 	curl "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
+
+# Resources:
+#  - [Base16 Shell](https://github.com/chriskempson/base16-shell)
+base16-shell: BASE16_SHELL_REPO := https://github.com/chriskempson/base16-shell.git
+base16-shell: BASE16_COLOR_SCHEME := gruvbox-dark-hard
+base16-shell:
+	@echo ">>> Cloning Base16 Shell repository to '$(BASE16_SHELL_HOME)'"
+	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_HOME)
+	@echo ">>> Testing default Base16 color scheme"
+	@$(BASE16_SHELL_HOME)/colortest
+	@echo ">>> Select color scheme by running: 'base16_$(BASE16_COLOR_SCHEME)'"
 
 guake.conf:
 	guake --restore-preferences $@

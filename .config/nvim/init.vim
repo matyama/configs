@@ -97,7 +97,7 @@ let g:vim_markdown_folding_style_pythonic = 1
 " =============================================================================
 
 " Color setup
-" https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
+" https://github.com/jonhoo/configs/
 
 if has('nvim')
     set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
@@ -113,24 +113,30 @@ if (match($TERM, "-256color") != -1) && (match($TERM, "screen-256color") == -1)
   set termguicolors
 endif
 
-" FIXME: custom color scheme
-"  - https://vi.stackexchange.com/a/24382
+set background=dark
+
+" Access colors present in 256 colorspace
+" https://github.com/chriskempson/base16-vim#256-colorspace
+let base16colorspace=256
+
+" Pick Base16 color scheme
+" https://github.com/chriskempson/base16-vim#installation
+colorscheme base16-gruvbox-dark-hard
+
+" Enable syntax highlight
+"  - alternatively change to `syntax on`
+syntax enable
+
+" When using a color terminal, set the background terminal color to `NONE` for
+" the `Normal` group.
 "
-"func! s:custom_colors_setup() abort
-"    hi Pmenu guibg=#d7e5dc gui=NONE
-"    hi PmenuSel guibg=#b7c7b7 gui=NONE
-"    hi PmenuSbar guibg=#bcbcbc
-"    hi PmenuThumb guibg=#585858
-"endfunc
-"
-"augroup colorscheme_coc_setup | au!
-"    au ColorScheme * call s:custom_colors_setup()
-"augroup END
-"
+" https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax/
+hi Normal ctermbg=NONE
+
+" Brighter comments
+call Base16hi("Comment", g:base16_gui09, "", g:base16_cterm09, "", "", "")
 
 " https://github.com/rust-lang/rust.vim#installation
-syntax enable
-" or `syntax on`
 filetype plugin indent on
 set autoindent
 

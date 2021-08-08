@@ -13,6 +13,12 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'
 
+	" Style
+
+	" Base16 colors
+	" https://github.com/chriskempson/base16-vim#installation
+	Plug 'chriskempson/base16-vim'
+
 	" VIM enhancements
 	
 	" Secure modeline support

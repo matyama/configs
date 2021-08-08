@@ -41,7 +41,8 @@ font:
   size: 14
 
 # Base16 Gruvbox dark, hard 256 - alacritty color config
-# Dawid Kurek (dawikur@gmail.com), morhetz (https://github.com/morhetz/gruvbox)
+#  - https://github.com/aarowill/base16-alacritty
+#  - Dawid Kurek (dawikur@gmail.com), morhetz (https://github.com/morhetz/gruvbox)
 colors:
   # Default colors
   primary:
