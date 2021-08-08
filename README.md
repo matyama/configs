@@ -97,6 +97,10 @@ Note that when changing the [Base16 theme](https://github.com/chriskempson/base1
 one has to [manually update](https://github.com/aarowill/base16-alacritty#installation)
 `alacritty.yml` with appropriate colors from that color scheme.
 
+### Visual Studio Code
+Unless the [Base16 extension](https://github.com/golf1052/base16-vscode)
+is properly synced, install it and follow the instructions.
+
 ### Poetry
 Finish Poetry setup by manually
 [configuring auth tokens](https://bit.ly/3fdpMNR).
