@@ -67,6 +67,9 @@ endif
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
 
+" Show hidden files in NERDTree by default
+let g:NERDTreeShowHidden = 1
+
 " Enable NerdFonts for NERDTree
 let g:NERDTreeGitStatusUseNerdFonts = 1
 
