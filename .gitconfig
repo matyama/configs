@@ -23,6 +23,8 @@
 	st = status
 	lg = log --all --decorate --oneline --graph
 	last = log -1 HEAD
+	diff-last = diff HEAD^
+	dl = diff-last
 	cl = log -p -- ':(exclude)Cargo.lock'
 	pl = log -p -- ':(exclude)poetry.lock'
 	f = push --force-with-lease
