@@ -1,4 +1,4 @@
-.PHONY: \
+uPHONY: \
 	config \
 	links \
 	guake.conf \
@@ -636,6 +636,8 @@ rust-tools: rust
 	cargo install cargo-readme
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
+	@echo ">>> Installing dust: https://github.com/bootandy/dust"
+	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
 	cargo install fd-find
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
