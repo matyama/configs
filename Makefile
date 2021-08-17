@@ -1,4 +1,4 @@
-uPHONY: \
+.PHONY: \
 	config \
 	links \
 	guake.conf \
