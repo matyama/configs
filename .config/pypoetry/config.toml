@@ -1,3 +1,5 @@
+cache-dir = "~/.cache/pypoetry"
+
 [repositories]
 [repositories.testpypi]
 url = "https://test.pypi.org/legacy/"
