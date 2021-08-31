@@ -632,8 +632,10 @@ endif
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
 rust-tools: rust
-	@echo ">>> Installing cargo-readme"
+	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
+	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
+	cargo install cargo-expand
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
