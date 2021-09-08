@@ -1,8 +1,6 @@
 .PHONY: \
 	config \
 	links \
-	guake.conf \
-	save-guake-conf \
 	dconf-dump \
 	dconf-load \
 	install-fonts \
@@ -153,12 +151,6 @@ base16-fzf:
 	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
 
-guake.conf:
-	guake --restore-preferences $@
-
-save-guake-conf:
-	guake --save-preferences $(CFG_DIR)/guake.conf
-
 # Resources:
 #  - [dconf backup/restore](https://askubuntu.com/a/844907)
 #  - [Ubuntu wiki](https://wiki.ubuntu.com/Keybindings)
@@ -206,7 +198,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
-config: guake.conf dconf-load links 
+config: dconf-load links
 
 net-tools:
 	@echo ">>> Installing basic network tools"
@@ -254,7 +246,6 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		tshark \
 		mc \
 		neovim \
-		guake \
 		tmux \
 		byobu \
 		tree \

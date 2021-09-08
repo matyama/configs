@@ -147,24 +147,6 @@ so one can just login to GitHub.
 Edits to any linked configurations is automatically propagated here 
 (via the symlink). Then simply commit and push the changes. 
 
-### Guake Terminal
-Unlike other configs, preferences for Guake Terminal are not linked directly.
-In order to save updated Guake preferences, run
-```bash
-make guake.conf
-```
-This make target will apply preferences from  `guake.conf` from this repo to
-local Guake installation. While 
-```bash
-make save-guake-conf
-```
-will save current Guake settings to `guake.conf`. Under the hood make runs:
-```bash
-guake --save-preferences guake.conf
-guake --restore-preferences guake.conf
-```
-Source: [backup options](https://askubuntu.com/a/1164329)
-
 ## Ubuntu Setup Notes 
 
 ## KVM virtualization
