@@ -19,12 +19,6 @@ zshaddhistory() {
 setopt hist_ignore_all_dups
 setopt hist_ignore_space
 
-# Bat customization
-# See: https://github.com/sharkdp/bat#customization
-# TODO: Add `$BASE16_THEME`: https://github.com/sharkdp/bat#adding-new-themes
-export BAT_THEME=base16
-export BAT_STYLE=full
-
 # Colored man output
 # See: http://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
 export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking

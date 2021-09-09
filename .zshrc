@@ -62,6 +62,18 @@ BASE16_FZF_HOME="${BASE16_FZF_HOME:-${HOME}/.config/base16-fzf}"
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
   source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"
 
+# Bat customization (https://github.com/sharkdp/bat#customization)
+#  - Do not add `BAT_THEME` to `.pam_environment` or bat config file as it might
+#    be altered by the Base16 hook above.
+#  - Use `BASE16_THEME` for bat or default to `base16`
+#  - Use fully stylized bat by default
+
+export BAT_THEME="${BASE16_THEME:-base16}"
+[[ -f "$BAT_CONFIG_DIR/themes/$BASE16_THEME.tmTheme" ]] || \
+  export BAT_THEME=base16
+
+export BAT_STYLE=full
+
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
 

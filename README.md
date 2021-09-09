@@ -97,6 +97,29 @@ Note that when changing the [Base16 theme](https://github.com/chriskempson/base1
 one has to [manually update](https://github.com/aarowill/base16-alacritty#installation)
 `alacritty.yml` with appropriate colors from that color scheme.
 
+#### Bat
+[Bat](https://github.com/sharkdp/bat) supports `base16` color theme by
+default via `--theme=base16` option or `BAT_THEME` environment variable.
+
+Unfortunately, `gruvbox-dark-hard` (or other variations) is not part of
+the stable Ubuntu/Debian release. Therefore, for the time being, these
+themes are downloaded from [this repository](https://github.com/subnut/gruvbox-tmTheme)
+and linked to bat config dir `BAT_CONFIG_DIR` (`bat --config-dir`).
+
+The `BAT_THEME` automatically picks up current theme from `BASE16_THEME`
+if appropriate file exists in `BAT_CONFIG_DIR/themes` or defaults to
+`base16`.
+
+When new themes are downloaded and linked, one must update the cache by
+running:
+```bash
+bat cache --build
+```
+and then check the theme is available via:
+```bash
+bat --list-themes
+```
+
 ### Visual Studio Code
 Unless the [Base16 extension](https://github.com/golf1052/base16-vscode)
 is properly synced, install it and follow the instructions.

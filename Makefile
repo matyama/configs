@@ -73,8 +73,13 @@ ifndef BASE16_SHELL_HOME
 BASE16_SHELL_HOME=$(HOME)/.config/base16-shell
 endif
 
+
 ifndef ALACRITTY_CONFIG_DIR 
 ALACRITTY_CONFIG_DIR=~/.config/alacritty
+endif
+
+ifndef BAT_CONFIG_DIR
+BAT_CONFIG_DIR=$(HOME)/.config/bat
 endif
 
 ifndef BYOBU_CONFIG_DIR 
@@ -98,6 +103,7 @@ ZSH_FUNC_DIR := /usr/local/share/zsh/site-functions
 # Ensure necessary paths exist
 $(FONTS_DIR) \
 	$(ALACRITTY_CONFIG_DIR) \
+	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
 	$(GOPATH) \
 	$(ZSH_CUSTOM) \

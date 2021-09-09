@@ -53,6 +53,10 @@ RUBY_BIN DEFAULT=@{GEM_HOME}/ruby/3.0.0/bin
 BASE16_FZF_HOME DEFAULT=@{HOME}/.config/base16-fzf
 BASE16_SHELL_HOME DEFAULT=@{HOME}/.config/base16-shell
 
+# Bat
+BAT_CONFIG_DIR DEFAULT=@{HOME}/.config/bat
+BAT_CONFIG_PATH DEFAULT=@{BAT_CONFIG_DIR}/config
+
 # Path extension
 PATH DEFAULT=${PATH}:@{HOME}/bin
 PATH DEFAULT=${PATH}:@{HOME}/.local/bin
