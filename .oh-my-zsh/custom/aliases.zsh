@@ -45,6 +45,12 @@ if [ "$(command -v exa)" ]; then
 	alias l="exa -lahg@ --git"
 fi
 
+# bat (https://github.com/sharkdp/bat)
+if [ "$(command -v bat)" ]; then
+	alias b="bat"
+	alias bp="bat --plain"
+fi
+
 # googler (https://github.com/jarun/googler)
 if [ "$(command -v googler)" ]; then
 	alias s="googler"
