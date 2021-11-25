@@ -43,6 +43,8 @@ alias egrep='egrep --color=auto'
 # exa (https://the.exa.website/)
 if [ "$(command -v exa)" ]; then
 	alias l="exa -lahg@ --git"
+	alias lcd="l && cd"
+	alias cdl='cdls() { cd "$@" && l; }; cdls'
 fi
 
 # bat (https://github.com/sharkdp/bat)
