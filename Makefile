@@ -629,6 +629,8 @@ endif
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
+#  - mdbook: Build a book from Markdown files
+#    (https://github.com/rust-lang/mdBook)
 rust-tools: rust
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
@@ -648,6 +650,7 @@ rust-tools: rust
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
+	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
