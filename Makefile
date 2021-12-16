@@ -651,6 +651,7 @@ rust-tools: rust
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
+	cargo install mdbook
 
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
