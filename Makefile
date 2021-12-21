@@ -47,6 +47,7 @@
 	jetbrains-toolbox \
 	keybase \
 	zoom \
+	calibre \
 	set-swappiness \
 	crawl \
 	games \
@@ -848,6 +849,10 @@ endif
 zoom:
 	@echo ">>> Installing zoom client"
 	sudo snap install zoom-client
+
+calibre:
+	@echo ">>> Installing calibre"
+	sudo apt install -y calibre
 
 games: crawl
 
