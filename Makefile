@@ -447,6 +447,9 @@ else
 	$(BINENV_BIN) update
 	$(BINENV_BIN) install $@
 	exec $$SHELL
+	@echo ">>> Generating zsh completions for $@"
+	$@ completion zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 endif
 	@rm -rf $(BINENV_BIN)
 
