@@ -10,4 +10,7 @@ augroup filetypedetect
   autocmd Filetype tex let b:coc_enabled = 0
   autocmd Filetype text let b:coc_enabled = 0
   autocmd Filetype markdown let b:coc_enabled = 0
+  " Comment highlighting for jsonc
+  "  - https://scalameta.org/metals/docs/editors/vim/#installing-cocnvim
+  autocmd FileType json syntax match Comment +\/\/.\+$+
 augroup END

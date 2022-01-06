@@ -278,6 +278,21 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 
+" Metals (Scala language server) shortcuts
+" https://scalameta.org/metals/docs/editors/vim/#recommended-cocnvim-mappings
+"  - Expand decorations in worksheets
+"  - Toggle panel with Tree Views
+"  - Toggle Tree View 'metalsPackages'
+"  - Toggle Tree View 'metalsCompile'
+"  - Toggle Tree View 'metalsBuild'
+"  - Reveal current current class (trait or object) in Tree View 'metalsPackages'
+nmap <Leader>ws <Plug>(coc-metals-expand-decoration)
+nnoremap <silent> <space>t :<C-u>CocCommand metals.tvp<CR>
+nnoremap <silent> <space>tp :<C-u>CocCommand metals.tvp metalsPackages<CR>
+nnoremap <silent> <space>tc :<C-u>CocCommand metals.tvp metalsCompile<CR>
+nnoremap <silent> <space>tb :<C-u>CocCommand metals.tvp metalsBuild<CR>
+nnoremap <silent> <space>tf :<C-u>CocCommand metals.revealInTreeView metalsPackages<CR>
+
 " Open a new file with <leader>+o and replicate with <leader>+op
 nnoremap <leader>o :vnew<CR>
 nnoremap <leader>op :vsp<CR>
@@ -481,4 +496,5 @@ au Filetype rust set colorcolumn=100
 autocmd BufRead *.plot set filetype=gnuplot
 autocmd BufRead *.md set filetype=markdown
 autocmd BufRead *.tex set filetype=tex
+autocmd BufRead,BufNewFile *.sbt,*.sc set filetype=scala
 

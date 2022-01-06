@@ -7,5 +7,11 @@
       "filetypes": ["haskell", "lhaskell"]
     }
   },
-  "rust-analyzer.cargo.allFeatures": true
+  "rust-analyzer.cargo.allFeatures": true,
+  "metals.statusBarEnabled": true,
+  "metals.superMethodLensesEnabled": true,
+  "metals.showInferredType": true,
+  "metals.showImplicitArguments": true,
+  "metals.showImplicitConversionsAndClasses": true,
+  "coc.preferences.formatOnSaveFiletypes": ["scala"]
 }

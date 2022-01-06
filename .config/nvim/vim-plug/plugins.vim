@@ -89,6 +89,8 @@ call plug#begin('~/.config/nvim/autoload/plugged')
 	"  * Python:
 	"    - https://github.com/fannheyward/coc-pyright#install
 	"    - https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+	"  * Scala:
+	"    - https://scalameta.org/metals/docs/editors/vim/
 	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 	" NERDTree File Explorer
