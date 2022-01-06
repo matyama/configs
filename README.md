@@ -140,12 +140,21 @@ language support for various languages, refer to corresponding sub-section.
 * https://github.com/fannheyward/coc-rust-analyzer
 * https://rust-analyzer.github.io/manual.html#vimneovim
 
-#### Python:
+#### Python
 ```vim
 :CocInstall coc-pyright
 ```
 * https://github.com/fannheyward/coc-pyright#install
 * https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+
+#### Scala
+```vim
+:CocInstall coc-metals
+```
+* https://scalameta.org/metals/docs/editors/vim/#installing-coc-metals
+* https://scalameta.org/metals/docs/editors/vim/#available-configuration-options
+
+Custom configurations can be found in `~/.config/coc/coc-settings.json`.
 
 #### Haskell
 [Haskell Language Server (HLS)](https://github.com/haskell/haskell-language-server)
