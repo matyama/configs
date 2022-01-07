@@ -207,9 +207,11 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 
 config: dconf-load links
 
+# Installed tools:
+#  - libssl-dev: secure sockets layer toolkit
 net-tools:
 	@echo ">>> Installing basic network tools"
-	sudo apt install -y curl jq net-tools wget
+	sudo apt install -y curl jq net-tools wget libssl-dev
 
 core-utils:
 	@echo ">>> Installing core utilities"
@@ -644,6 +646,10 @@ rust-tools: rust
 	cargo install cargo-criterion
 	@echo ">>> Installing cargo-hack: https://crates.io/crates/cargo-hack"
 	cargo install cargo-hack
+	@echo ">>> Installing cargo-deny: https://crates.io/crates/cargo-deny"
+	cargo install --locked cargo-deny
+	@echo ">>> Installing cargo-audit: https://crates.io/crates/cargo-audit"
+	cargo install cargo-audit --features=fix
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
