@@ -282,3 +282,20 @@ sourced again for the plugin installation to work.
 :source $VIMRC
 :PlugInstall
 ```
+
+### `cargo-audit` installation and usage
+The installation of `cargo-audit` might fail if installed manually and
+the system does not have `libssl-dev` installed (note that if one uses
+`make rust-tools` this should not happen).
+
+In such case, and possibly in other situations, the *advisory database*
+might get into an invalid state.
+
+Fortunately, according to
+[this issue](https://github.com/RustSec/rustsec/issues/32), the fix is
+simply to drop the database:
+```bash
+rm -rf ~/.cargo/advisory-db/
+```
+
+Next invocation of `cargo audit` will fetch it again and fix the issue.
