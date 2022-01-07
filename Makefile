@@ -642,6 +642,8 @@ rust-tools: rust
 	cargo install cargo-expand
 	@echo ">>> Installing criterion: https://crates.io/crates/cargo-criterion"
 	cargo install cargo-criterion
+	@echo ">>> Installing cargo-hack: https://crates.io/crates/cargo-hack"
+	cargo install cargo-hack
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
