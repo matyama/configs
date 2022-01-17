@@ -179,6 +179,12 @@ so one can just login to GitHub.
 Edits to any linked configurations is automatically propagated here 
 (via the symlink). Then simply commit and push the changes. 
 
+### `coc.nvim` configuration
+Although the `.config/coc/coc-settings.json` configuration file is
+linked automatically, the server might not load it correctly. This issue
+is described in the *Thoubleshooting* section and can be fixed by
+rewriting the `:CocConfig` buffer.
+
 ## Ubuntu Setup Notes 
 
 ## KVM virtualization
@@ -282,6 +288,21 @@ sourced again for the plugin installation to work.
 :source $VIMRC
 :PlugInstall
 ```
+
+### Language servers not working with `coc.nvim`
+Some language servers managed by
+[`coc.nvim`](https://github.com/neoclide/coc.nvim) may misbehave. For
+instance the [HLS](https://github.com/haskell/haskell-language-server)
+may error on hover to display documentation and generally not check the
+code for errors.
+
+There is a configuration file `.config/coc/coc-settings.json` that is
+automatically symlinked but nvim/coc may not load it. This situation can
+be checked by running `:CocConfig` and if the buffer is empty the linked
+file is not loaded.
+
+The fix is simply to paste the content of `coc-settings.json` to the
+`:CocConfig` buffer and (re)write it.
 
 ### `cargo-audit` installation and usage
 The installation of `cargo-audit` might fail if installed manually and
