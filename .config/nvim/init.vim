@@ -297,6 +297,22 @@ nnoremap <silent> <space>tf :<C-u>CocCommand metals.revealInTreeView metalsPacka
 nnoremap <leader>o :vnew<CR>
 nnoremap <leader>op :vsp<CR>
 
+" Open a new split with <leader>+v and replicate with <leader>+vp and
+" similarly for horizontal split with h/hp (vsplit is equivalent to <leader>o)
+nnoremap <leader>v :vnew<CR>
+nnoremap <leader>vp :vsp<CR>
+nnoremap <leader>h :new<CR>
+nnoremap <leader>hp :sp<CR>
+
+" Use <leader>+x to close a split
+nnoremap <leader>x <c-w>c
+
+" Use <leader>+<Right/Left/Up/Down> to switch between splits
+nnoremap <leader><Right> <C-W><Right>
+nnoremap <leader><Left> <C-W><Left>
+nnoremap <leader><Up> <C-W><Up>
+nnoremap <leader><Down> <C-W><Down>
+
 " Save file with <leader>+w
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 nnoremap <leader>w :w<CR>
