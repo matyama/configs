@@ -61,3 +61,9 @@ fi
 # Python
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
+# Haskell
+if [ "$(command -v ghc)" ]; then
+	# Quick check if Haskell source file(s) compile
+	alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
+	alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
+fi
