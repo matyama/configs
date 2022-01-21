@@ -650,6 +650,12 @@ rust-tools: rust
 	cargo install --locked cargo-deny
 	@echo ">>> Installing cargo-audit: https://crates.io/crates/cargo-audit"
 	cargo install cargo-audit --features=fix
+	@echo ">>> Installing cargo-llvm-lines: https://github.com/dtolnay/cargo-llvm-lines"
+	cargo install cargo-llvm-lines
+	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
+	cargo install --locked cargo-outdated
+	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
+	cargo install --locked cargo-udeps
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
