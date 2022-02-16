@@ -642,6 +642,8 @@ rust-tools: rust
 	cargo install cargo-readme
 	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
 	cargo install cargo-expand
+	@echo ">>> Installing cargo-nextest: https://crates.io/crates/cargo-nextest"
+	cargo install cargo-nextest
 	@echo ">>> Installing criterion: https://crates.io/crates/cargo-criterion"
 	cargo install cargo-criterion
 	@echo ">>> Installing cargo-hack: https://crates.io/crates/cargo-hack"
