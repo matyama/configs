@@ -637,6 +637,8 @@ endif
 #    (https://github.com/BurntSushi/ripgrep)
 #  - mdbook: Build a book from Markdown files
 #    (https://github.com/rust-lang/mdBook)
+#  - hyperfine: A command-line benchmarking tool
+#    (https://github.com/sharkdp/hyperfine)
 rust-tools: rust
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
@@ -672,6 +674,8 @@ rust-tools: rust
 	cargo install ripgrep
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
+	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
+	cargo install hyperfine
 
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
