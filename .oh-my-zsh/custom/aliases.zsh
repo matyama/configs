@@ -27,7 +27,13 @@ alias vimdiff="nvim -d"
 # PDF
 
 # Concatenate pdf files passed as arguments and output final pdf to stdout
-alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dPDFSETTINGS=/prepress -sOutputFile=/dev/stdout"
+#  - Example: `pdfconcat in-*.pdf > out.pdf`
+alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/None -dPDFSETTINGS=/prepress -sOutputFile=%stdout"
+
+# Extract given range of pages from a pdf file and output to stdout
+#  - Example: `pdfextract 2,6-9,11,42- in.pdf > out.pdf`
+#  - TODO: disable or otherwise fix pdfmark error (seem to have no effect)
+alias pdfextract='pdfext() { gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sPageList="$1" -sOutputFile=%stdout "$2" ; }; pdfext'
 
 # Git
 alias gah="git stash && git pull --rebase && git stash pop"
