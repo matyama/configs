@@ -191,6 +191,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		$(CFG_DIR)/.pam_environment \
 		$(CFG_DIR)/.direnvrc \
 		$(CFG_DIR)/.zsh* \
+		$(CFG_DIR)/.zlogout \
 		$(CFG_DIR)/.p10k.zsh
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.byobu $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \

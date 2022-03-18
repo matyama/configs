@@ -1,3 +1,9 @@
+# System and architecture
+export ARCH=$(uname -m)
+
+# Compilation flags
+# export ARCHFLAGS="-arch $ARCH"
+
 # TODO: Move history management to .zshrc
 # History management
 #  - https://stackoverflow.com/a/38549502

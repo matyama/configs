@@ -39,9 +39,6 @@ else
   export EDITOR='nvim'
 fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
