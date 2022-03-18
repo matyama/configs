@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+__USAGE="Upgrade programs and libraries managed by apt, pipx, rustup and other.
+
+USAGE:
+	$(basename $0) [-h|--help] [-s SKIP|--skip SKIP] [RUN]...
+
+SKIP:
+	apt          Skip apt upgrade
+	pipx         Skip pipx upgrade
+	rust         Skip rustup update
+	extras       Skip all but apt upgrade
+
+RUN: TODO run only selected tool(s)
+"
+
+usage() {
+	echo "$__USAGE"
+}
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+		-h|--help)
+			usage
+			exit 0
+			;;
+    -s|--skip)
+			case "$2" in
+				apt)
+					SKIP_APT=0
+					;;
+				pipx)
+					SKIP_PIPX=0
+					;;
+				rust)
+					SKIP_RUST=0
+					;;
+				extras)
+					SKIP_PIPX=0
+					SKIP_RUST=0
+					;;
+				*)
+					echo "Unknown skip option value $2"
+					usage
+					exit 1
+					;;
+			esac
+			# move past argument and value
+      shift
+      shift
+      ;;
+    -*|--*)
+      echo "Unknown option $1"
+			usage
+      exit 1
+      ;;
+    *)
+			# save positional arg
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+if [[ -z "${SKIP_APT}" ]]; then
+	echo "Ugrading system programs..."
+	sudo apt update
+	sudo apt upgrade -y
+	sudo apt autoremove
+	sudo apt autoclean
+fi
+
+if [[ "$(command -v pipx)" ]] && [[ -z "${SKIP_PIPX}" ]]; then
+	echo "Upgrading pipx tools..."
+	pipx upgrade-all
+fi
+
+if [[ "$(command -v rustup)" ]] && [[ -z "${SKIP_RUST}" ]]; then
+	echo "Upgrading Rust toolchains..."
+	rustup upgrade
+fi
+
+# TODO: automatically upgrade binenv tools
+# TODO: automatically upgrade sdk tools
+

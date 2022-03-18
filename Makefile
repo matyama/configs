@@ -202,6 +202,7 @@ links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.co
 		$(CFG_DIR)/.local/bin/increase_swap.sh \
 		$(CFG_DIR)/.local/bin/init_ubuntu.sh \
 		$(CFG_DIR)/.local/bin/poetry-here \
+		$(CFG_DIR)/.local/bin/upgrade \
 		$(CFG_DIR)/.local/bin/upgrade_kernel.sh
 	@[ "$$(grep 'user_readenv=1' /etc/pam.d/login)" ] || \
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
