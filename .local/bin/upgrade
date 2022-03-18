@@ -10,6 +10,7 @@ SKIP:
 	pipx         Skip pipx upgrade
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
+	sdk          Skip sdk upgrade
 	extras       Skip all but apt upgrade
 
 RUN: TODO run only selected tool(s)
@@ -41,10 +42,14 @@ while [[ $# -gt 0 ]]; do
 				binenv)
 					SKIP_BINENV=0
 					;;
+				sdk)
+					SKIP_SDK=0
+					;;
 				extras)
 					SKIP_PIPX=0
 					SKIP_RUST=0
 					SKIP_BINENV=0
+					SKIP_SDK=0
 					;;
 				*)
 					echo "Unknown skip option value $2"
@@ -125,5 +130,29 @@ if [[ "$(command -v binenv)" ]] && [[ -z "${SKIP_BINENV}" ]]; then
 	done <<< "$(binenv versions | grep default)"
 fi
 
-# TODO: automatically upgrade sdk tools
+# Include `sdkman-init.sh` to make `sdk` command available
+[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
+	source "${SDKMAN_DIR}/bin/sdkman-init.sh"
+
+if [[ "$(command -v sdk)" ]] && [[ -z "${SKIP_SDK}" ]]; then
+	echo "Upgrading sdk candidates..."
+	CANDIDATES=$(\
+		# make this non-interactive and don't run any upgrade
+		yes n | \
+		head -1 | \
+		# list upgradable candidates
+		sdk ug | \
+		# strip irrelevant ouput and keep only lines with candidates
+		grep local | \
+		# skipping automatic java upgrade because it breaks apps
+		grep -v java | \
+		# grep candidate name
+		cut -d ' ' -f 1 | \
+		# remove colors from the output
+		sed -r 's|\x1b\[[0-9;]*m||g' \
+	)
+	for candidate in $CANDIDATES; do
+		yes Y | head -1 | sdk upgrade "${candidate}"
+	done
+fi
 
