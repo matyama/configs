@@ -152,35 +152,39 @@ binenv_upgrade() {
 		return 0
 	fi
 
+	# TODO: improvement - don't unnecessarily check for current (default) version
 	local version=$(\
 		echo $1 | \
+		# select release version list
 		cut -d: -f2 | \
+		# select only later releases than the currently installed one
 		sed 's|(default).*||g' | \
 		tr " " "\n" | \
+		# filter out any RC/alpha/beta releases and non-version outputs
 		egrep -v "rc|alpha|beta|^[[:space:]]*$" | \
+		# select the latest release version
 		head -1 | \
+		# make sure to select only semantic version and strip color outputs
 		egrep -o "[[:digit:]]+(\.[[:digit:]]+)+" \
 	)
 
 	binenv install "${dist}" "${version}"
-
-	# TODO: upgrade binenv first so that other dists come from refreshed list
-	# refresh distribution list after binenv upgrade
-	if [[ "${dist}" == "binenv" ]]; then
-		binenv update
-	fi
 }
 
 if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
 	echo "Upgrading binenv distributions..."
 	binenv update
+	# upgrade binenv before any other distribution and refresh distribution list
+	binenv_upgrade $(binenv versions | grep binenv)
+	binenv update
 	while read -r binenv_dist; do
 		binenv_upgrade "${binenv_dist}"
-	done <<< "$(binenv versions | grep default)"
+	done <<< "$(binenv versions | grep default | grep -v binenv)"
 fi
 
 # Include `sdkman-init.sh` to make `sdk` command available
-[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
+[[ $RUN_SDK -gt 0 ]] && \
+	[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
 	source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
 if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
