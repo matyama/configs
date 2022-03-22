@@ -130,7 +130,7 @@ if [[ $RUN_APT -gt 0 ]]; then
 	echo "Ugrading system programs..."
 	sudo apt update
 	sudo apt upgrade -y
-	sudo apt autoremove
+	sudo apt autoremove -y
 	sudo apt autoclean
 fi
 
@@ -156,7 +156,7 @@ binenv_upgrade() {
 	local version=$(\
 		echo $1 | \
 		# select release version list
-		cut -d: -f2 | \
+		cut -d : -f 2 | \
 		# select only later releases than the currently installed one
 		sed 's|(default).*||g' | \
 		tr " " "\n" | \
