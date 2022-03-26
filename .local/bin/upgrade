@@ -13,6 +13,7 @@ SKIP: Skip selected tool(s), overrides RUN.
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
 	sdk          Skip sdk upgrade
+	omz          Skip omz update 
 	extras       Skip all but apt upgrade
 
 RUN: Run only selected tool(s), can be overridden by SKIP.
@@ -21,6 +22,7 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 	rust         Run only rustup update
 	binenv       Run only binenv upgrade
 	sdk          Run only sdk upgrade
+	omz          Run only omz update
 "
 
 usage() {
@@ -34,6 +36,7 @@ RUN_PIPX=0
 RUN_RUST=0
 RUN_BINENV=0
 RUN_SDK=0
+RUN_OMZ=0
 
 POSITIONAL_ARGS=()
 
@@ -64,11 +67,15 @@ while [[ $# -gt 0 ]]; do
 				sdk)
 					RUN_SDK=$((RUN_SDK - 2))
 					;;
+				omz)
+					RUN_OMZ=$((RUN_OMZ - 2))
+					;;
 				extras)
 					RUN_PIPX=$((RUN_PIPX - 2))
 					RUN_RUST=$((RUN_RUST - 2))
 					RUN_BINENV=$((RUN_BINENV - 2))
 					RUN_SDK=$((RUN_SDK - 2))
+					RUN_OMZ=$((RUN_OMZ - 2))
 					;;
 				*)
 					echo "Unknown skip option value $2"
@@ -102,6 +109,7 @@ if [[ $# -eq 0 ]]; then
 	RUN_RUST=$((RUN_RUST + 1))
 	RUN_BINENV=$((RUN_BINENV + 1))
 	RUN_SDK=$((RUN_SDK + 1))
+	RUN_OMZ=$((RUN_OMZ + 1))
 else
 	while [[ $# -gt 0 ]]; do
 		case $1 in
@@ -123,6 +131,10 @@ else
 				;;
 			sdk)
 				RUN_SDK=$((RUN_SDK + 1))
+				shift
+				;;
+			omz)
+				RUN_OMZ=$((RUN_OMZ + 1))
 				shift
 				;;
 			*)
@@ -227,5 +239,11 @@ if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
 	for candidate in $CANDIDATES; do
 		yes Y | head -1 | sdk upgrade "${candidate}"
 	done
+fi
+
+if [[ -n $ZSH ]] && [[ $ZSH == *oh-my-zsh ]] && [[ $RUN_OMZ -gt 0 ]]; then
+	# There should be no downside to running the upgrade script directly
+	#  - See: https://bit.ly/3Nlq6KP
+	"$ZSH/tools/upgrade.sh"
 fi
 
