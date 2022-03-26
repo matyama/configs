@@ -5,7 +5,7 @@ set -e
 __USAGE="Upgrade programs and libraries managed by apt, pipx, rustup and other.
 
 USAGE:
-	$(basename $0) [-h|--help] [-s|--skip SKIP] [RUN]...
+	$(basename $0) [-h|--help] [-p|--prompt] [-s|--skip SKIP] [RUN]...
 
 SKIP: Skip selected tool(s), overrides RUN.
 	apt          Skip apt upgrade
@@ -27,6 +27,8 @@ usage() {
 	echo "$__USAGE"
 }
 
+PROMPT=1
+
 RUN_APT=0
 RUN_PIPX=0
 RUN_RUST=0
@@ -40,6 +42,10 @@ while [[ $# -gt 0 ]]; do
 		-h|--help)
 			usage
 			exit 0
+			;;
+		-p|--prompt)
+			PROMPT=0
+			shift
 			;;
     -s|--skip)
 			case "$2" in
@@ -124,6 +130,20 @@ else
 				;;
 		esac
 	done
+fi
+
+if [[ $PROMPT -eq 0 ]]; then 
+	read -p "Running system & tooling update - continue (yY/nN)? " choice
+	case "$choice" in 
+		y|Y) 
+			;;
+		n|N) 
+			exit 0
+			;;
+		*) 
+			exit 0
+			;;
+	esac
 fi
 
 if [[ $RUN_APT -gt 0 ]]; then
