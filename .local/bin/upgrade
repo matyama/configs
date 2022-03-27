@@ -14,6 +14,7 @@ SKIP: Skip selected tool(s), overrides RUN.
 	binenv       Skip binenv upgrade
 	sdk          Skip sdk upgrade
 	omz          Skip omz update 
+	vim          Skip (neo)vim updates (vim-plug, coc) 
 	extras       Skip all but apt upgrade
 
 RUN: Run only selected tool(s), can be overridden by SKIP.
@@ -23,6 +24,7 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 	binenv       Run only binenv upgrade
 	sdk          Run only sdk upgrade
 	omz          Run only omz update
+	vim          Run only (neo)vim updates (vim-plug, coc)
 "
 
 usage() {
@@ -37,6 +39,7 @@ RUN_RUST=0
 RUN_BINENV=0
 RUN_SDK=0
 RUN_OMZ=0
+RUN_VIM=0
 
 POSITIONAL_ARGS=()
 
@@ -70,12 +73,16 @@ while [[ $# -gt 0 ]]; do
 				omz)
 					RUN_OMZ=$((RUN_OMZ - 2))
 					;;
+				vim)
+					RUN_VIM=$((RUN_VIM - 2))
+					;;
 				extras)
 					RUN_PIPX=$((RUN_PIPX - 2))
 					RUN_RUST=$((RUN_RUST - 2))
 					RUN_BINENV=$((RUN_BINENV - 2))
 					RUN_SDK=$((RUN_SDK - 2))
 					RUN_OMZ=$((RUN_OMZ - 2))
+					RUN_VIM=$((RUN_VIM - 2))
 					;;
 				*)
 					echo "Unknown skip option value $2"
@@ -110,6 +117,7 @@ if [[ $# -eq 0 ]]; then
 	RUN_BINENV=$((RUN_BINENV + 1))
 	RUN_SDK=$((RUN_SDK + 1))
 	RUN_OMZ=$((RUN_OMZ + 1))
+	RUN_VIM=$((RUN_VIM + 1))
 else
 	while [[ $# -gt 0 ]]; do
 		case $1 in
@@ -135,6 +143,10 @@ else
 				;;
 			omz)
 				RUN_OMZ=$((RUN_OMZ + 1))
+				shift
+				;;
+			vim)
+				RUN_VIM=$((RUN_VIM + 1))
 				shift
 				;;
 			*)
@@ -245,5 +257,11 @@ if [[ -n $ZSH ]] && [[ $ZSH == *oh-my-zsh ]] && [[ $RUN_OMZ -gt 0 ]]; then
 	# There should be no downside to running the upgrade script directly
 	#  - See: https://bit.ly/3Nlq6KP
 	"$ZSH/tools/upgrade.sh"
+fi
+
+if [[ -n "$EDITOR" ]] && [[ "$EDITOR" == *vim ]] && [[ $RUN_VIM -gt 0 ]]; then
+	echo "Upgrading ${EDITOR} plugins..."
+	# FIXME: CocUpdate does not seem to run with +qall
+	"$EDITOR" --headless +PlugUpdate +CocUpdate +qall &> /dev/null
 fi
 
