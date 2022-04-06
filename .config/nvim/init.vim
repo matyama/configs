@@ -271,6 +271,22 @@ nnoremap <leader>sv :source $VIMRC<CR>
 " ; as :
 nnoremap ; :
 
+" Open hotkeys
+" FIXME: Files have similar issue with fzf as Rg search does
+map <C-p> :Files<CR>
+nmap <leader>; :buffers<CR>
+
+" Switch buffers with <leader><left> and <leader><right>
+nnoremap <leader><left> :bp<CR>
+nnoremap <leader><right> :bn<CR>
+
+" Move by line
+nnoremap j gj
+nnoremap k gk
+
+" Toggle between buffers with <leader><leader>
+nnoremap <leader><leader> <c-^>
+
 " NERDTree shortcuts
 " https://github.com/preservim/nerdtree#frequently-asked-questions
 nnoremap <leader>n :NERDTreeFocus<CR>
@@ -319,7 +335,8 @@ nnoremap <leader>w :w<CR>
 
 " Enter visual mode with <leader><leader>
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-nmap <leader><leader> V
+"  - Note: currently disable in favor of switching between buffers
+" nmap <leader><leader> V
 
 " Press 'v' to expand the visual selection and C-v to shrink it.
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
