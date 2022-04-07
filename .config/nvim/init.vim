@@ -407,13 +407,13 @@ vnoremap <leader>P "+P
 "noremap <leader>p :read !xsel --clipboard --output<cr>
 "noremap <leader>c :w !xsel -ib<cr><cr>
 
-" FIXME
+" FIXME: rg/fzf does not seem to work after reloading vim config
 " Use <leader>s for Rg search
-noremap <leader>s :Rg
+noremap <leader>s :Rg<Space>
 let g:fzf_layout = { 'down': '~20%' }
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --hidden --color=always '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --hidden --smart-case --color=always '.shellescape(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)

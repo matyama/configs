@@ -1,0 +1,27 @@
+# For reference see official guide:
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+
+# Limit max line length, and show a preview
+--max-columns=150
+--max-columns-preview
+
+# Display line number
+--line-number
+
+# Show column as well
+--column
+
+# Include hidden files
+--hidden
+
+# Include/exclude files and folders:
+#  - exclude .git/
+--glob=!.git/*
+
+# TODO: base16 colors
+# Set the colors
+--color=always
+
+# Because who cares about case!?
+--smart-case
+

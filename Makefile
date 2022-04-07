@@ -85,8 +85,12 @@ ifndef BAT_CONFIG_DIR
 BAT_CONFIG_DIR=$(HOME)/.config/bat
 endif
 
-ifndef FD_CONFIG_DIR
-FD_CONFIG_DIR=$(XDG_CONFIG_HOME)/fd
+ifndef FD_CONFIG_HOME
+FD_CONFIG_HOME=$(XDG_CONFIG_HOME)/fd
+endif
+
+ifndef RIPGREP_CONFIG_HOME
+RIPGREP_CONFIG_HOME=$(XDG_CONFIG_HOME)/rg
 endif
 
 ifndef BYOBU_CONFIG_DIR 
@@ -112,7 +116,8 @@ $(FONTS_DIR) \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
-	$(FD_CONFIG_DIR) \
+	$(FD_CONFIG_HOME) \
+	$(RIPGREP_CONFIG_HOME) \
 	$(GOPATH) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
@@ -193,7 +198,8 @@ dconf-load:
 links: \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BYOBU_CONFIG_DIR) \
-	$(FD_CONFIG_DIR) \
+	$(FD_CONFIG_HOME) \
+	$(RIPGREP_CONFIG_HOME) \
 	~/.config/nvim/vim-plug \
 	~/.config/nvim/scripts \
 	~/.config/coc \
