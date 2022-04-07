@@ -37,6 +37,6 @@ export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
 
 # fzf
 # https://github.com/junegunn/fzf#layout
-export FZF_DEFAULT_COMMAND="fd --type file --follow"
-export FZF_CTRL_T_COMMAND="fd --type file --follow"
+export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
+export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
 export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"

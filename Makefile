@@ -66,6 +66,9 @@ ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
 endif
 
+# TODO: use $(XDG_CONFIG_HOME) instead of $(HOME)/.config
+#  - or check if set and keep current as fallback
+
 ifndef BASE16_FZF_HOME
 BASE16_FZF_HOME=$(HOME)/.config/base16-fzf
 endif
@@ -74,13 +77,16 @@ ifndef BASE16_SHELL_HOME
 BASE16_SHELL_HOME=$(HOME)/.config/base16-shell
 endif
 
-
 ifndef ALACRITTY_CONFIG_DIR 
 ALACRITTY_CONFIG_DIR=~/.config/alacritty
 endif
 
 ifndef BAT_CONFIG_DIR
 BAT_CONFIG_DIR=$(HOME)/.config/bat
+endif
+
+ifndef FD_CONFIG_DIR
+FD_CONFIG_DIR=$(XDG_CONFIG_HOME)/fd
 endif
 
 ifndef BYOBU_CONFIG_DIR 
@@ -106,6 +112,7 @@ $(FONTS_DIR) \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
+	$(FD_CONFIG_DIR) \
 	$(GOPATH) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
@@ -183,7 +190,18 @@ dconf-load:
 		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' < \
 		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
 
-links: $(ALACRITTY_CONFIG_DIR) $(BYOBU_CONFIG_DIR) ~/.config/nvim/vim-plug ~/.config/nvim/scripts ~/.config/coc ~/.config/pypoetry ~/.stack ~/.local/bin $(ZSH_CUSTOM)
+links: \
+	$(ALACRITTY_CONFIG_DIR) \
+	$(BYOBU_CONFIG_DIR) \
+	$(FD_CONFIG_DIR) \
+	~/.config/nvim/vim-plug \
+	~/.config/nvim/scripts \
+	~/.config/coc \
+	~/.config/pypoetry \
+	~/.stack \
+	~/.local/bin \
+	$(ZSH_CUSTOM)
+	# END DEPS
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
