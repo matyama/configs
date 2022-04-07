@@ -24,6 +24,11 @@ alias vi="nvim"
 alias oldvim="\vim"
 alias vimdiff="nvim -d"
 
+# Search file with fzf and open in with the editor
+if [ "$(command -v fzf)" ]; then
+	alias ef='e $(fzf)'
+fi
+
 # PDF
 
 # Concatenate pdf files passed as arguments and output final pdf to stdout
