@@ -187,6 +187,15 @@ endif
 set splitright
 set splitbelow
 
+" Permanent undo
+set undodir=~/.vimdid
+set undofile
+
+" Decent wildmenu
+set wildmenu
+set wildmode=list:longest,full
+set wildignore=.hg,.svn,*~,*.png,*.jpg,*.gif,*.settings,Thumbs.db,*.min.js,*.swp,*.o,*.hi
+
 " Wrapping options
 set formatoptions=tc " wrap text and comments using textwidth
 set formatoptions+=r " continue comments when pressing ENTER in I mode
@@ -199,6 +208,18 @@ set incsearch
 set ignorecase
 set smartcase
 set gdefault
+
+" Search results centered please
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+
+" Very magic by default
+nnoremap ? ?\v
+nnoremap / /\v
+cnoremap %s/ %sm/
 
 " Show commands
 set showcmd
@@ -241,6 +262,7 @@ set relativenumber
 set number
 
 " Make diffing better: https://vimways.org/2018/the-power-of-diff/
+set diffopt+=iwhite
 set diffopt+=algorithm:patience
 set diffopt+=indent-heuristic
 
@@ -276,16 +298,37 @@ nnoremap ; :
 map <C-p> :Files<CR>
 nmap <leader>; :buffers<CR>
 
-" Switch buffers with <leader><left> and <leader><right>
-nnoremap <leader><left> :bp<CR>
-nnoremap <leader><right> :bn<CR>
+" Switch buffers with <leader>+<Right>/<Left>
+nnoremap <leader><Left> :bp<CR>
+nnoremap <leader><Right> :bn<CR>
+
+" Toggle between buffers with <leader><leader>
+nnoremap <leader><leader> <c-^>
 
 " Move by line
 nnoremap j gj
 nnoremap k gk
 
-" Toggle between buffers with <leader><leader>
-nnoremap <leader><leader> <c-^>
+" Make Ctrl+j/k act as Esc
+nnoremap <C-j> <Esc>
+inoremap <C-j> <Esc>
+vnoremap <C-j> <Esc>
+snoremap <C-j> <Esc>
+xnoremap <C-j> <Esc>
+cnoremap <C-j> <C-c>
+onoremap <C-j> <Esc>
+lnoremap <C-j> <Esc>
+tnoremap <C-j> <Esc>
+
+nnoremap <C-k> <Esc>
+inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
+snoremap <C-k> <Esc>
+xnoremap <C-k> <Esc>
+cnoremap <C-k> <C-c>
+onoremap <C-k> <Esc>
+lnoremap <C-k> <Esc>
+tnoremap <C-k> <Esc>
 
 " NERDTree shortcuts
 " https://github.com/preservim/nerdtree#frequently-asked-questions
@@ -370,14 +413,16 @@ noremap <leader>s :Rg
 let g:fzf_layout = { 'down': '~20%' }
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --hidden --color=always '.shellescape(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
 function! s:list_cmd()
   let base = fnamemodify(expand('%'), ':h:.:S')
-  return base == '.' ? 'fd --type file --follow' : printf('fd --type file --follow | proximity-sort %s', shellescape(expand('%')))
+  return base == '.' ? 
+                    \ 'fd --type file --follow --hidden' : 
+                    \ printf('fd --type file --follow --hidden | proximity-sort %s', shellescape(expand('%')))
 endfunction
 
 command! -bang -nargs=? -complete=dir Files
@@ -452,11 +497,17 @@ function! s:show_documentation()
   endif
 endfunction
 
+" Show stats with <leader>+q
+nnoremap <leader>q g<c-g>
+
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
+
+" Keymap for replacing up to next _ or -
+noremap <leader>m ct_
 
 " Introduce function and class text objects 
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
