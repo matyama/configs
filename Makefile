@@ -1,58 +1,3 @@
-.PHONY: \
-	config \
-	links \
-	dconf-dump \
-	dconf-load \
-	install-fonts \
-	base16-shell \
-	base16-fzf\
-	basic-tools \
-	net-tools \
-	core-utils \
-	apt-utils \
-	x-utils \
-	kvm \
-	test-kvm \
-	k8s \
-	test-k8s \
-	python3.6 \
-	python3.7 \
-	pipx \
-	python-tools \
-	poetry \
-	sdk \
-	jvm-tools \
-	ghcup \
-	stack \
-	haskell \
-	haskell-tools \
-	rust \
-	rust-tools \
-	alacritty \
-	nodejs \
-	ruby \
-	docker \
-	docker-compose \
-	test-docker \
-	nvidia-docker \
-	binenv \
-	zsh \
-	zsh-theme \
-	snaps \
-	google-chrome \
-	gh \
-	travis \
-	bat \
-	aws-vault \
-	jetbrains-toolbox \
-	keybase \
-	zoom \
-	calibre \
-	set-swappiness \
-	crawl \
-	games \
-	fix-ssh-perms
-
 # Absolute path to the directory containing this Makefile
 #  - This path remains the same even when invoked with 'make -f ...'
 #  - [source](https://stackoverflow.com/a/23324703)
@@ -145,6 +90,7 @@ INTEL_CPU := $(shell egrep 'model name\s+: Intel' /proc/cpuinfo 2> /dev/null)
 
 NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
 
+.PHONY: install-fonts
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(FONTS_DIR)
 	@echo ">>> Downloading Meslo Nerd Font for Powerlevel10k"
@@ -154,6 +100,7 @@ install-fonts: $(FONTS_DIR)
 
 # Resources:
 #  - [Base16 Shell](https://github.com/chriskempson/base16-shell)
+.PHONY: base16-shell
 base16-shell: BASE16_SHELL_REPO := https://github.com/chriskempson/base16-shell.git
 base16-shell: BASE16_THEME := gruvbox-dark-hard
 base16-shell:
@@ -165,6 +112,7 @@ base16-shell:
 
 # Resources:
 #  - [Base16 fzf](https://github.com/fnune/base16-fzf)
+.PHONY: base16-fzf
 base16-fzf: BASE16_FZF_REPO := https://github.com/fnune/base16-fzf.git
 base16-fzf:
 	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
@@ -173,6 +121,7 @@ base16-fzf:
 # Resources:
 #  - [dconf backup/restore](https://askubuntu.com/a/844907)
 #  - [Ubuntu wiki](https://wiki.ubuntu.com/Keybindings)
+.PHONY: dconf-dump
 dconf-dump:
 	@echo "Saving Gnome keybindings:"
 	@echo "'/org/gnome/desktop/wm/keybindings/'"
@@ -184,6 +133,7 @@ dconf-dump:
 		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' > \
 		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
 
+.PHONY: dconf-load
 dconf-load:
 	@echo "Restoring Gnome keybindings:"
 	@echo "'/org/gnome/desktop/wm/keybindings/'"
@@ -195,6 +145,7 @@ dconf-load:
 		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' < \
 		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
 
+.PHONY: links
 links: \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BYOBU_CONFIG_DIR) \
@@ -233,18 +184,22 @@ links: \
 		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
+.PHONY: config
 config: dconf-load links
 
 # Installed tools:
 #  - libssl-dev: secure sockets layer toolkit
+.PHONY: net-tools
 net-tools:
 	@echo ">>> Installing basic network tools"
 	sudo apt install -y curl jq net-tools wget libssl-dev
 
+.PHONY: core-tools
 core-utils:
 	@echo ">>> Installing core utilities"
 	sudo apt install -y git lsb-core moreutils
 
+.PHONY: apt-utils
 apt-utils:
 	@echo ">>> Installing utilities that let apt use packages over HTTPS"
 	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
@@ -252,6 +207,7 @@ apt-utils:
 # Installed tools:
 #  - xclip: X11 clipboard selection
 #  - xdotool: X11 automation tool (https://github.com/jordansissel/xdotool)
+.PHONY: x-utils
 x-utils:
 	@echo ">>> Installing X11 utilities"
 	sudo apt install -y xclip xdotool
@@ -262,6 +218,7 @@ python:
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
+.PHONY: python3.6 python3.7
 python3.6 python3.7: python
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
@@ -274,6 +231,7 @@ python3.6 python3.7: python
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
 #  - tshark: Terminal version of wireshark
+.PHONY: basic-tools
 basic-tools: net-tools core-utils apt-utils x-utils python
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
@@ -309,6 +267,7 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 # Notes:
 #  - [IOMMU GRUB fix](https://serverfault.com/a/633322)
 #  - The other WARN should be fine: https://stackoverflow.com/q/65207563
+.PHONY: kvm
 ifdef INTEL_CPU
 kvm: CPU_MODEL := intel
 else
@@ -339,6 +298,7 @@ kvm: core-utils
 # Notes:
 #  - Groups will be visibel after login or [newgrp](https://superuser.com/a/345051) hack
 #  - Default storage pool will show up AFTER reboot.
+.PHONY: test-kvm
 test-kvm: ~/vm/$(DEBIAN_ISO)
 	@echo ">>> User groups should contain 'kvm' and 'libvirt*'"
 	id -nG | egrep -ow 'kvm|libvirt|libvirt-\w+'
@@ -386,6 +346,7 @@ test-kvm: ~/vm/$(DEBIAN_ISO)
 #  - [Helm docs](https://helm.sh/docs/)
 #  - [k8s krew](https://krew.sigs.k8s.io/)
 #  - [krew install warning](https://github.com/kubernetes-sigs/krew/issues/576)
+.PHONY: k8s
 k8s: KVM2_DRIVER_URL := https://storage.googleapis.com/minikube/releases/latest
 k8s: KVM2_DRIVER := docker-machine-driver-kvm2
 k8s: apt-utils binenv kvm
@@ -420,6 +381,7 @@ endif
 # Resources:
 #  - [minikube tutorial](https://kubernetes.io/docs/tutorials/hello-minikube/)
 #  - [Minikube with KVM2 driver](https://bit.ly/3tBWEVI)
+.PHONY: test-k8s
 test-k8s: net-tools
 	@echo ">>> Testing minikube installation"
 	minikube start --cpus 2 --memory 2048 --vm-driver kvm2
@@ -465,6 +427,7 @@ test-k8s: net-tools
 	@echo ">>> Verified kubectl $$(kubectl version --client --short)"
 
 # https://github.com/devops-works/binenv#linux-bashzsh
+.PHONY: binenv
 binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
 binenv: BINENV_BIN := $(shell mktemp)
 binenv: net-tools
@@ -484,6 +447,7 @@ endif
 	@rm -rf $(BINENV_BIN)
 
 # See: https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
+.PHONY: zsh
 zsh: core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
 	@echo ">>> zsh already installed"
@@ -500,12 +464,14 @@ else
 endif
 
 # See: https://github.com/romkatv/powerlevel10k
+.PHONY: zsh-theme
 zsh-theme: core-utils
 	@echo ">>> Setting up powerlevel10k theme"
 	git clone https://github.com/romkatv/powerlevel10k.git $(ZSH_CUSTOM)/themes/powerlevel10k
 	sudo apt install -y fonts-powerline
 	@echo ">>> Finish configuration manually by running 'p10k configure'"
 
+.PHONY: snaps
 snaps: $(GOPATH)
 	@echo ">>> Installing cmake"
 	sudo snap install --classic cmake
@@ -528,6 +494,7 @@ snaps: $(GOPATH)
 	@echo ">>> Installing googler: https://github.com/jarun/googler"
 	sudo snap install googler
 
+.PHONY: pipx
 pipx: python
 ifneq ($(shell which pipx 2> /dev/null),)
 	@echo ">>> $@ $$($@ --version) already installed"
@@ -537,6 +504,7 @@ else
 	python3 -m $@ ensurepath
 endif
 
+.PHONY: python-tools
 python-tools: OPS :=
 python-tools: pipx
 	@echo ">>> Installing Python virtual environment"
@@ -558,6 +526,7 @@ python-tools: pipx
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
 	pipx install kaggle $(OPS)
 
+.PHONY: poetry
 poetry: python zsh $(ZSH)/plugins/poetry
 ifneq ($(shell which poetry 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
@@ -569,12 +538,14 @@ else
 	$@ completions zsh > $(ZSH)/plugins/poetry/_poetry
 endif
 
+.PHONY: sdk
 sdk: SHELL := /bin/bash
 sdk: net-tools
 	@echo ">>> Installing SDKMAN: https://sdkman.io/"
 	curl -s https://get.sdkman.io | bash
 	source $(SDKMAN_DIR)/bin/sdkman-init.sh
 
+.PHONY: jvm-tools
 jvm-tools: SHELL := /bin/bash
 jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 	@{ \
@@ -608,8 +579,10 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 # Additional notes:
 #  - ghcup also installs the Haskell Language Server
 #  - ghcup-zsh instegration is already present in .zshrc
+.PHONY: haskell
 haskell: ghcup stack
 
+.PHONY: ghcup
 ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
 ghcup: $(ZSH)/completions net-tools
 ifneq ($(shell which ghcup 2> /dev/null),)
@@ -623,6 +596,7 @@ else
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 endif
 
+.PHONY: stack
 stack: net-tools
 ifneq ($(shell which stack 2> /dev/null),)
 	@echo ">>> $@ $$($@ --numeric-version) already installed"
@@ -636,12 +610,14 @@ endif
 #  - hlint: Haskell source code suggestions
 #  - apply-refact: Refactor Haskell source files
 #  - data-tree-print: Installed as a brittany dependency
+.PHONY: haskell-tools
 haskell-tools: haskell
 	@echo ">>> Installing brittany: https://github.com/lspitzner/brittany/"
 	stack install data-tree-print brittany
 	@echo ">>> Installing hlint: https://github.com/ndmitchell/hlint"
 	stack install hlint apply-refact
 
+.PHONY: rust
 rust: net-tools
 ifeq ($(shell which rustc 2> /dev/null),)
 	@echo ">>> Installing Rust toolchain"
@@ -667,6 +643,7 @@ endif
 #    (https://github.com/rust-lang/mdBook)
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
+.PHONY: rust-tools
 rust-tools: rust
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
@@ -705,6 +682,7 @@ rust-tools: rust
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	cargo install hyperfine
 
+.PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
 ifeq ($(shell which alacritty 2> /dev/null),)
@@ -726,10 +704,12 @@ endif
 	@sudo wget -qcNP $(ZSH_FUNC_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 
+.PHONY: nodejs
 nodejs: net-tools
 	@echo ">>> Installing nodejs (LTS)"
 	sudo curl -sL install-node.now.sh/lts | sudo bash -s -- -y
 
+.PHONY: ruby
 ruby:
 	@echo ">>> Installing Ruby"
 	sudo snap install --classic $@
@@ -737,6 +717,7 @@ ruby:
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
 #  - [Official post-instegration](https://docs.docker.com/engine/install/linux-postinstall/)
+.PHONY: docker
 docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
 docker: DOCKER_GPG := /usr/share/keyrings/docker-archive-keyring.gpg
 docker: core-utils apt-utils
@@ -759,6 +740,7 @@ docker: core-utils apt-utils
 	newgrp $@
 
 # NOTE: This target installs docker-compose using pipx for easier version handling.
+.PHONY: docker-compose
 docker-compose:
 ifneq ($(shell which docker-compose 2> /dev/null),)
 	@echo ">>> Already installed $$($@ --version)"
@@ -767,6 +749,7 @@ else
 	pipx install $@
 endif
 
+.PHONY: test-docker
 test-docker:
 ifndef DOCKER_CMD
 	$(error docker command not found)
@@ -783,6 +766,7 @@ endif
 # TL;DR
 #  - k8s depends on a runtime => install nvidia-docker2 and use --runtime=nvidia (--gpus might work)
 #  - otherwise install just nvidia-container-toolkit and use --gpus
+.PHONY: nvidia-docker
 nvidia-docker: NVIDIA_DOCKER_PKG := nvidia-docker2
 nvidia-docker: NVIDIA_DOCKER_URL := https://nvidia.github.io/nvidia-docker
 nvidia-docker: NVIDIA_DOCKER_GPG := /usr/share/keyrings/nvidia-docker-archive-keyring.gpg
@@ -808,6 +792,7 @@ else
 	$(error >>> No NVIDIA GPU available)
 endif
 
+.PHONY: google-chrome
 google-chrome: CHROME_PKG := google-chrome-stable_current_amd64.deb
 google-chrome: net-tools
 ifneq ($(shell which google-chrome 2> /dev/null),)
@@ -820,6 +805,7 @@ endif
 	rm -rf /tmp/$(CHROME_PKG)
 
 # https://github.com/cli/cli
+.PHONY: gh
 gh: zsh
 ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
@@ -833,11 +819,13 @@ else
 	$@ completion -s zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
 endif
 
+.PHONY: travis
 travis: ruby
 	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
 	gem install $@ --no-document --user-install
 
 # TODO: Install via binenv when it's available as a dependency
+.PHONY: aws-vault
 aws-vault: AWS_VAULT_BIN := /usr/local/bin/aws-vault
 aws-vault: AWS_VAULT_URL := https://github.com/99designs/aws-vault/releases
 aws-vault: net-tools
@@ -849,6 +837,7 @@ aws-vault: net-tools
 	}
 	sudo chmod 755 $(AWS_VAULT_BIN)
 
+.PHONY: bat
 bat: ~/.local/bin
 ifneq ($(shell which bat 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
@@ -859,6 +848,7 @@ else
 	@echo ">>> Installed $$($@ --version)"
 endif
 
+.PHONY: set-swappiness
 set-swappiness: SWAPPINESS := 10
 set-swappiness:
 ifeq ($(shell grep "vm.swappiness" /etc/sysctl.conf),)
@@ -870,6 +860,7 @@ endif
 
 # Resources:
 #  - [Automating setup](https://bit.ly/2SMFmsj)
+.PHONY: jetbrains-toolbox
 jetbrains-toolbox: TOOLBOX_URL := "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA"
 jetbrains-toolbox: TOOLBOX_DIR := $(shell mktemp -d)
 jetbrains-toolbox: net-tools
@@ -883,6 +874,7 @@ else
 endif
 	rm -rf $(TOOLBOX_DIR)
 
+.PHONY: keybase
 keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_amd64.deb
 keybase: KEYBASE_PKG := $(shell mktemp)
 keybase: net-tools
@@ -897,16 +889,20 @@ else
 endif
 	rm -f $(KEYBASE_PKG)
 
+.PHONY: zoom
 zoom:
 	@echo ">>> Installing zoom client"
 	sudo snap install zoom-client
 
+.PHONY: calibre
 calibre:
 	@echo ">>> Installing calibre"
 	sudo apt install -y calibre
 
+.PHONY: games
 games: crawl
 
+.PHONY: crawl
 crawl: net-tools
 ifneq ($(shell which crawl 2> /dev/null),)
 	@echo ">>> $$($@ --version | head -n1) already installed"
@@ -918,6 +914,7 @@ else
 	sudo apt install -y $@ $@-tiles
 endif
 
+.PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
 fix-ssh-perms:
 	@echo ">>> Setting appropriate file permissions for files in '$(SSH_DIR)'"
