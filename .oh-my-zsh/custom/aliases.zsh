@@ -46,6 +46,9 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+# history
+alias hg='history | egrep'
+
 # exa (https://the.exa.website/)
 if [ "$(command -v exa)" ]; then
 	alias l="exa -lahg@ --git"
