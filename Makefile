@@ -80,12 +80,13 @@ $(FONTS_DIR) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
-	$(XDG_CONFIG_HOME)/coc \
 	~/.local/bin \
+	$(XDG_CONFIG_HOME)/coc \
+	$(XDG_CONFIG_HOME)/direnv \
+	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
-	$(XDG_CONFIG_HOME)/direnv \
 	~/.stack \
 	~/vm \
 	$(CRAWL_DIR):
@@ -166,11 +167,12 @@ links: \
 	$(BYOBU_CONFIG_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(RIPGREP_CONFIG_HOME) \
+	$(XDG_CONFIG_HOME)/coc \
+	$(XDG_CONFIG_HOME)/direnv \
+	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
-	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/pypoetry \
-	$(XDG_CONFIG_HOME)/direnv \
 	~/.stack \
 	~/.local/bin \
 	$(ZSH_CUSTOM)
@@ -178,7 +180,6 @@ links: \
 	@echo "Linking configuration files:"
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
-		$(CFG_DIR)/.gitconfig \
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.zlogout \
 		$(CFG_DIR)/.p10k.zsh
