@@ -67,11 +67,6 @@ Additionally one can download
 [Meslo Nerd Fonts](https://bit.ly/3uZhBeH) and configure terminals as
 instructed. The font download is part of `make fonts`.
 
-### PAM environment
-After linking `.pam_environment` for the first time, one should manually update 
-`/etc/pam.d/login` according to
-[these instructions](https://askubuntu.com/a/636544).
-
 ### Base16 colors
 
 #### Base16 Shell

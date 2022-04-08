@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH="/home/matyama/.oh-my-zsh"
+export ZSH="${HOME}/.oh-my-zsh"
 
 # Default user
 DEFAULT_USER=matyama
@@ -48,7 +48,7 @@ BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${HOME}/.config/base16-shell}"
     [ -s "$BASE16_SHELL_HOME/profile_helper.sh" ] && \
     eval "$("$BASE16_SHELL_HOME/profile_helper.sh")"
 
-# NOTE: Do not add this to `.pam_environment` as it is altered by the Base16
+# NOTE: Do not add this to `.zshenv`/`.zprofile` as it is altered by the Base16
 # `profile_helper.sh` (hooked above) when the theme is changed and then it 
 # might missmatch colors in `~/.base16_theme` if the shell config is reloaded.
 BASE16_THEME="${BASE16_THEME:-gruvbox-dark-hard}"
@@ -60,8 +60,8 @@ BASE16_FZF_HOME="${BASE16_FZF_HOME:-${HOME}/.config/base16-fzf}"
   source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"
 
 # Bat customization (https://github.com/sharkdp/bat#customization)
-#  - Do not add `BAT_THEME` to `.pam_environment` or bat config file as it might
-#    be altered by the Base16 hook above.
+#  - Do not add `BAT_THEME` to `.zshenv`/`.zprofile` or bat config file as it
+#    might be altered by the Base16 hook above.
 #  - Use `BASE16_THEME` for bat or default to `base16`
 #  - Use fully stylized bat by default
 

@@ -163,7 +163,6 @@ links: \
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
 		$(CFG_DIR)/.gitconfig \
-		$(CFG_DIR)/.pam_environment \
 		$(CFG_DIR)/.direnvrc \
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.zlogout \
