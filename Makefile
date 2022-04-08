@@ -79,6 +79,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/direnv \
 	~/.stack \
 	~/vm:
 	mkdir -p $@
@@ -162,6 +163,7 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/direnv \
 	~/.stack \
 	~/.local/bin \
 	$(ZSH_CUSTOM)
@@ -170,7 +172,6 @@ links: \
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
 		$(CFG_DIR)/.gitconfig \
-		$(CFG_DIR)/.direnvrc \
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.zlogout \
 		$(CFG_DIR)/.p10k.zsh
