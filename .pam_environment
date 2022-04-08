@@ -12,6 +12,9 @@
 #
 # Additionally, update pam.d login as follows: https://askubuntu.com/a/636544
 
+# TODO: deprecate `~/.pam_environment`
+#  - https://github.com/matyama/configs/issues/18
+
 # Editor setup 
 VISUAL=nvim
 EDITOR=${VISUAL}
@@ -58,10 +61,10 @@ BAT_CONFIG_DIR DEFAULT=@{HOME}/.config/bat
 BAT_CONFIG_PATH DEFAULT=@{BAT_CONFIG_DIR}/config
 
 # fd
-FD_CONFIG_HOME DEFAULT=@{XDG_CONFIG_HOME}/fd
+FD_CONFIG_HOME DEFAULT=@{HOME}/.config/fd
 
 # rg
-RIPGREP_CONFIG_HOME DEFAULT=@{XDG_CONFIG_HOME}/rg
+RIPGREP_CONFIG_HOME DEFAULT=@{HOME}/.config/rg
 RIPGREP_CONFIG_PATH DEFAULT=@{RIPGREP_CONFIG_HOME}/ripgreprc
 
 # Path extension
