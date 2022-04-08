@@ -87,6 +87,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/zsh \
 	~/.stack \
 	~/vm \
 	$(CRAWL_DIR):
@@ -173,6 +174,7 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/zsh \
 	~/.stack \
 	~/.local/bin \
 	$(ZSH_CUSTOM)
@@ -181,8 +183,7 @@ links: \
 	@ln -svft ~ \
 		$(CFG_DIR)/.xsession \
 		$(CFG_DIR)/.zsh* \
-		$(CFG_DIR)/.zlogout \
-		$(CFG_DIR)/.p10k.zsh
+		$(CFG_DIR)/.zlogout
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\

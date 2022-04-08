@@ -7,6 +7,13 @@ DEFAULT_USER=matyama
 # Set name of the theme to load
 ZSH_THEME=powerlevel10k/powerlevel10k
 
+# Set p10k configuration file
+POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k.zsh"
+
+# Disable p10k configuration wizard
+#  - If it's really needed, set this ad-hoc to false
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
@@ -76,8 +83,9 @@ export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
 #     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
 export LESS="-F -X -R"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
+[[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
+  source "${POWERLEVEL9K_CONFIG_FILE}"
 
 # Base16 Shell (https://github.com/chriskempson/base16-shell)
 BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${XDG_CONFIG_HOME}/base16-shell}"
