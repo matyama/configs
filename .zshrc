@@ -16,6 +16,26 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# History management
+#  - https://stackoverflow.com/a/38549502
+#  - https://unix.stackexchange.com/a/273863
+export HISTCONTROL=ignoreboth
+export HISTSIZE=5000
+export SAVEHIST="${HISTSIZE}"
+export HISTFILESIZE=10000
+export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:exa"
+export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|exa)"
+
+zshaddhistory() {
+  emulate -L zsh
+  ## uncomment if HISTORY_IGNORE should use EXTENDED_GLOB syntax
+  # setopt extendedglob
+  [[ $1 != ${~HISTORY_IGNORE} ]]
+}
+
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+
 # Use Ctrl-Z to switch back to Vim
 # https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 fancy-ctrl-z () {
@@ -30,14 +50,31 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
-# export MANPATH="/usr/local/man:$MANPATH"
-
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
   export EDITOR='nvim'
 fi
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# Colored man output
+# See: https://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
+export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking
+export LESS_TERMCAP_md=$'\e[01;38;5;74m'  # begin bold
+export LESS_TERMCAP_me=$'\e[0m'           # end mode
+export LESS_TERMCAP_se=$'\e[0m'           # end standout-mode
+export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
+export LESS_TERMCAP_ue=$'\e[0m'           # end underline
+export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
+
+# make less better
+# X = leave content on-screen
+# F = quit automatically if less than one screenfull
+# R = raw terminal characters (fixes git diff)
+#     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
+export LESS="-F -X -R"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -84,6 +121,12 @@ autoload -U +X bashcompinit && bashcompinit
 # Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
+
+# fzf
+# https://github.com/junegunn/fzf#layout
+export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
+export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
+export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
 
 # pipx
 if [ $(command -v pipx) ]; then
