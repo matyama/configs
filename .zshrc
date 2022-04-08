@@ -43,7 +43,7 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Base16 Shell (https://github.com/chriskempson/base16-shell)
-BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${HOME}/.config/base16-shell}"
+BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${XDG_CONFIG_HOME}/base16-shell}"
 [ -n "$PS1" ] && \
     [ -s "$BASE16_SHELL_HOME/profile_helper.sh" ] && \
     eval "$("$BASE16_SHELL_HOME/profile_helper.sh")"
@@ -54,7 +54,7 @@ BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${HOME}/.config/base16-shell}"
 BASE16_THEME="${BASE16_THEME:-gruvbox-dark-hard}"
 
 # Base16 fzf (https://github.com/fnune/base16-fzf)
-BASE16_FZF_HOME="${BASE16_FZF_HOME:-${HOME}/.config/base16-fzf}"
+BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
 [[ ! -d "$BASE16_FZF_HOME" ]] || \
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
   source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"

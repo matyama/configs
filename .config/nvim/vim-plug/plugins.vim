@@ -2,13 +2,13 @@
 " See: https://www.chrisatmachine.com/Neovim/01-vim-plug/
 
 " auto-install vim-plug
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+if empty(glob("$XDG_CONFIG_HOME/nvim/autoload/plug.vim"))
+  silent !curl -fLo $XDG_CONFIG_HOME/nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall | source ~/.config/nvim/init.vim
+  autocmd VimEnter * PlugInstall | source $XDG_CONFIG_HOME/nvim/init.vim
 endif
 
-call plug#begin('~/.config/nvim/autoload/plugged')
+call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 
 	" Capture some events in terminal and tmux vim
 	Plug 'tmux-plugins/vim-tmux-focus-events'

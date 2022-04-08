@@ -13,7 +13,7 @@ let mapleader = "\<Space>"
 set nocompatible
 
 " Setup plugins
-source ~/.config/nvim/vim-plug/plugins.vim
+source $XDG_CONFIG_HOME/nvim/vim-plug/plugins.vim
 
 " Secure modeline config
 " https://www.vim.org/scripts/script.php?script_id=1876
@@ -573,7 +573,7 @@ augroup fmt
 augroup END
 
 " Follow Rust code style rules
-au Filetype rust source ~/.config/nvim/scripts/spacetab.vim
+au Filetype rust source $XDG_CONFIG_HOME/nvim/scripts/spacetab.vim
 au Filetype rust set colorcolumn=100
 
 " Help filetype detection

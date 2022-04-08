@@ -3,6 +3,16 @@
 #  - [source](https://stackoverflow.com/a/23324703)
 CFG_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+# Make sure XDG is set: https://wiki.archlinux.org/title/XDG_Base_Directory
+
+ifndef XDG_CONFIG_HOME
+	XDG_CONFIG_HOME=$(HOME)/.config
+endif
+
+ifndef XDG_DATA_HOME
+	XDG_DATA_HOME=$(HOME)/.local/share
+endif
+
 ifndef ZSH
 ZSH=~/.oh-my-zsh
 endif
@@ -11,23 +21,20 @@ ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
 endif
 
-# TODO: use $(XDG_CONFIG_HOME) instead of $(HOME)/.config
-#  - or check if set and keep current as fallback
-
 ifndef BASE16_FZF_HOME
-BASE16_FZF_HOME=$(HOME)/.config/base16-fzf
+BASE16_FZF_HOME=$(XDG_CONFIG_HOME)/base16-fzf
 endif
 
 ifndef BASE16_SHELL_HOME
-BASE16_SHELL_HOME=$(HOME)/.config/base16-shell
+BASE16_SHELL_HOME=$(XDG_CONFIG_HOME)/base16-shell
 endif
 
 ifndef ALACRITTY_CONFIG_DIR 
-ALACRITTY_CONFIG_DIR=~/.config/alacritty
+ALACRITTY_CONFIG_DIR=$(XDG_CONFIG_HOME)/alacritty
 endif
 
 ifndef BAT_CONFIG_DIR
-BAT_CONFIG_DIR=$(HOME)/.config/bat
+BAT_CONFIG_DIR=$(XDG_CONFIG_HOME)/bat
 endif
 
 ifndef FD_CONFIG_HOME
@@ -52,7 +59,7 @@ endif
 
 DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 
-FONTS_DIR := ~/.local/share/fonts
+FONTS_DIR := $(XDG_DATA_HOME)/fonts
 MAN1_DIR := /usr/local/share/man/man1
 ZSH_FUNC_DIR := /usr/local/share/zsh/site-functions
 
@@ -67,11 +74,11 @@ $(FONTS_DIR) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
-	~/.config/coc \
+	$(XDG_CONFIG_HOME)/coc \
 	~/.local/bin \
-	~/.config/nvim/scripts \
-	~/.config/nvim/vim-plug \
-	~/.config/pypoetry \
+	$(XDG_CONFIG_HOME)/nvim/scripts \
+	$(XDG_CONFIG_HOME)/nvim/vim-plug \
+	$(XDG_CONFIG_HOME)/pypoetry \
 	~/.stack \
 	~/vm:
 	mkdir -p $@
@@ -151,10 +158,10 @@ links: \
 	$(BYOBU_CONFIG_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(RIPGREP_CONFIG_HOME) \
-	~/.config/nvim/vim-plug \
-	~/.config/nvim/scripts \
-	~/.config/coc \
-	~/.config/pypoetry \
+	$(XDG_CONFIG_HOME)/nvim/vim-plug \
+	$(XDG_CONFIG_HOME)/nvim/scripts \
+	$(XDG_CONFIG_HOME)/coc \
+	$(XDG_CONFIG_HOME)/pypoetry \
 	~/.stack \
 	~/.local/bin \
 	$(ZSH_CUSTOM)
@@ -179,8 +186,6 @@ links: \
 		$(CFG_DIR)/.local/bin/poetry-here \
 		$(CFG_DIR)/.local/bin/upgrade \
 		$(CFG_DIR)/.local/bin/upgrade_kernel.sh
-	@[ "$$(grep 'user_readenv=1' /etc/pam.d/login)" ] || \
-		echo "Finish pam env setup by manually updating '/etc/pam.d/login' - see https://askubuntu.com/a/636544"
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 .PHONY: config

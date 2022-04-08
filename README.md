@@ -149,11 +149,12 @@ language support for various languages, refer to corresponding sub-section.
 * https://scalameta.org/metals/docs/editors/vim/#installing-coc-metals
 * https://scalameta.org/metals/docs/editors/vim/#available-configuration-options
 
-Custom configurations can be found in `~/.config/coc/coc-settings.json`.
+Custom configurations can be found in
+`$XDG_CONFIG_HOME/coc/coc-settings.json`.
 
 #### Haskell
 [Haskell Language Server (HLS)](https://github.com/haskell/haskell-language-server)
-is configured in `~/.config/coc/coc-settings.json`.
+is configured in `$XDG_CONFIG_HOME/coc/coc-settings.json`.
 
 The installation of HLS is done as part of `ghcup` installation in
 ```bash

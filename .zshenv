@@ -18,7 +18,7 @@ export ARCH=$(uname -m)
 # Editor setup
 export VISUAL=nvim
 export EDITOR=${VISUAL}
-export VIMRC=${HOME}/.config/nvim/init.vim
+export VIMRC=${XDG_CONFIG_HOME}/nvim/init.vim
 
 # Personal user info
 export NAME="Martin Matyášek"
@@ -53,18 +53,18 @@ export GEM_HOME=${HOME}/.gem
 export RUBY_BIN=${GEM_HOME}/ruby/3.0.0/bin
 
 # Base16
-export BASE16_FZF_HOME=${HOME}/.config/base16-fzf
-export BASE16_SHELL_HOME=${HOME}/.config/base16-shell
+export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
+export BASE16_SHELL_HOME=${XDG_CONFIG_HOME}/base16-shell
 
 # Bat
-export BAT_CONFIG_DIR=${HOME}/.config/bat
+export BAT_CONFIG_DIR=${XDG_CONFIG_HOME}/bat
 export BAT_CONFIG_PATH=${BAT_CONFIG_DIR}/config
 
 # fd
-export FD_CONFIG_HOME=${HOME}/.config/fd
+export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 
 # rg
-export RIPGREP_CONFIG_HOME=${HOME}/.config/rg
+export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
 # Path extension
