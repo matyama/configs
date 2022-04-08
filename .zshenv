@@ -76,6 +76,17 @@ export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
+# wget
+# - Despite the fact it's not recommended to override command behavior in
+#   `.envrc` (since it's always loaded, even for non-interactive shells), here
+#   we actually want to prevent all executions from creating `~/.wget-hsts`
+# - An alternative is to set `hsts-file` in `WGETRC` but it must use an absolute
+#   path, i.e. cannot dynamically change with `XDG_CACHE_HOME`
+# - See: https://wiki.archlinux.org/title/XDG_Base_Directory
+# - Uncomment `WGETRC` if it's present and should be used
+#export WGETRC=${XDG_CONFIG_HOME}/wgetrc
+alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
+
 # Dungeon Crawl Stone Soup
 #  - Note: the trailing slash is required
 #  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
