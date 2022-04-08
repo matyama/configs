@@ -76,6 +76,11 @@ export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
+# Dungeon Crawl Stone Soup
+#  - Note: the trailing slash is required
+#  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
+export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
+
 # Path extension
 export PATH=${PATH}:${HOME}/bin
 export PATH=${PATH}:${HOME}/.local/bin

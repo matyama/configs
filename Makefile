@@ -57,6 +57,12 @@ ifndef GOPATH
 GOPATH=$(HOME)/go
 endif
 
+# The trailing slash is required - see: 
+# https://wiki.archlinux.org/title/XDG_Base_Directory
+ifndef CRAWL_DIR
+CRAWL_DIR=$(XDG_DATA_HOME)/crawl/
+endif
+
 DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
@@ -81,7 +87,8 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/direnv \
 	~/.stack \
-	~/vm:
+	~/vm \
+	$(CRAWL_DIR):
 	mkdir -p $@
 
 $(MAN1_DIR):
@@ -908,7 +915,7 @@ calibre:
 games: crawl
 
 .PHONY: crawl
-crawl: net-tools
+crawl: $(CRAWL_DIR) net-tools
 ifneq ($(shell which crawl 2> /dev/null),)
 	@echo ">>> $$($@ --version | head -n1) already installed"
 else
