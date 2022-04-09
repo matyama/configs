@@ -87,6 +87,9 @@ export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
 
+# Kaggle
+export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
+
 # Dungeon Crawl Stone Soup
 #  - Note: the trailing slash is required
 #  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
