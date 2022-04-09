@@ -49,7 +49,24 @@ make config
 1. Follow [these instructions](https://bit.ly/33QDcdB)
 
 ### Powerlevel10k
-Typical configuration for `p10k configure`
+This configuration is actually stored as `.config/zsh/p10k.zsh` and
+automatically symlinked to `$POWERLEVEL9K_CONFIG_FILE`.
+
+It is important to note that `$POWERLEVEL9K_CONFIG_FILE` is set in
+`.zshrc` and uses `$XDG_CONFIG_HOME`. Additionally, `.zshrc` disables
+the `p10k configure` configuration wizard.
+
+Therefore, if one deliberately wants to run it, the wizard must be
+re-enabled with
+```bash
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=false p10k configure
+```
+
+Also the XDG specification, respectively `$POWERLEVEL9K_CONFIG_FILE`,
+should be respected if `p10k.zsh` ought to be rewritten by the wizard.
+
+Some settings used in `p10k configure` when `p10k.zsh` was originally
+created include: 
 1. Prompt Style: Lean
 1. Character Set: Unicode
 1. Prompt Colors: 256 colors
@@ -61,7 +78,6 @@ Typical configuration for `p10k configure`
 1. Prompt Flow: Concise
 1. Enable Transient Prompt?: No
 1. Instant Prompt Mode: Off
-1. Apply changes to `~/.zshrc`?: No (we're using `.p10k.zsh` from this repo)
 
 Additionally one can download
 [Meslo Nerd Fonts](https://bit.ly/3uZhBeH) and configure terminals as
