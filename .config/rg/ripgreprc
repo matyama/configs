@@ -9,7 +9,7 @@
 --line-number
 
 # Show column as well
---column
+#--column
 
 # Include hidden files
 --hidden
