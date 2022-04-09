@@ -72,6 +72,9 @@ export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
+# Travis
+export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
+
 # wget
 # - Despite the fact it's not recommended to override command behavior in
 #   `.envrc` (since it's always loaded, even for non-interactive shells), here
