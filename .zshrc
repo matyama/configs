@@ -76,12 +76,20 @@ export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
 export LESS_TERMCAP_ue=$'\e[0m'           # end underline
 export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
 
-# make less better
+# Make less better
 # X = leave content on-screen
 # F = quit automatically if less than one screenfull
 # R = raw terminal characters (fixes git diff)
 #     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
 export LESS="-F -X -R"
+
+# Set configuration files for less
+#  - TODO: XDG should be fully supported when version 600 lands
+#  - TODO: Try `XDG_STATE_HOME` instead of `XDG_DATA_HOME` as it should be more
+#    appropriate for `lesshst` and should be supported by less as well.
+#    Unfortunately, currently `XDG_STATE_HOME` is not set.
+export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
+export LESSHISTFILE=${XDG_DATA_HOME}/less/lesshst
 
 # To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
