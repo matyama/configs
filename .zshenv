@@ -29,10 +29,6 @@ export VIMRC=${XDG_CONFIG_HOME}/nvim/init.vim
 export NAME="Martin Matyášek"
 export EMAIL=martin.matyasek@gmail.com
 
-# Personal user info
-export NAME="Martin Matyášek"
-export EMAIL=martin.matyasek@gmail.com
-
 # Binenv
 export BINENV_HOME=${HOME}/.binenv
 
