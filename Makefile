@@ -49,6 +49,18 @@ ifndef BYOBU_CONFIG_DIR
 BYOBU_CONFIG_DIR=$(XDG_CONFIG_HOME)/byobu
 endif
 
+ifndef GEM_HOME
+GEM_HOME=$(XDG_CONFIG_HOME)/gem
+endif
+
+ifndef GEM_SPEC_CACHE
+GEM_SPEC_CACHE=$(XDG_CACHE_HOME)/gem
+endif
+
+ifndef TRAVIS_CONFIG_PATH
+TRAVIS_CONFIG_PATH=$(XDG_CONFIG_HOME)/travis
+endif
+
 ifndef SDKMAN_DIR
 SDKMAN_DIR=~/.sdkman
 endif
@@ -75,8 +87,8 @@ $(FONTS_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
 	$(FD_CONFIG_HOME) \
-	$(RIPGREP_CONFIG_HOME) \
 	$(GOPATH) \
+	$(RIPGREP_CONFIG_HOME) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
@@ -723,10 +735,15 @@ nodejs: net-tools
 	@echo ">>> Installing nodejs (LTS)"
 	sudo curl -sL install-node.now.sh/lts | sudo bash -s -- -y
 
+# Install ruby using apt instead of snap
+#  - With ruby from snap, `gem install` does not respect cusom `$GEM_HOME` even
+#    with `--no-user-install`, see: https://stackoverflow.com/a/70101849 
+#  - https://www.ruby-lang.org/en/documentation/installation
+#  - TODO: try https://www.ruby-lang.org/en/documentation/installation/#rbenv
 .PHONY: ruby
 ruby:
 	@echo ">>> Installing Ruby"
-	sudo snap install --classic $@
+	sudo apt install -y $@-full
 
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
@@ -833,10 +850,11 @@ else
 	$@ completion -s zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
 endif
 
+# Note: `--no-user-install` forces gem to respect `$GEM_HOME`
 .PHONY: travis
 travis: ruby
 	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
-	gem install $@ --no-document --user-install
+	gem install $@ --no-document --no-user-install
 
 # TODO: Install via binenv when it's available as a dependency
 .PHONY: aws-vault

@@ -53,9 +53,18 @@ export KREW_ROOT=${HOME}/.krew
 export KREW_BIN=${KREW_ROOT}/bin
 
 # Ruby
-export GEM_HOME=${HOME}/.gem
-#export GEM_BIN=${GEM_HOME}/bin
-export RUBY_BIN=${GEM_HOME}/ruby/3.0.0/bin
+#  - Note: Since we're using XDG directories and not the default, make sure to
+#    remove `gem: --user-install` from `/etc/gemrc` or in general any rc file
+#    and `gem install`
+#  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
+export GEM_HOME=${XDG_DATA_HOME}/gem
+export GEM_SPEC_CACHE=${XDG_CACHE_HOME}/gem
+export GEM_BIN=${GEM_HOME}/bin
+
+# Travis
+#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
+#  - https://github.com/travis-ci/travis.rb/issues/219
+export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 
 # Base16
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
@@ -71,9 +80,6 @@ export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 # rg
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
-
-# Travis
-export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 
 # wget
 # - Despite the fact it's not recommended to override command behavior in
@@ -100,9 +106,8 @@ export PATH=${PATH}:${HOME}/.local/bin
 export PATH=${PATH}:${CARGO_BIN}
 export PATH=${PATH}:${POETRY_BIN}
 export PATH=${PATH}:${GOBIN}
-#export PATH=${PATH}:${GEM_BIN}
+export PATH=${PATH}:${GEM_BIN}
 export PATH=${PATH}:${KREW_BIN}
-export PATH=${PATH}:${RUBY_BIN}
 export PATH=${PATH}:/usr/local/bin
 export PATH=${PATH}:${BINENV_HOME}
 
