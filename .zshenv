@@ -66,6 +66,13 @@ export GEM_BIN=${GEM_HOME}/bin
 #  - https://github.com/travis-ci/travis.rb/issues/219
 export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 
+# Gradle
+#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
+#  - https://github.com/gradle/gradle/issues/17756
+#  - According to the issue: "gradle still puts some stuff under
+#    `~/.gradle/daemon` even with `GRADLE_USER_HOME` pointing elsewhere"
+export GRADLE_USER_HOME=${XDG_DATA_HOME}/gradle
+
 # Base16
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
 export BASE16_SHELL_HOME=${XDG_CONFIG_HOME}/base16-shell
