@@ -6,11 +6,11 @@ CFG_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # Make sure XDG is set: https://wiki.archlinux.org/title/XDG_Base_Directory
 
 ifndef XDG_CONFIG_HOME
-	XDG_CONFIG_HOME=$(HOME)/.config
+XDG_CONFIG_HOME=$(HOME)/.config
 endif
 
 ifndef XDG_DATA_HOME
-	XDG_DATA_HOME=$(HOME)/.local/share
+XDG_DATA_HOME=$(HOME)/.local/share
 endif
 
 ifndef ZSH
@@ -96,6 +96,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
+	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
@@ -183,6 +184,7 @@ links: \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
+	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \

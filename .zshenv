@@ -92,6 +92,16 @@ export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
 
+# Maven
+#  - `mvn -gs` is a workaround to make maven XDG compliant
+#  - See: https://issues.apache.org/jira/browse/MNG-6603
+#  - Note that this relies on custom `settings.xml` which is symlinked so any
+#    further modifications should go there
+#  - Despite the fact it's not recommended to override command behavior in
+#    `.envrc` (since it's always loaded, even for non-interactive shells), here
+#    we actually want to prevent all executions from creating `~/.m2`
+alias mvn="mvn -gs ${XDG_CONFIG_HOME}/maven/settings.xml"
+
 # Kaggle
 export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
 
