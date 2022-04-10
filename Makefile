@@ -70,7 +70,7 @@ SDKMAN_DIR=~/.sdkman
 endif
 
 ifndef GOPATH
-GOPATH=$(HOME)/go
+GOPATH=$(XDG_DATA_HOME)/go
 endif
 
 # The trailing slash is required - see: 

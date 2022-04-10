@@ -51,7 +51,7 @@ export RUST_BACKTRACE=1
 export STACK_ROOT=${XDG_DATA_HOME}/stack
 
 # Go lang
-export GOPATH=${HOME}/go
+export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
 # Kubernetes Krew
