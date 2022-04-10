@@ -14,6 +14,11 @@
 #  - Furthermore, `.zprofile` might be better place for commands and variables
 #    that should be set *once* or which **don't need to be updated frequently** 
 
+# XDG specification does not define this variable but it is mentioned/assumed by
+# some apps/libs (e.g. `ghcup`) so it might be useful to export it anyway.
+#  - https://www.haskell.org/ghcup/guide/#xdg-support
+export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
+
 # System and architecture
 export ARCH=$(uname -m)
 
@@ -48,6 +53,11 @@ export RUSTFLAGS="-C target-cpu=native"
 export RUST_BACKTRACE=1
 
 # Haskell stack
+#  - Any value of `GHCUP_USE_XDG_DIRS` will enable XDG support, see:
+#    https://www.haskell.org/ghcup/guide/#xdg-support
+#  - Note: `XDG_BIN_HOME` will be used for storing binaries and as mentioned in
+#    the docs, there might be clash with other tools using it (stack/cabal/ghc) 
+export GHCUP_USE_XDG_DIRS=1
 export STACK_ROOT=${XDG_DATA_HOME}/stack
 
 # Go lang

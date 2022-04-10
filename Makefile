@@ -9,6 +9,10 @@ ifndef XDG_CONFIG_HOME
 XDG_CONFIG_HOME=$(HOME)/.config
 endif
 
+ifndef XDG_BIN_HOME
+XDG_BIN_HOME=$(HOME)/.local/bin
+endif
+
 ifndef XDG_DATA_HOME
 XDG_DATA_HOME=$(HOME)/.local/share
 endif
@@ -61,6 +65,10 @@ ifndef TRAVIS_CONFIG_PATH
 TRAVIS_CONFIG_PATH=$(XDG_CONFIG_HOME)/travis
 endif
 
+ifndef GHCUP_USE_XDG_DIRS
+GHCUP_USE_XDG_DIRS=1
+endif
+
 ifndef STACK_ROOT
 STACK_ROOT=$(XDG_DATA_HOME)/stack
 endif
@@ -97,7 +105,7 @@ $(FONTS_DIR) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
-	~/.local/bin \
+	$(XDG_BIN_HOME) \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
@@ -186,6 +194,7 @@ links: \
 	$(FD_CONFIG_HOME) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
+	$(XDG_BIN_HOME) \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
@@ -194,7 +203,6 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/zsh \
-	~/.local/bin \
 	$(ZSH_CUSTOM)
 	# END DEPS
 	@echo "Linking configuration files:"
@@ -207,7 +215,7 @@ links: \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
-	@ln -svft ~/.local/bin \
+	@ln -svft $(XDG_BIN_HOME) \
 		$(CFG_DIR)/.local/bin/alacritty_toggle.sh \
 		$(CFG_DIR)/.local/bin/increase_swap.sh \
 		$(CFG_DIR)/.local/bin/init_ubuntu.sh \
@@ -628,6 +636,9 @@ else
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 endif
 
+# TODO: ghcup now installs stack as well => deprecate?
+#  - From `ghcup`'s post-installation log:
+#    "Additionally, you should upgrade stack only through ghcup."
 .PHONY: stack
 stack: net-tools
 ifneq ($(shell which stack 2> /dev/null),)
@@ -876,7 +887,7 @@ aws-vault: net-tools
 	sudo chmod 755 $(AWS_VAULT_BIN)
 
 .PHONY: bat
-bat: ~/.local/bin
+bat: $(XDG_BIN_HOME)
 ifneq ($(shell which bat 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else

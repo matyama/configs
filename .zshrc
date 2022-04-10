@@ -153,7 +153,7 @@ fi
 [ ! $(command -v fuck) ] || eval $(thefuck --alias)
 
 # Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
-[ -f "/home/matyama/.ghcup/env" ] && source "/home/matyama/.ghcup/env"
+[ -f "${XDG_DATA_HOME}/ghcup/env" ] && source "${XDG_DATA_HOME}/ghcup/env"
 
 # Haskell stack (https://docs.haskellstack.org/en/stable/README/)
 [ ! $(command -v stack) ] || eval "$(stack --bash-completion-script stack)"
