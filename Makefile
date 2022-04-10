@@ -61,6 +61,10 @@ ifndef TRAVIS_CONFIG_PATH
 TRAVIS_CONFIG_PATH=$(XDG_CONFIG_HOME)/travis
 endif
 
+ifndef STACK_ROOT
+STACK_ROOT=$(XDG_DATA_HOME)/stack
+endif
+
 ifndef SDKMAN_DIR
 SDKMAN_DIR=~/.sdkman
 endif
@@ -89,6 +93,7 @@ $(FONTS_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
+	$(STACK_ROOT) \
 	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
@@ -101,7 +106,6 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/zsh \
-	~/.stack \
 	~/vm \
 	$(CRAWL_DIR):
 	mkdir -p $@
@@ -181,6 +185,7 @@ links: \
 	$(BYOBU_CONFIG_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(RIPGREP_CONFIG_HOME) \
+	$(STACK_ROOT) \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
@@ -189,7 +194,6 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/zsh \
-	~/.stack \
 	~/.local/bin \
 	$(ZSH_CUSTOM)
 	# END DEPS
@@ -199,7 +203,7 @@ links: \
 		$(CFG_DIR)/.zsh* \
 		$(CFG_DIR)/.zlogout
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.stack $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \
+		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}

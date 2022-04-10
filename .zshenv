@@ -48,7 +48,7 @@ export RUSTFLAGS="-C target-cpu=native"
 export RUST_BACKTRACE=1
 
 # Haskell stack
-export STACK_ROOT=${HOME}/.stack
+export STACK_ROOT=${XDG_DATA_HOME}/stack
 
 # Go lang
 export GOPATH=${HOME}/go
