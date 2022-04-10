@@ -114,6 +114,16 @@ alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
 #    we actually want to prevent all executions from creating `~/.m2`
 alias mvn="mvn -gs ${XDG_CONFIG_HOME}/maven/settings.xml"
 
+# IPython
+#  - Should support XDG directories since version 8.x. Despite the fact that
+#    `$HOME` is still the default, `XDG_CONFIG_HOME` should be picked up.
+#  - https://github.com/matyama/configs/issues/17#issuecomment-1094140403
+#
+# Jupyter
+#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
+#  - https://github.com/jupyter/jupyter_core/issues/185
+export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME}/jupyter
+
 # Kaggle
 export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
 
