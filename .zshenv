@@ -35,8 +35,14 @@ export BINENV_HOME=${HOME}/.binenv
 # Poetry
 export POETRY_BIN=${HOME}/.poetry/bin
 
-# Rust stuff
-export CARGO_BIN=${HOME}/.cargo/bin
+# Rust
+#  - Note: Out-of-the-box XDG support is still an open issue for both `rustup`
+#    and `cargo`, monitor.
+#  - https://github.com/rust-lang/rustup/issues/247
+#  - https://github.com/rust-lang/cargo/issues/1734
+export RUSTUP_HOME=${XDG_DATA_HOME}/rustup 
+export CARGO_HOME=${XDG_DATA_HOME}/cargo
+export CARGO_BIN=${CARGO_HOME}/bin
 export CARGO_INCREMENTAL=1
 export RUSTFLAGS="-C target-cpu=native"
 export RUST_BACKTRACE=1
