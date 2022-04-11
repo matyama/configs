@@ -116,6 +116,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/zsh \
+	$(XDG_DATA_HOME)/npm \
 	$(CRAWL_DIR):
 	mkdir -p $@
 
@@ -756,7 +757,7 @@ endif
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 # TODO: migrate to https://github.com/nvm-sh/nvm
 .PHONY: nodejs
-nodejs: net-tools
+nodejs: $(XDG_DATA_HOME)/npm net-tools
 	@echo ">>> Installing nodejs (LTS)"
 	sudo curl -sL install-node.now.sh/lts | \
 		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
