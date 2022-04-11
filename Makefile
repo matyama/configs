@@ -622,14 +622,28 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 #  - [ghcup](https://www.haskell.org/ghcup/)
 #  - [stack](https://docs.haskellstack.org/en/stable/README/)
 # Additional notes:
-#  - ghcup also installs the Haskell Language Server
+#  - ghcup also installs the Haskell Language Server and Stack
 #  - ghcup-zsh instegration is already present in .zshrc
 .PHONY: haskell
-haskell: ghcup stack
+haskell: ghcup
+
+.PHONY: ghcup-deps
+ghcup-deps: net-tools
+	@echo ">>> Installing ghcup distro packages"
+	sudo apt install -y \
+		build-essential \
+		curl \
+		libffi-dev \
+		libffi7 \
+		libgmp-dev \
+		libgmp10 \
+		libncurses-dev \
+		libncurses5 \
+		libtinfo5
 
 .PHONY: ghcup
 ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
-ghcup: $(ZSH)/completions net-tools
+ghcup: $(ZSH)/completions ghcup-deps
 ifneq ($(shell which ghcup 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
@@ -639,18 +653,6 @@ else
 	curl -sSL -o $</_$@ \
 		"$(GHCUP_URL)/-/raw/v$$($@ --numeric-version)/shell-completions/zsh"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
-endif
-
-# TODO: ghcup now installs stack as well => deprecate?
-#  - From `ghcup`'s post-installation log:
-#    "Additionally, you should upgrade stack only through ghcup."
-.PHONY: stack
-stack: net-tools
-ifneq ($(shell which stack 2> /dev/null),)
-	@echo ">>> $@ $$($@ --numeric-version) already installed"
-else
-	@echo ">>> Installing Haskell Stack"
-	curl -sSL https://get.haskellstack.org/ | sh
 endif
 
 # Installed tools:

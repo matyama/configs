@@ -55,6 +55,8 @@ export RUST_BACKTRACE=1
 #  - Note: `XDG_BIN_HOME` will be used for storing binaries and as mentioned in
 #    the docs, there might be clash with other tools using it (stack/cabal/ghc) 
 export GHCUP_USE_XDG_DIRS=1
+export CABAL_DIR=${XDG_CACHE_HOME}/cabal
+export CABAL_CONFIG=${XDG_CONFIG_HOME}/cabal/config
 export STACK_ROOT=${XDG_DATA_HOME}/stack
 
 # Go lang
