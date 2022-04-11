@@ -37,9 +37,6 @@ export EMAIL=martin.matyasek@gmail.com
 # Binenv
 export BINENV_HOME=${HOME}/.binenv
 
-# Poetry
-export POETRY_BIN=${HOME}/.poetry/bin
-
 # Rust
 #  - Note: Out-of-the-box XDG support is still an open issue for both `rustup`
 #    and `cargo`, monitor.
@@ -156,7 +153,6 @@ export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
 export PATH=${PATH}:${HOME}/bin
 export PATH=${PATH}:${HOME}/.local/bin
 export PATH=${PATH}:${CARGO_BIN}
-export PATH=${PATH}:${POETRY_BIN}
 export PATH=${PATH}:${GOBIN}
 export PATH=${PATH}:${GEM_BIN}
 export PATH=${PATH}:${KREW_BIN}

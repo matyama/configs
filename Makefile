@@ -102,9 +102,9 @@ $(FONTS_DIR) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
-	$(ZSH_CUSTOM) \
 	$(ZSH)/completions \
-	$(ZSH)/plugins/poetry \
+	$(ZSH_CUSTOM) \
+	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CONFIG_HOME)/coc \
@@ -568,16 +568,18 @@ python-tools: pipx
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
 	pipx install kaggle $(OPS)
 
+# Installation resources:
+#  - https://python-poetry.org/docs/#installation
+#  - https://python-poetry.org/docs/#enable-tab-completion-for-bash-fish-or-zsh
 .PHONY: poetry
-poetry: python zsh $(ZSH)/plugins/poetry
+poetry: python zsh $(ZSH_CUSTOM)/plugins/poetry
 ifneq ($(shell which poetry 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
 	@echo ">>> Installing Poetry: https://python-poetry.org/docs/"
-	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
-	. $(HOME)/.poetry/env
-	$@ self update --preview
-	$@ completions zsh > $(ZSH)/plugins/poetry/_poetry
+	curl -sSL https://install.python-poetry.org | python3 -
+	$@ self update
+	$@ completions zsh > $(ZSH_CUSTOM)/plugins/poetry/_poetry
 endif
 
 .PHONY: sdk
