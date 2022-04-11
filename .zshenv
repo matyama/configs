@@ -94,6 +94,10 @@ export GRADLE_USER_HOME=${XDG_DATA_HOME}/gradle
 #  - https://github.com/holgerbrandl/kscript/issues/323
 export KSCRIPT_CACHE_DIR=${XDG_CACHE_HOME}/kscript
 
+# Node.js
+export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
+export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
+
 # Base16
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
 export BASE16_SHELL_HOME=${XDG_CONFIG_HOME}/base16-shell
@@ -158,4 +162,5 @@ export PATH=${PATH}:${GEM_BIN}
 export PATH=${PATH}:${KREW_BIN}
 export PATH=${PATH}:/usr/local/bin
 export PATH=${PATH}:${BINENV_HOME}
+export PATH=${PATH}:"${XDG_DATA_HOME}/npm/bin"
 

@@ -111,6 +111,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
+	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
@@ -199,6 +200,7 @@ links: \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
+	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
@@ -747,10 +749,15 @@ endif
 	@sudo wget -qcNP $(ZSH_FUNC_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
 
+# Resources:
+#  - https://github.com/vercel/install-node
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+# TODO: migrate to https://github.com/nvm-sh/nvm
 .PHONY: nodejs
 nodejs: net-tools
 	@echo ">>> Installing nodejs (LTS)"
-	sudo curl -sL install-node.now.sh/lts | sudo bash -s -- -y
+	sudo curl -sL install-node.now.sh/lts | \
+		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
 
 # Install ruby using apt instead of snap
 #  - With ruby from snap, `gem install` does not respect cusom `$GEM_HOME` even
