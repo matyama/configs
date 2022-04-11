@@ -87,7 +87,7 @@ ifndef CRAWL_DIR
 CRAWL_DIR=$(XDG_DATA_HOME)/crawl/
 endif
 
-DEBIAN_ISO := debian-10.9.0-amd64-netinst.iso
+DEBIAN_ISO := debian-11.3.0-amd64-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
 MAN1_DIR := /usr/local/share/man/man1
@@ -106,6 +106,7 @@ $(FONTS_DIR) \
 	$(ZSH)/completions \
 	$(ZSH)/plugins/poetry \
 	$(XDG_BIN_HOME) \
+	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
@@ -114,15 +115,14 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/zsh \
-	~/vm \
 	$(CRAWL_DIR):
 	mkdir -p $@
 
 $(MAN1_DIR):
 	sudo mkdir -p $@
 
-~/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
-~/vm/$(DEBIAN_ISO): ~/vm net-tools
+$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
+$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
 	@echo ">>> Downloading Debian Buster net installer for x86_64" 
 	@[ -f $@ ] || wget -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
@@ -339,7 +339,7 @@ kvm: core-utils
 #  - Groups will be visibel after login or [newgrp](https://superuser.com/a/345051) hack
 #  - Default storage pool will show up AFTER reboot.
 .PHONY: test-kvm
-test-kvm: ~/vm/$(DEBIAN_ISO)
+test-kvm: $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO)
 	@echo ">>> User groups should contain 'kvm' and 'libvirt*'"
 	id -nG | egrep -ow 'kvm|libvirt|libvirt-\w+'
 	@echo ">>> Verifying installation"
