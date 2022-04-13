@@ -328,7 +328,7 @@ Fortunately, according to
 [this issue](https://github.com/RustSec/rustsec/issues/32), the fix is
 simply to drop the database:
 ```bash
-rm -rf ~/.cargo/advisory-db/
+rm -rf $CARGO_HOME/advisory-db/
 ```
 
 Next invocation of `cargo audit` will fetch it again and fix the issue.
