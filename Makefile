@@ -219,13 +219,7 @@ links: \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
-	@ln -svft $(XDG_BIN_HOME) \
-		$(CFG_DIR)/.local/bin/alacritty_toggle.sh \
-		$(CFG_DIR)/.local/bin/increase_swap.sh \
-		$(CFG_DIR)/.local/bin/init_ubuntu.sh \
-		$(CFG_DIR)/.local/bin/poetry-here \
-		$(CFG_DIR)/.local/bin/upgrade \
-		$(CFG_DIR)/.local/bin/upgrade_kernel.sh
+	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 .PHONY: config

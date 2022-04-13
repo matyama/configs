@@ -155,8 +155,7 @@ export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
 export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
 
 # Path extension
-export PATH=${PATH}:${HOME}/bin
-export PATH=${PATH}:${HOME}/.local/bin
+export PATH=${PATH}:${XDG_BIN_HOME}
 export PATH=${PATH}:${CARGO_BIN}
 export PATH=${PATH}:${GOBIN}
 export PATH=${PATH}:${GEM_BIN}
