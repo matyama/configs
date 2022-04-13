@@ -17,8 +17,12 @@ ifndef XDG_DATA_HOME
 XDG_DATA_HOME=$(HOME)/.local/share
 endif
 
+ifndef ZDOTDIR
+ZDOTDIR=$(XDG_CONFIG_HOME)/zsh
+endif
+
 ifndef ZSH
-ZSH=~/.oh-my-zsh
+ZSH=$(XDG_DATA_HOME)/oh-my-zsh
 endif
 
 ifndef ZSH_CUSTOM
@@ -102,11 +106,13 @@ $(FONTS_DIR) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
+	$(ZDOTDIR) \
 	$(ZSH)/completions \
 	$(ZSH_CUSTOM) \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/vm \
+	$(XDG_CACHE_HOME)/zsh \
 	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/git \
@@ -115,7 +121,6 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
-	$(XDG_CONFIG_HOME)/zsh \
 	$(XDG_DATA_HOME)/npm \
 	$(CRAWL_DIR):
 	mkdir -p $@
@@ -205,16 +210,12 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
-	$(XDG_CONFIG_HOME)/zsh \
+	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
-	# END DEPS
 	@echo "Linking configuration files:"
-	@ln -svft ~ \
-		$(CFG_DIR)/.xsession \
-		$(CFG_DIR)/.zsh* \
-		$(CFG_DIR)/.zlogout
+	@ln -svft ~ $(CFG_DIR)/.xsession $(CFG_DIR)/.zshenv
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share $(CFG_DIR)/.oh-my-zsh/custom -type f -not -name '*.dconf'); do \
+		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f -not -name '*.dconf'); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
@@ -489,9 +490,14 @@ else
 endif
 	@rm -rf $(BINENV_BIN)
 
-# See: https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
+# Installation resources:
+#  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
+#  - https://github.com/ohmyzsh/ohmyzsh#custom-directory
+#  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - https://github.com/romkatv/powerlevel10k
 .PHONY: zsh
-zsh: core-utils net-tools
+zsh: $(XDG_CACHE_HOME)/zsh core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
 	@echo ">>> zsh already installed"
 else
@@ -503,16 +509,7 @@ else
 	@echo ">>> Setting up powerlevel10k theme"
 	git clone https://github.com/romkatv/powerlevel10k.git $(ZSH_CUSTOM)/themes/powerlevel10k
 	sudo apt install -y fonts-powerline
-	@echo ">>> Finish configuration manually by running 'p10k configure'"
 endif
-
-# See: https://github.com/romkatv/powerlevel10k
-.PHONY: zsh-theme
-zsh-theme: core-utils
-	@echo ">>> Setting up powerlevel10k theme"
-	git clone https://github.com/romkatv/powerlevel10k.git $(ZSH_CUSTOM)/themes/powerlevel10k
-	sudo apt install -y fonts-powerline
-	@echo ">>> Finish configuration manually by running 'p10k configure'"
 
 .PHONY: snaps
 snaps: $(GOPATH)

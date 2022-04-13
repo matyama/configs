@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
-export ZSH="${HOME}/.oh-my-zsh"
+#  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
+export ZSH="${XDG_DATA_HOME}/oh-my-zsh"
 
 # Default user
 DEFAULT_USER=matyama
@@ -26,9 +27,11 @@ source $ZSH/oh-my-zsh.sh
 # History management
 #  - https://stackoverflow.com/a/38549502
 #  - https://unix.stackexchange.com/a/273863
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
 export HISTCONTROL=ignoreboth
 export HISTSIZE=5000
 export SAVEHIST="${HISTSIZE}"
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export HISTFILESIZE=10000
 export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:exa"
 export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|exa)"
@@ -128,8 +131,15 @@ export BAT_STYLE=full
 # setxkbmap -option caps:escape
 
 # Initialize completions
-autoload -U +X compinit && compinit -i
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - https://unix.stackexchange.com/a/391670
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+
+autoload -U +X compinit && \
+  compinit -i -d "${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
 autoload -U +X bashcompinit && bashcompinit
+
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 
 # direnv (https://direnv.net)
 [ ! $(command -v direnv) ] || eval "$(direnv hook zsh)"
@@ -172,7 +182,8 @@ fi
 [ ! $(command -v helm) ] || source <(helm completion zsh)
 
 # travis autocompletion
-[ ! -s $HOME/.travis/travis.sh ] || source $HOME/.travis/travis.sh
+[ ! -s "${TRAVIS_CONFIG_PATH}/travis.sh" ] || \
+  source "${TRAVIS_CONFIG_PATH}/travis.sh"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/matyama/.sdkman"

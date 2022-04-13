@@ -1,6 +1,6 @@
 # ZSH
-alias zshreload="source ~/.zshrc"
-alias zshconfig="nvim ~/.zshrc"
+alias zshreload="source ${ZDOTDIR}/.zshrc"
+alias zshconfig="nvim ${ZDOTDIR}/.zshrc"
 
 # XDG
 alias o="xdg-open"
