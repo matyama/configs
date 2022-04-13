@@ -149,6 +149,15 @@ export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME}/jupyter
 # Kaggle
 export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
 
+# scikit-learn datasets
+#  - https://scikit-learn.org/stable/modules/generated/sklearn.datasets.get_data_home.html
+#  - Note: There's a bug in the default dir name in the docs (check the code).
+export SCIKIT_LEARN_DATA=${XDG_CACHE_HOME}/scikit_learn_data
+
+# TensorFlow datasets
+#  - https://www.tensorflow.org/datasets/api_docs/python/tfds/load
+export TFDS_DATA_DIR=${XDG_CACHE_HOME}/tensorflow_datasets
+
 # Dungeon Crawl Stone Soup
 #  - Note: the trailing slash is required
 #  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
