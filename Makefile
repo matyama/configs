@@ -213,7 +213,7 @@ links: \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
-	@ln -svft ~ $(CFG_DIR)/.xsession $(CFG_DIR)/.zshenv
+	@ln -svft ~ $(CFG_DIR)/.zshenv
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f -not -name '*.dconf'); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
