@@ -67,7 +67,8 @@ export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
 # Kubernetes Krew
-export KREW_ROOT=${HOME}/.krew
+#  - https://krew.sigs.k8s.io/docs/user-guide/advanced-configuration/
+export KREW_ROOT=${XDG_DATA_HOME}/krew
 export KREW_BIN=${KREW_ROOT}/bin
 
 # Ruby

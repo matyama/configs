@@ -85,6 +85,10 @@ ifndef GOPATH
 GOPATH=$(XDG_DATA_HOME)/go
 endif
 
+ifndef KREW_ROOT
+KREW_ROOT=$(XDG_DATA_HOME)/krew
+endif
+
 # The trailing slash is required - see: 
 # https://wiki.archlinux.org/title/XDG_Base_Directory
 ifndef CRAWL_DIR
