@@ -162,6 +162,11 @@ export SCIKIT_LEARN_DATA=${XDG_CACHE_HOME}/scikit_learn_data
 #  - https://www.tensorflow.org/datasets/api_docs/python/tfds/load
 export TFDS_DATA_DIR=${XDG_CACHE_HOME}/tensorflow_datasets
 
+# Keras
+#  - https://github.com/tensorflow/tensorflow/issues/38831
+#  - Since the only file is `keras.json` config, `XDG_CONFIG_HOME` is used here
+export KERAS_HOME=${XDG_CONFIG_HOME}/keras
+
 # Dungeon Crawl Stone Soup
 #  - Note: the trailing slash is required
 #  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
