@@ -88,6 +88,14 @@ export GEM_BIN=${GEM_HOME}/bin
 #  - https://github.com/travis-ci/travis.rb/issues/219
 export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 
+# Java
+#  - Workaround to support XDG and move `~/.java` out of `HOME`
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - https://bugzilla.redhat.com/show_bug.cgi?id=1154277
+#  - https://stackoverflow.com/a/30305597/15112035
+export JDK_JAVA_OPTIONS="-Djava.util.prefs.userRoot=${XDG_CONFIG_HOME}/java"
+export JAVA_OPTS="-Djava.util.prefs.userRoot=${XDG_CONFIG_HOME}/java"
+
 # Gradle
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://github.com/gradle/gradle/issues/17756
