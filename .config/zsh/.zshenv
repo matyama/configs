@@ -120,15 +120,27 @@ export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
 # wget
-# - Despite the fact it's not recommended to override command behavior in
-#   `.envrc` (since it's always loaded, even for non-interactive shells), here
-#   we actually want to prevent all executions from creating `~/.wget-hsts`
-# - An alternative is to set `hsts-file` in `WGETRC` but it must use an absolute
-#   path, i.e. cannot dynamically change with `XDG_CACHE_HOME`
-# - See: https://wiki.archlinux.org/title/XDG_Base_Directory
-# - Uncomment `WGETRC` if it's present and should be used
+#  - Despite the fact it's not recommended to override command behavior in
+#    `.envrc` (since it's always loaded, even for non-interactive shells), here
+#    we actually want to prevent all executions from creating `~/.wget-hsts`
+#  - An alternative is to set `hsts-file` in `WGETRC` but it must use an
+#    absolute path, i.e. cannot dynamically change with `XDG_CACHE_HOME`
+#  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - Uncomment `WGETRC` if it's present and should be used
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
+
+# Scala: sbt & ivy2
+#  - `sbt -ivy ... -sbt-dir ...` is a workaround to make sbt XDG compliant, see:
+#    - https://github.com/sbt/sbt/issues/3681
+#    - https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - An alternative could be to set `SBT_OPTS` as mentioned in 
+#    https://github.com/sbt/sbt/issues/3681#issuecomment-434009989
+#  - Despite the fact it's not recommended to override command behavior in
+#    `.envrc` (since it's always loaded, even for non-interactive shells), here
+#    we actually want to prevent all executions from creating `~/.sbt` and
+#    `~/.ivy2`
+alias sbt="sbt -ivy ${XDG_DATA_HOME}/ivy2 -sbt-dir ${XDG_DATA_HOME}/sbt"
 
 # Maven
 #  - `mvn -gs` is a workaround to make maven XDG compliant
