@@ -37,6 +37,9 @@ export VIMRC=${XDG_CONFIG_HOME}/nvim/init.vim
 export NAME="Martin Matyášek"
 export EMAIL=martin.matyasek@gmail.com
 
+# CUDA
+export CUDA_CACHE_PATH=${XDG_CACHE_HOME}/nv
+
 # Binenv
 export BINENV_HOME=${HOME}/.binenv
 
