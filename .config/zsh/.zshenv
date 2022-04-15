@@ -166,6 +166,11 @@ alias sbt="sbt -ivy ${XDG_DATA_HOME}/ivy2 -sbt-dir ${XDG_DATA_HOME}/sbt"
 #    we actually want to prevent all executions from creating `~/.m2`
 alias mvn="mvn -gs ${XDG_CONFIG_HOME}/maven/settings.xml"
 
+# Python
+#  - Sets path to custom startup file for interactive Python:
+#    https://docs.python.org/3.8/using/cmdline.html#envvar-PYTHONSTARTUP
+export PYTHONSTARTUP=${XDG_CONFIG_HOME}/python/startup.py
+
 # IPython
 #  - Should support XDG directories since version 8.x. Despite the fact that
 #    `$HOME` is still the default, `XDG_CONFIG_HOME` should be picked up.

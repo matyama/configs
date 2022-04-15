@@ -125,6 +125,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/python \
 	$(XDG_DATA_HOME)/npm \
 	$(CRAWL_DIR):
 	mkdir -p $@
@@ -214,6 +215,7 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/pypoetry \
+	$(XDG_CONFIG_HOME)/python \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
