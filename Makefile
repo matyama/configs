@@ -291,7 +291,6 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		gparted \
 		gnome-tweaks \
 		blueman \
-		lynx \
 		mypaint \
 		tlp \
 		dos2unix \
