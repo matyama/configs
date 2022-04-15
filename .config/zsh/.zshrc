@@ -186,6 +186,6 @@ fi
   source "${TRAVIS_CONFIG_PATH}/travis.sh"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/matyama/.sdkman"
-[[ -s "/home/matyama/.sdkman/bin/sdkman-init.sh" ]] && source "/home/matyama/.sdkman/bin/sdkman-init.sh"
+[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
+  source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 

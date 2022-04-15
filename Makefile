@@ -78,7 +78,7 @@ STACK_ROOT=$(XDG_DATA_HOME)/stack
 endif
 
 ifndef SDKMAN_DIR
-SDKMAN_DIR=~/.sdkman
+SDKMAN_DIR=$(XDG_DATA_HOME)/sdkman
 endif
 
 ifndef GOPATH
@@ -577,11 +577,15 @@ else
 	$@ completions zsh > $(ZSH_CUSTOM)/plugins/poetry/_poetry
 endif
 
+# Installation resources:
+#  - https://sdkman.io/install
+#  - Note: Installation won't update rc files since we're using custom `.zshrc`
+#    and `.zshenv`
 .PHONY: sdk
 sdk: SHELL := /bin/bash
 sdk: net-tools
 	@echo ">>> Installing SDKMAN: https://sdkman.io/"
-	curl -s https://get.sdkman.io | bash
+	curl -s "https://get.sdkman.io?rcupdate=false" | bash
 	source $(SDKMAN_DIR)/bin/sdkman-init.sh
 
 .PHONY: jvm-tools
@@ -589,8 +593,7 @@ jvm-tools: SHELL := /bin/bash
 jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 	@{ \
 		set -e;\
-		export SDKMAN_DIR=$$HOME/.sdkman;\
-		source $$SDKMAN_DIR/bin/sdkman-init.sh;\
+		source $(SDKMAN_DIR)/bin/sdkman-init.sh;\
 		echo ">>> Installing Java";\
 		sdk install java;\
 		sdk install java 8.0.292-zulu;\
