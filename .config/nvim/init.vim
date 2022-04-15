@@ -192,7 +192,7 @@ set splitright
 set splitbelow
 
 " Permanent undo
-set undodir=~/.vimdid
+set undodir=$XDG_STATE_HOME/vimdid
 set undofile
 
 " Decent wildmenu
