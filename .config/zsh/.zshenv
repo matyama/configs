@@ -144,6 +144,25 @@ export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
 
+# Scala: REPL
+#  - `-Dscala.shell.histfile=...` is a workaround to make Scala REPL write
+#    command history to custom location respecting XDG specification
+#  - Despite the fact it's not recommended to override command behavior in
+#    `.envrc` (since it's always loaded, even for non-interactive shells), here
+#    we actually want to prevent all executions from creating `~/.scala_history`
+#  - Configuration of `spark-shell` could alternatively be done by setting
+#    `spark.driver.extraJavaOptions` in `$SPARK_HOME/conf/spark-defaults.conf`
+#    (possibly symlinked conf file). Note that the default location can be
+#    altered with `SPARK_CONF_DIR`.
+#  - Note that `SCALA_HISTFILE` is custom environment variable which won't be by
+#    itself recognized by Scala/Spark REPL
+#  - FIXME: Scala 3 uses `~/.dotty_history` and does not recognize the
+#    `-Dscala.shell.histfile` option
+#  - Note: Spark (shell) runs on Scala 2
+export SCALA_HISTFILE="${XDG_STATE_HOME}/scala/history"
+alias scala="scala -Dscala.shell.histfile=${SCALA_HISTFILE}"
+alias spark-shell="spark-shell --conf spark.driver.extraJavaOptions=\"-Dscala.shell.histfile=${SCALA_HISTFILE}\""
+
 # Scala: sbt & ivy2
 #  - `sbt -ivy ... -sbt-dir ...` is a workaround to make sbt XDG compliant, see:
 #    - https://github.com/sbt/sbt/issues/3681
