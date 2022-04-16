@@ -85,6 +85,10 @@ ifndef GOPATH
 GOPATH=$(XDG_DATA_HOME)/go
 endif
 
+ifndef MINIKUBE_HOME
+MINIKUBE_HOME=$(XDG_DATA_HOME)/minikube
+endif
+
 ifndef KREW_ROOT
 KREW_ROOT=$(XDG_DATA_HOME)/krew
 endif

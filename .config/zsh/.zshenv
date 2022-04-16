@@ -69,6 +69,13 @@ export STACK_ROOT=${XDG_DATA_HOME}/stack
 export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
+# Minikube
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#  - https://github.com/kubernetes/minikube/issues/4109
+#  - Known issue: Creates a further `.minikube` directory in `MINIKUBE_HOME` for
+#    whatever reason.
+export MINIKUBE_HOME=${XDG_DATA_HOME}/minikube
+
 # Kubernetes Krew
 #  - https://krew.sigs.k8s.io/docs/user-guide/advanced-configuration/
 export KREW_ROOT=${XDG_DATA_HOME}/krew
