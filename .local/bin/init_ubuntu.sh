@@ -9,5 +9,5 @@ echo ">>> Installing basic tools..."
 sudo apt install -y make git
 
 echo ">>> Creating custom directories..."
-mkdir -p ~/tmp ~/workspace
+mkdir -p ~/dev ~/tmp
 
