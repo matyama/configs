@@ -688,16 +688,13 @@ haskell-tools: haskell
 	stack install hlint apply-refact
 
 .PHONY: rust
-rust: $(ZSH_COMPLETIONS) net-tools
+rust: net-tools
 ifeq ($(shell which rustc 2> /dev/null),)
 	@echo ">>> Installing Rust toolchain"
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	. $(HOME)/.cargo/env
 	@echo ">>> Installing Rust nightly toolchain"
 	rustup install nightly
-	@echo ">>> Adding ZSH autocompletion for 'rustup' and 'cargo'"
-	rustup completions zsh > $</_rustup
-	rustup completions zsh cargo > $</_cargo
 endif
 	rustup show
 

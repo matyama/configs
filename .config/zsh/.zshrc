@@ -22,31 +22,46 @@ fi
 #  - If it's really needed, set this ad-hoc to false
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Plugins
+#  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
+#  - https://github.com/zsh-users/zsh-syntax-highlighting
+#  - https://github.com/zsh-users/zsh-history-substring-search
+#  - https://github.com/zsh-users/zsh-autosuggestions
+#
+# Plugin directories
+#  - Standard plugins can be found in $ZSH/plugins/
+#  - Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
-  aws
-  direnv
-  docker
-  docker-compose
-  fzf
-  git
-  helm
-  history
-  kubectl
-  minikube
-  pip
-  poetry
-  rust
-  sbt
-  scala
-  sdk
-  stack
-  zsh-syntax-highlighting
-  zsh-history-substring-search
-  zsh-autosuggestions
+  aws                           # completion support for awscli & few utilities 
+  copybuffer                    # copy shell buffer to clipboard with ctrl-o
+  direnv                        # creates the direnv hook
+  docker                        # adds auto-completion and aliases for docker
+  docker-compose                # adds completion & some aliases
+  fzf                           # enables fuzzy auto-completion & key bindings
+  git                           # adds many aliases & few useful functions
+  helm                          # adds completion for helm
+  history                       # adds a couple of convenient aliases
+  kubectl                       # adds completion & some aliases
+  minikube                      # adds completion for minikube
+  pip                           # adds completion & some aliases
+  poetry                        # adds completion & keeps it up to date
+  rust                          # adds completion for rustc, rustup and cargo
+  sbt                           # adds completion & some aliases
+  scala                         # adds completion & aliases for scala & scalac
+  sdk                           # adds auto-completion for sdk
+  stack                         # adds auto-completion for stack
+  zsh-syntax-highlighting       # provides fish-like syntax highlighting
+  zsh-history-substring-search  # provides fish-like history search feature
+  zsh-autosuggestions           # provides fish-like autosuggestions
 )
+
+# fzf
+#  - https://github.com/junegunn/fzf#layout
+#  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf#settings
+export FZF_BASE="$(dirname $(which fzf))"
+export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
+export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
+export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -179,18 +194,14 @@ autoload -U +X bashcompinit && bashcompinit
 
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 
-# direnv (https://direnv.net)
-[ ! $(command -v direnv) ] || eval "$(direnv hook zsh)"
+# Enable option stacking in docker auto-completion
+#  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/docker#settings
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
-
-# fzf
-# https://github.com/junegunn/fzf#layout
-export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
-export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
-export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
 
 # pipx
 if [ $(command -v pipx) ]; then
@@ -205,19 +216,6 @@ fi
 
 # Haskell stack (https://docs.haskellstack.org/en/stable/README/)
 [ ! $(command -v stack) ] || eval "$(stack --bash-completion-script stack)"
-
-# minikube autocompletion
-[ ! $(command -v minikube) ] || source <(minikube completion zsh)
-
-# kubectl autocompletion
-if [ $(command -v kubectl) ]; then
-  source <(kubectl completion zsh)
-  alias k=kubectl
-  complete -F __start_kubectl k
-fi
-
-# helm autocompletion
-[ ! $(command -v helm) ] || source <(helm completion zsh)
 
 # travis autocompletion
 [ ! -s "${TRAVIS_CONFIG_PATH}/travis.sh" ] || \
