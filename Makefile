@@ -103,7 +103,7 @@ DEBIAN_ISO := debian-11.3.0-amd64-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
 MAN1_DIR := /usr/local/share/man/man1
-ZSH_FUNC_DIR := /usr/local/share/zsh/site-functions
+ZSH_COMPLETIONS := $(ZSH)/completions
 
 # Ensure necessary paths exist
 $(FONTS_DIR) \
@@ -115,7 +115,7 @@ $(FONTS_DIR) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
 	$(ZDOTDIR) \
-	$(ZSH)/completions \
+	$(ZSH_COMPLETIONS) \
 	$(ZSH_CUSTOM) \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
@@ -477,7 +477,7 @@ test-k8s: net-tools
 .PHONY: binenv
 binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
 binenv: BINENV_BIN := $(shell mktemp)
-binenv: net-tools
+binenv: $(ZSH_COMPLETIONS) net-tools
 ifneq ($(shell which binenv 2> /dev/null),)
 	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
 else
@@ -488,8 +488,8 @@ else
 	$(BINENV_BIN) install $@
 	exec $$SHELL
 	@echo ">>> Generating zsh completions for $@"
-	$@ completion zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
+	$@ completion zsh > $</_$@
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 endif
 	@rm -rf $(BINENV_BIN)
 
@@ -663,7 +663,7 @@ ghcup-deps: net-tools
 
 .PHONY: ghcup
 ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
-ghcup: $(ZSH)/completions ghcup-deps
+ghcup: $(ZSH_COMPLETIONS) ghcup-deps
 ifneq ($(shell which ghcup 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
@@ -688,15 +688,16 @@ haskell-tools: haskell
 	stack install hlint apply-refact
 
 .PHONY: rust
-rust: net-tools
+rust: $(ZSH_COMPLETIONS) net-tools
 ifeq ($(shell which rustc 2> /dev/null),)
 	@echo ">>> Installing Rust toolchain"
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	. $(HOME)/.cargo/env
 	@echo ">>> Installing Rust nightly toolchain"
 	rustup install nightly
-	@echo ">>> Adding ZSH autocompletion for 'rustup'"
-	rustup completions zsh | sudo tee $(ZSH_FUNC_DIR)/_rustup > /dev/null
+	@echo ">>> Adding ZSH autocompletion for 'rustup' and 'cargo'"
+	rustup completions zsh > $</_rustup
+	rustup completions zsh cargo > $</_cargo
 endif
 	rustup show
 
@@ -754,7 +755,7 @@ rust-tools: rust
 
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
-alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) net-tools x-utils
+alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(ZSH_COMPLETIONS) net-tools x-utils
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@: https://github.com/alacritty/alacritty"
 	sudo snap install --classic $@
@@ -771,8 +772,8 @@ endif
 	@echo ">>> Fetching man pages for $$($@ -V)"
 	@sudo wget -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
 	@echo ">>> Fetching zsh completions for $$($@ -V)"
-	@sudo wget -qcNP $(ZSH_FUNC_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
+	@sudo wget -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 
 # Resources:
 #  - https://github.com/vercel/install-node
@@ -886,7 +887,7 @@ endif
 
 # https://github.com/cli/cli
 .PHONY: gh
-gh: zsh
+gh: $(ZSH_COMPLETIONS) zsh
 ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
@@ -896,7 +897,7 @@ else
 	sudo apt update
 	sudo apt install -y $@
 	@echo ">>> Adding ZSH autocompletion for Github CLI"
-	$@ completion -s zsh | sudo tee $(ZSH_FUNC_DIR)/_$@ > /dev/null
+	$@ completion -s zsh > $</_$@
 endif
 
 # Note: `--no-user-install` forces gem to respect `$GEM_HOME`
