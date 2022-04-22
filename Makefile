@@ -498,7 +498,12 @@ endif
 #  - https://github.com/ohmyzsh/ohmyzsh#custom-directory
 #  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
+# Themes:
 #  - https://github.com/romkatv/powerlevel10k
+# Plugins:
+#  - https://github.com/zsh-users/zsh-syntax-highlighting
+#  - https://github.com/zsh-users/zsh-history-substring-search
+#  - https://github.com/zsh-users/zsh-autosuggestions
 .PHONY: zsh
 zsh: $(XDG_CACHE_HOME)/zsh core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
@@ -510,8 +515,20 @@ else
 	sh -c "$$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 	sudo chsh -s $$(which $@)
 	@echo ">>> Setting up powerlevel10k theme"
-	git clone https://github.com/romkatv/powerlevel10k.git $(ZSH_CUSTOM)/themes/powerlevel10k
+	git clone \
+		https://github.com/romkatv/powerlevel10k.git \
+		$(ZSH_CUSTOM)/themes/powerlevel10k
 	sudo apt install -y fonts-powerline
+	@echo ">>> Installing zsh plugins"
+	git clone \
+		https://github.com/zsh-users/zsh-syntax-highlighting.git \
+		$(ZSH_CUSTOM)/plugins/zsh-syntax-highlighting
+	git clone \
+		https://github.com/zsh-users/zsh-history-substring-search \
+		$(ZSH_CUSTOM)/plugins/zsh-history-substring-search
+	git clone \
+		https://github.com/zsh-users/zsh-autosuggestions \
+		$(ZSH_CUSTOM)/plugins/zsh-autosuggestions
 endif
 
 .PHONY: snaps

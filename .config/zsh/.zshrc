@@ -18,7 +18,28 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(aws direnv docker docker-compose fzf git helm history kubectl minikube pip poetry rust sbt scala sdk stack)
+plugins=(
+  aws
+  direnv
+  docker
+  docker-compose
+  fzf
+  git
+  helm
+  history
+  kubectl
+  minikube
+  pip
+  poetry
+  rust
+  sbt
+  scala
+  sdk
+  stack
+  zsh-syntax-highlighting
+  zsh-history-substring-search
+  zsh-autosuggestions
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -46,8 +67,18 @@ zshaddhistory() {
 setopt hist_ignore_all_dups
 setopt hist_ignore_space
 
+# History search
+#  - https://github.com/zsh-users/zsh-history-substring-search#configuration
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
+
+# Keybindings
+
+# Accept autosuggestion with <Ctrl><Space>
+#  - https://github.com/zsh-users/zsh-autosuggestions#key-bindings
+bindkey '^ ' autosuggest-accept
+
 # Use Ctrl-Z to switch back to Vim
-# https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+#  - https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 fancy-ctrl-z () {
   if [[ $#BUFFER -eq 0 ]]; then
     BUFFER="fg"
