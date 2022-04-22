@@ -37,6 +37,7 @@ plugins=(
   direnv                        # creates the direnv hook
   docker                        # adds auto-completion and aliases for docker
   docker-compose                # adds completion & some aliases
+  fd                            # adds completion for fd
   fzf                           # enables fuzzy auto-completion & key bindings
   git                           # adds many aliases & few useful functions
   gh                            # adds completion for the GitHub CLI
