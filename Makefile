@@ -715,7 +715,9 @@ endif
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
 .PHONY: rust-tools
-rust-tools: rust
+rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
+rust-tools: RG_PKG := $(shell mktemp)
+rust-tools: rust $(ZSH_COMPLETIONS) $(MAN1_DIR)
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
 	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
@@ -748,6 +750,14 @@ rust-tools: rust
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
+	@wget -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_amd64.deb"
+	@ar -p $(RG_PKG) data.tar.xz | \
+		tar -xOJf - --strip-components=4 --wildcards '*/_rg' \
+		> "$(ZSH_COMPLETIONS)/_rg"
+	@ar -p $(RG_PKG) data.tar.xz | \
+		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
+		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
+	@rm -f $(RG_PKG)
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
@@ -772,7 +782,7 @@ endif
 	@echo ">>> Fetching man pages for $$($@ -V)"
 	@sudo wget -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
 	@echo ">>> Fetching zsh completions for $$($@ -V)"
-	@sudo wget -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
+	@wget -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 
 # Resources:
