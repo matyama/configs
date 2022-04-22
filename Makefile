@@ -894,7 +894,7 @@ endif
 
 # https://github.com/cli/cli
 .PHONY: gh
-gh: $(ZSH_COMPLETIONS) zsh
+gh: zsh
 ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
@@ -903,8 +903,6 @@ else
 	sudo apt-add-repository https://cli.github.com/packages
 	sudo apt update
 	sudo apt install -y $@
-	@echo ">>> Adding ZSH autocompletion for Github CLI"
-	$@ completion -s zsh > $</_$@
 endif
 
 # Note: `--no-user-install` forces gem to respect `$GEM_HOME`

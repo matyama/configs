@@ -39,6 +39,7 @@ plugins=(
   docker-compose                # adds completion & some aliases
   fzf                           # enables fuzzy auto-completion & key bindings
   git                           # adds many aliases & few useful functions
+  gh                            # adds completion for the GitHub CLI
   helm                          # adds completion for helm
   history                       # adds a couple of convenient aliases
   kubectl                       # adds completion & some aliases
