@@ -73,6 +73,7 @@ if [ "$(command -v googler)" ]; then
 fi
 
 # Python
+alias py="python3"
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
 # Haskell
