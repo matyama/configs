@@ -47,6 +47,7 @@ plugins=(
   minikube                      # adds completion for minikube
   pip                           # adds completion & some aliases
   poetry                        # adds completion & keeps it up to date
+  ripgrep                       # adds completion for ripgrep
   rust                          # adds completion for rustc, rustup and cargo
   sbt                           # adds completion & some aliases
   scala                         # adds completion & aliases for scala & scalac

@@ -714,7 +714,7 @@ endif
 .PHONY: rust-tools
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
-rust-tools: rust $(ZSH_COMPLETIONS) $(MAN1_DIR)
+rust-tools: rust $(MAN1_DIR)
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
 	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
@@ -748,9 +748,6 @@ rust-tools: rust $(ZSH_COMPLETIONS) $(MAN1_DIR)
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
 	@wget -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_amd64.deb"
-	@ar -p $(RG_PKG) data.tar.xz | \
-		tar -xOJf - --strip-components=4 --wildcards '*/_rg' \
-		> "$(ZSH_COMPLETIONS)/_rg"
 	@ar -p $(RG_PKG) data.tar.xz | \
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
