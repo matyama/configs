@@ -53,6 +53,7 @@ plugins=(
   scala                         # adds completion & aliases for scala & scalac
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
+  thefuck                       # press ESC twice to run fuck
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
   zsh-autosuggestions           # provides fish-like autosuggestions
@@ -210,9 +211,6 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 if [ $(command -v pipx) ]; then
   eval "$(register-python-argcomplete pipx)"
 fi
-
-# thefuck (shell command corrector)
-[ ! $(command -v fuck) ] || eval $(thefuck --alias)
 
 # Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
 [ -f "${XDG_DATA_HOME}/ghcup/env" ] && source "${XDG_DATA_HOME}/ghcup/env"
