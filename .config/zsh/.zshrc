@@ -57,6 +57,7 @@ plugins=(
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
   zsh-autosuggestions           # provides fish-like autosuggestions
+  zsh-interactive-cd            # provides fish-like interactive cd completion
 )
 
 # fzf
