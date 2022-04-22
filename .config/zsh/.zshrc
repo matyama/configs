@@ -188,6 +188,10 @@ export BAT_STYLE=full
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
 
+# Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
+
 # Initialize completions
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 #  - https://unix.stackexchange.com/a/391670
@@ -204,24 +208,15 @@ zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-# Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
-
-# pipx
-if [ $(command -v pipx) ]; then
-  eval "$(register-python-argcomplete pipx)"
-fi
-
-# Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
-[ -f "${XDG_DATA_HOME}/ghcup/env" ] && source "${XDG_DATA_HOME}/ghcup/env"
-
-# Haskell stack (https://docs.haskellstack.org/en/stable/README/)
-[ ! $(command -v stack) ] || eval "$(stack --bash-completion-script stack)"
+# pipx autocompletion
+(( $+commands[pipx] )) && eval "$(register-python-argcomplete pipx)"
 
 # travis autocompletion
-[ ! -s "${TRAVIS_CONFIG_PATH}/travis.sh" ] || \
+[[ -s "${TRAVIS_CONFIG_PATH}/travis.sh" ]] && \
   source "${TRAVIS_CONFIG_PATH}/travis.sh"
+
+# Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
+[[ -f "${XDG_DATA_HOME}/ghcup/env" ]] && source "${XDG_DATA_HOME}/ghcup/env"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
