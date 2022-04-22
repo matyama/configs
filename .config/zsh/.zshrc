@@ -9,7 +9,14 @@ DEFAULT_USER=matyama
 ZSH_THEME=powerlevel10k/powerlevel10k
 
 # Set p10k configuration file
-POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k.zsh"
+#  - Note: *Rainbow* prompt style does now display correctly in vscode terminal,
+#    therefore `p10k-vscode.zsh` is used if current shell runs there.
+#  - See: https://stackoverflow.com/a/59231654/15112035
+if [[ -n "${TERM_PROGRAM}"  ]] && [[ "${TERM_PROGRAM}" == "vscode" ]]; then
+  POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k-vscode.zsh"
+else
+  POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k.zsh"
+fi
 
 # Disable p10k configuration wizard
 #  - If it's really needed, set this ad-hoc to false
