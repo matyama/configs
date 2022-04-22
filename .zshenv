@@ -4,6 +4,6 @@
 #
 # Alternatively, this export could be set globally and  moved to
 # `/etc/zsh/zshenv`, see: https://wiki.archlinux.org/title/XDG_Base_Directory
-export ZDOTDIR=${XDG_CONFIG_HOME}/zsh
+export ZDOTDIR=${XDG_CONFIG_HOME:-$HOME/.config}/zsh
 . $ZDOTDIR/.zshenv
 
