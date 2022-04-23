@@ -33,7 +33,10 @@ export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 # System and architecture
-export ARCH=$(uname -m)
+#  - https://zsh.sourceforge.io/Doc/Release/Parameters.html
+#  - TODO: consider adding `DIST_ARCH` derived from `ARCH` for `amd64 ~ x86_64`
+export ARCH="${CPUTYPE:-x86_64}"
+#export DIST_ARCH=amd64
 
 # Compilation flags
 # export ARCHFLAGS="-arch $ARCH"

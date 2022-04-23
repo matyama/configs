@@ -8,7 +8,7 @@ if [[ ! "$(command -v wget gpg shasum dpkg)" ]]; then
 fi
 
 KERNEL_REPO_URL=https://kernel.ubuntu.com/~kernel-ppa/mainline
-ARCH=amd64
+ARCH="$(dpkg --print-architecture)"
 VERSION="latest"
 INSTALL_OPS=""
 DOWNLOAD_OPS="-nv"

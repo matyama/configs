@@ -99,11 +99,13 @@ ifndef CRAWL_DIR
 CRAWL_DIR=$(XDG_DATA_HOME)/crawl/
 endif
 
+DIST_ARCH := $(shell dpkg --print-architecture)
+
 # Aliases to make tools respect XDG specification
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
 
-DEBIAN_ISO := debian-11.3.0-amd64-netinst.iso
+DEBIAN_ISO := debian-11.3.0-$(DIST_ARCH)-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
 MAN1_DIR := /usr/local/share/man/man1
@@ -141,7 +143,7 @@ $(FONTS_DIR) \
 $(MAN1_DIR):
 	sudo mkdir -p $@
 
-$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
+$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/$(DIST_ARCH)/iso-cd
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
 	@echo ">>> Downloading Debian Buster net installer for x86_64" 
 	@[ -f $@ ] || $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
@@ -479,7 +481,7 @@ test-k8s: net-tools
 
 # https://github.com/devops-works/binenv#linux-bashzsh
 .PHONY: binenv
-binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64
+binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_$(DIST_ARCH)
 binenv: BINENV_BIN := $(shell mktemp)
 binenv: $(ZSH_COMPLETIONS) net-tools
 ifneq ($(shell which binenv 2> /dev/null),)
@@ -751,7 +753,7 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
-	@$(WGET) -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_amd64.deb"
+	@$(WGET) -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_$(DIST_ARCH).deb"
 	@ar -p $(RG_PKG) data.tar.xz | \
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
@@ -813,7 +815,7 @@ docker: core-utils apt-utils
 	@echo ">>> Installing Docker: https://docs.docker.com/engine/install/ubuntu/"
 	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' and configuring apt sources"
 	curl -fsSL $(DOCKER_URL)/gpg | gpg --dearmor | sudo tee $(DOCKER_GPG) > /dev/null
-	echo "deb [arch=amd64 signed-by=$(DOCKER_GPG)] $(DOCKER_URL) $$(lsb_release -cs) stable" \
+	echo "deb [arch=$(DIST_ARCH) signed-by=$(DOCKER_GPG)] $(DOCKER_URL) $$(lsb_release -cs) stable" \
 		| sudo tee /etc/apt/sources.list.d/$@.list > /dev/null
 	sudo apt-get update
 	sudo apt-get install -y docker-ce docker-ce-cli containerd.io
@@ -882,7 +884,7 @@ else
 endif
 
 .PHONY: google-chrome
-google-chrome: CHROME_PKG := google-chrome-stable_current_amd64.deb
+google-chrome: CHROME_PKG := google-chrome-stable_current_$(DIST_ARCH).deb
 google-chrome: net-tools
 ifneq ($(shell which google-chrome 2> /dev/null),)
 	@echo ">>> Google Chrome already installed"
@@ -921,7 +923,7 @@ aws-vault: net-tools
 	@{ \
 		TAG=$$(curl -sL -H "Accept: application/json" "$(AWS_VAULT_URL)/latest" | jq -r '.tag_name');\
 		echo ">>> Downloading $@ $$TAG binary as '$(AWS_VAULT_BIN)'";\
-		sudo curl -Lo $(AWS_VAULT_BIN) "$(AWS_VAULT_URL)/download/$$TAG/aws-vault-linux-amd64";\
+		sudo curl -Lo $(AWS_VAULT_BIN) "$(AWS_VAULT_URL)/download/$$TAG/aws-vault-linux-$(DIST_ARCH)";\
 	}
 	sudo chmod 755 $(AWS_VAULT_BIN)
 
@@ -963,7 +965,7 @@ endif
 	rm -rf $(TOOLBOX_DIR)
 
 .PHONY: keybase
-keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_amd64.deb
+keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_$(DIST_ARCH).deb
 keybase: KEYBASE_PKG := $(shell mktemp)
 keybase: net-tools
 ifneq ($(shell which keybase 2> /dev/null),)
