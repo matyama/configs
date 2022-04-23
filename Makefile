@@ -99,6 +99,10 @@ ifndef CRAWL_DIR
 CRAWL_DIR=$(XDG_DATA_HOME)/crawl/
 endif
 
+# Aliases to make tools respect XDG specification
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
+
 DEBIAN_ISO := debian-11.3.0-amd64-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
@@ -140,7 +144,7 @@ $(MAN1_DIR):
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/amd64/iso-cd
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
 	@echo ">>> Downloading Debian Buster net installer for x86_64" 
-	@[ -f $@ ] || wget -O $@ $(ISO_URL)/$(DEBIAN_ISO)
+	@[ -f $@ ] || $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
 DOCKER_CMD := $(shell command -v docker 2> /dev/null)
 
@@ -482,7 +486,7 @@ ifneq ($(shell which binenv 2> /dev/null),)
 	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
 else
 	@echo ">>> Downloading and installing $@"
-	wget -q -O $(BINENV_BIN) $(BINENV_URL)
+	$(WGET) -q -O $(BINENV_BIN) $(BINENV_URL)
 	chmod +x $(BINENV_BIN)
 	$(BINENV_BIN) update
 	$(BINENV_BIN) install $@
@@ -747,7 +751,7 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
-	@wget -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_amd64.deb"
+	@$(WGET) -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_amd64.deb"
 	@ar -p $(RG_PKG) data.tar.xz | \
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
@@ -774,9 +778,9 @@ else
 	sudo snap refresh $@
 endif
 	@echo ">>> Fetching man pages for $$($@ -V)"
-	@sudo wget -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
+	@sudo $(WGET) -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
 	@echo ">>> Fetching zsh completions for $$($@ -V)"
-	@wget -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
+	@$(WGET) -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 
 # Resources:
@@ -884,7 +888,7 @@ ifneq ($(shell which google-chrome 2> /dev/null),)
 	@echo ">>> Google Chrome already installed"
 else
 	@echo ">>> Downloading and installing Google Chrome"
-	wget -O /tmp/$(CHROME_PKG) https://dl.google.com/linux/direct/$(CHROME_PKG)
+	$(WGET) -O /tmp/$(CHROME_PKG) https://dl.google.com/linux/direct/$(CHROME_PKG)
 	sudo apt install -y /tmp/$(CHROME_PKG)
 endif
 	rm -rf /tmp/$(CHROME_PKG)
@@ -993,7 +997,7 @@ ifneq ($(shell which crawl 2> /dev/null),)
 else
 	@echo ">>> Installing Dungeon Crawl Stone Soup: https://crawl.develz.org/"
 	echo 'deb https://crawl.develz.org/debian crawl 0.23' | sudo tee -a /etc/apt/sources.list
-	wget https://crawl.develz.org/debian/pubkey -O - | sudo apt-key add -
+	$(WGET) https://crawl.develz.org/debian/pubkey -O - | sudo apt-key add -
 	sudo apt update
 	sudo apt install -y $@ $@-tiles
 endif
