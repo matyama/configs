@@ -100,13 +100,13 @@ instructed. The font download is part of `make fonts`.
 installed with `make base16-shell`. One can then manually
 [switch themes](https://github.com/chriskempson/base16-shell#configuration)
 with `base16_<theme>` which creates/updates a link
-`~/.base16_theme`.
+`$XDG_STATE_HOME/base16-shell/base16_theme`.
 
 Note that the shell hook is already added to and liked with `.zshrc`, so
 after installation with `make` one just needs to reload zsh and pick a
 theme:
 ```bash
-zshreload
+omz reload
 base16_gruvbox-dark-hard
 ```
 

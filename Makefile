@@ -676,7 +676,7 @@ else
 	@echo ">>> Dowloading zsh completions for $@"
 	curl -sSL -o $</_$@ \
 		"$(GHCUP_URL)/-/raw/v$$($@ --numeric-version)/shell-completions/zsh"
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'zshreload'"
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 endif
 
 # Installed tools:

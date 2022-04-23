@@ -1,6 +1,6 @@
 # ZSH
-alias zshreload="source ${ZDOTDIR}/.zshrc"
-alias zshconfig="nvim ${ZDOTDIR}/.zshrc"
+alias zenv="nvim ${ZDOTDIR}/.zshenv"
+alias zconf="nvim ${ZDOTDIR}/.zshrc"
 
 # XDG
 alias o="xdg-open"
@@ -12,9 +12,7 @@ alias p="xclip -o -selection clipboard"
 alias rmclip="echo '' | c"
 
 # Command auto-correction
-if [ "$(command -v fuck)" ]; then
-	alias f="fuck"
-fi
+(( $+commands[fuck] )) && alias f="fuck"
 
 # EDITOR
 alias e="nvim"
@@ -25,9 +23,7 @@ alias oldvim="\vim"
 alias vimdiff="nvim -d"
 
 # Search file with fzf and open in with the editor
-if [ "$(command -v fzf)" ]; then
-	alias ef='e $(fzf)'
-fi
+(( $+commands[fzf] )) && alias ef='e $(fzf)'
 
 # PDF
 
@@ -55,30 +51,25 @@ alias egrep='egrep --color=auto'
 alias hg='history | egrep'
 
 # exa (https://the.exa.website/)
-if [ "$(command -v exa)" ]; then
-	alias l="exa -lahg@ --git"
-	alias lcd="l && cd"
-	alias cdl='cdls() { cd "$@" && l; }; cdls'
-fi
+(( $+commands[exa] )) && alias l="exa -lahg@ --git"
 
 # bat (https://github.com/sharkdp/bat)
-if [ "$(command -v bat)" ]; then
+if (( $+commands[bat] )); then
 	alias b="bat"
 	alias bp="bat --plain"
 fi
 
 # googler (https://github.com/jarun/googler)
-if [ "$(command -v googler)" ]; then
-	alias s="googler"
-fi
+(( $+commands[googler] )) && alias s="googler"
 
 # Python
 alias py="python3"
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
 # Haskell
-if [ "$(command -v ghc)" ]; then
+if (( $+commands[ghc] )); then
 	# Quick check if Haskell source file(s) compile
 	alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
 	alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
 fi
+
