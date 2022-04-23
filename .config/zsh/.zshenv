@@ -244,12 +244,13 @@ export KERAS_HOME=${XDG_CACHE_HOME}/keras
 export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
 
 # Path extension
-export PATH=${PATH}:${XDG_BIN_HOME}
-export PATH=${PATH}:${CARGO_BIN}
-export PATH=${PATH}:${GOBIN}
-export PATH=${PATH}:${GEM_BIN}
-export PATH=${PATH}:${KREW_BIN}
-export PATH=${PATH}:/usr/local/bin
-export PATH=${PATH}:${BINENV_HOME}
-export PATH=${PATH}:"${XDG_DATA_HOME}/npm/bin"
+typeset -aU path
+path+=${XDG_BIN_HOME}
+path+=${CARGO_BIN}
+path+=${GOBIN}
+path+=${GEM_BIN}
+path+=${KREW_BIN}
+path+="/usr/local/bin"
+path+=${BINENV_HOME}
+path+="${XDG_DATA_HOME}/npm/bin"
 
