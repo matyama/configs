@@ -421,6 +421,8 @@ else
 	minikube status
 	@echo ">>> Installing and initializing helm: https://helm.sh/docs/"
 	binenv install helm
+	@echo ">>> Installing helm-operator: https://github.com/fluxcd/helm-operator"
+	binenv install helm-operator
 	@echo ">>> Installing kubectx: https://github.com/ahmetb/kubectx"
 	krew install ctx
 	@echo ">>> Current k8s context is '$$(kubectl ctx -c)'"
