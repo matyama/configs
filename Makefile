@@ -479,25 +479,35 @@ test-k8s: net-tools
 	minikube status || true
 	@echo ">>> Verified kubectl $$(kubectl version --client --short)"
 
-# https://github.com/devops-works/binenv#linux-bashzsh
+# Installation resources:
+#  - https://github.com/devops-works/binenv#linux-bashzsh
+# 
+# TODO: Verify (gpg) the signature of the checksum file if binenv releases one.
 .PHONY: binenv
-binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_$(DIST_ARCH)
-binenv: BINENV_BIN := $(shell mktemp)
+binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download
+binenv: BINENV_BIN := binenv_linux_$(DIST_ARCH)
+binenv: DOWNLOAD_DIR := $(shell mktemp -d)
 binenv: $(ZSH_COMPLETIONS) net-tools
 ifneq ($(shell which binenv 2> /dev/null),)
 	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
 else
-	@echo ">>> Downloading and installing $@"
-	$(WGET) -q -O $(BINENV_BIN) $(BINENV_URL)
-	chmod +x $(BINENV_BIN)
-	$(BINENV_BIN) update
-	$(BINENV_BIN) install $@
-	exec $$SHELL
+	@echo ">>> Downloading $@"
+	$(WGET) -q -P $(DOWNLOAD_DIR) \
+		"$(BINENV_URL)/$(BINENV_BIN)" \
+		"$(BINENV_URL)/checksums.txt"
+	@echo ">>> Verifying dowloaded $@ file integrity"
+	@(cd $(DOWNLOAD_DIR) && \
+		sha256sum -c --strict --status --ignore-missing checksums.txt) || \
+		(echo ">>> Failed to verify checksum" && rm -rf $(DOWNLOAD_DIR) && exit 1)
+	@echo ">>> Installing $@"
+	@chmod +x "$(DOWNLOAD_DIR)/$(BINENV_BIN)"
+	"$(DOWNLOAD_DIR)/$(BINENV_BIN)" update
+	"$(DOWNLOAD_DIR)/$(BINENV_BIN)" install $@
 	@echo ">>> Generating zsh completions for $@"
 	$@ completion zsh > $</_$@
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 endif
-	@rm -rf $(BINENV_BIN)
+	@rm -rf $(DOWNLOAD_DIR)
 
 # Installation resources:
 #  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
