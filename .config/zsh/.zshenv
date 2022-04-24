@@ -252,5 +252,6 @@ path+=${GEM_BIN}
 path+=${KREW_BIN}
 path+="/usr/local/bin"
 path+=${BINENV_HOME}
+path+="${CABAL_DIR}/bin"
 path+="${XDG_DATA_HOME}/npm/bin"
 

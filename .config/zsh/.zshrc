@@ -215,9 +215,6 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 [[ -s "${TRAVIS_CONFIG_PATH}/travis.sh" ]] && \
   source "${TRAVIS_CONFIG_PATH}/travis.sh"
 
-# Haskell toolchain installer ghcup (https://www.haskell.org/ghcup/)
-[[ -f "${XDG_DATA_HOME}/ghcup/env" ]] && source "${XDG_DATA_HOME}/ghcup/env"
-
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
   source "${SDKMAN_DIR}/bin/sdkman-init.sh"
