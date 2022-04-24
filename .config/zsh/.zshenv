@@ -82,6 +82,17 @@ export STACK_ROOT=${XDG_DATA_HOME}/stack
 export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
+# AWS CLI & Vault
+#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
+#  - https://docs.aws.amazon.com/cli/latest/topic/config-vars.html
+#  - https://github.com/99designs/aws-vault/blob/master/USAGE.md
+#  - https://github.com/aws/aws-sdk/issues/30#issuecomment-532208981
+#  - https://github.com/99designs/aws-vault/issues/707
+export AWS_CONFIG_FILE="${XDG_CONFIG_HOME}/aws/config"
+export AWS_CLI_HISTORY_FILE="${XDG_STATE_HOME}/aws/history"
+export AWS_SHARED_CREDENTIALS_FILE="${XDG_DATA_HOME}/aws/credentials}"
+export AWS_VAULT_FILE_DIR="${XDG_DATA_HOME}/awsvault/keys"
+
 # Minikube
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 #  - https://github.com/kubernetes/minikube/issues/4109

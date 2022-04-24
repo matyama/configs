@@ -926,19 +926,12 @@ travis: ruby
 	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
 	gem install $@ --no-document --no-user-install
 
-# TODO: Install via binenv when it's available as a dependency
 .PHONY: aws-vault
-aws-vault: AWS_VAULT_BIN := /usr/local/bin/aws-vault
-aws-vault: AWS_VAULT_URL := https://github.com/99designs/aws-vault/releases
-aws-vault: net-tools
-	@echo ">>> Installing latest $@: $(AWS_VAULT_URL)"
-	@{ \
-		TAG=$$(curl -sL -H "Accept: application/json" "$(AWS_VAULT_URL)/latest" | jq -r '.tag_name');\
-		echo ">>> Downloading $@ $$TAG binary as '$(AWS_VAULT_BIN)'";\
-		sudo curl -Lo $(AWS_VAULT_BIN) "$(AWS_VAULT_URL)/download/$$TAG/aws-vault-linux-$(DIST_ARCH)";\
-	}
-	sudo chmod 755 $(AWS_VAULT_BIN)
-
+aws-vault: binenv
+	@echo ">>> Installing $@: https://github.com/99designs/aws-vault"
+	@binenv update
+	binenv install $@
+	
 .PHONY: bat
 bat: $(XDG_BIN_HOME)
 ifneq ($(shell which bat 2> /dev/null),)

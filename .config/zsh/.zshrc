@@ -211,6 +211,9 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 # pipx autocompletion
 (( $+commands[pipx] )) && eval "$(register-python-argcomplete pipx)"
 
+# aws-vault autocompletion
+(( $+commands[aws-vault] )) && eval "$(aws-vault --completion-script-zsh)"
+
 # travis autocompletion
 [[ -s "${TRAVIS_CONFIG_PATH}/travis.sh" ]] && \
   source "${TRAVIS_CONFIG_PATH}/travis.sh"
