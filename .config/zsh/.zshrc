@@ -146,11 +146,8 @@ export LESS="-F -X -R"
 
 # Set configuration files for less
 #  - TODO: XDG should be fully supported when version 600 lands
-#  - TODO: Try `XDG_STATE_HOME` instead of `XDG_DATA_HOME` as it should be more
-#    appropriate for `lesshst` and should be supported by less as well.
-#    Unfortunately, currently `XDG_STATE_HOME` is not set.
 export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
-export LESSHISTFILE=${XDG_DATA_HOME}/less/lesshst
+export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 
 # To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
