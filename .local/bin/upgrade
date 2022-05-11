@@ -232,6 +232,8 @@ fi
 	source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
 if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
+	echo "Updating sdk..."
+	sdk update
 	echo "Upgrading sdk candidates..."
 	CANDIDATES=$(\
 		# make this non-interactive and don't run any upgrade
