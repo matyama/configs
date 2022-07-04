@@ -24,6 +24,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
 # Plugins
 #  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
+#  - https://github.com/base16-project/base16-shell
 #  - https://github.com/zsh-users/zsh-syntax-highlighting
 #  - https://github.com/zsh-users/zsh-history-substring-search
 #  - https://github.com/zsh-users/zsh-autosuggestions
@@ -33,6 +34,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 #  - Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
   aws                           # completion support for awscli & few utilities 
+  base16-shell                  # provides support for Base16 Shell themes
   copybuffer                    # copy shell buffer to clipboard with ctrl-o
   direnv                        # creates the direnv hook
   docker                        # adds auto-completion and aliases for docker
@@ -152,17 +154,6 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 # To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
   source "${POWERLEVEL9K_CONFIG_FILE}"
-
-# Base16 Shell (https://github.com/chriskempson/base16-shell)
-BASE16_SHELL_HOME="${BASE16_SHELL_HOME:-${XDG_CONFIG_HOME}/base16-shell}"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL_HOME/profile_helper.sh" ] && \
-    eval "$("$BASE16_SHELL_HOME/profile_helper.sh")"
-
-# NOTE: Do not add this to `.zshenv`/`.zprofile` as it is altered by the Base16
-# `profile_helper.sh` (hooked above) when the theme is changed and then it 
-# might missmatch colors in `~/.base16_theme` if the shell config is reloaded.
-BASE16_THEME="${BASE16_THEME:-gruvbox-dark-hard}"
 
 # Base16 fzf (https://github.com/fnune/base16-fzf)
 BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"

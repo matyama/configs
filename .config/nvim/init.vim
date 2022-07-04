@@ -116,15 +116,14 @@ endif
 set background=dark
 
 " Pick Base16 color scheme and access colors present in 256 colorspace
-"  - https://github.com/chriskempson/base16-shell#base16-vim-users
+"  - https://github.com/base16-project/base16-shell#base16-vim-users
 "  - https://github.com/base16-project/base16-vim#256-colorspace
 "  - https://github.com/base16-project/base16-vim#installation
-if filereadable(expand("~/.vimrc_background"))
+if exists('$BASE16_THEME')
+    \ && (!exists('g:colors_name') 
+    \ || g:colors_name != 'base16-$BASE16_THEME')
   let base16colorspace=256
-  source ~/.vimrc_background
-elseif filereadable(expand("$XDG_STATE_HOME/base16-shell/vimrc_background"))
-  let base16colorspace=256
-  source $XDG_STATE_HOME/base16-shell/vimrc_background
+  colorscheme base16-$BASE16_THEME
 endif
 
 " Enable syntax highlight

@@ -33,8 +33,10 @@ ifndef BASE16_FZF_HOME
 BASE16_FZF_HOME=$(XDG_CONFIG_HOME)/base16-fzf
 endif
 
-ifndef BASE16_SHELL_HOME
-BASE16_SHELL_HOME=$(XDG_CONFIG_HOME)/base16-shell
+# TODO: currently base16-project hardcodes `$HOME/.config`, use 
+# `XDG_CONFIG_HOME` once supported
+ifndef BASE16_SHELL_PATH
+BASE16_SHELL_PATH=$(HOME)/.config/base16-shell
 endif
 
 ifndef ALACRITTY_CONFIG_DIR 
@@ -123,6 +125,7 @@ $(FONTS_DIR) \
 	$(ZDOTDIR) \
 	$(ZSH_COMPLETIONS) \
 	$(ZSH_CUSTOM) \
+	$(ZSH_CUSTOM)/plugins/base16-shell \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/vm \
@@ -163,15 +166,19 @@ install-fonts: $(FONTS_DIR)
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 
 # Resources:
-#  - [Base16 Shell](https://github.com/chriskempson/base16-shell)
+#  - [Base16 Shell](https://github.com/base16-project/base16-shell)
 .PHONY: base16-shell
-base16-shell: BASE16_SHELL_REPO := https://github.com/chriskempson/base16-shell.git
+base16-shell: BASE16_SHELL_REPO := https://github.com/base16-project/base16-shell.git
+base16-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
 base16-shell: BASE16_THEME := gruvbox-dark-hard
-base16-shell:
-	@echo ">>> Cloning Base16 Shell repository to '$(BASE16_SHELL_HOME)'"
-	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_HOME)
+base16-shell: zsh $(ZSH_CUSTOM)/plugins/base16-shell
+	@echo ">>> Cloning Base16 Shell repository to '$(BASE16_SHELL_PATH)'"
+	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_PATH)
+	@echo ">>> Linking Base16 Shell OMZ plugin"
+	@ln -svf $(BASE16_SHELL_PATH)/base16-shell.plugin.zsh \
+		$(ZSH_CUSTOM)/plugins/base16-shell/base16-shell.plugin.zsh
 	@echo ">>> Testing default Base16 color scheme"
-	@$(BASE16_SHELL_HOME)/colortest
+	@$(BASE16_SHELL_PATH)/colortest
 	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
 
 # Resources:

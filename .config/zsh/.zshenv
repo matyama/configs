@@ -151,7 +151,11 @@ export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
 
 # Base16
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
-export BASE16_SHELL_HOME=${XDG_CONFIG_HOME}/base16-shell
+export BASE16_SHELL_PATH=${HOME}/.config/base16-shell
+# TODO: currently base16-project hardcodes `$HOME/.config`, use 
+# `XDG_CONFIG_HOME` once supported
+#export BASE16_SHELL_PATH=${XDG_CONFIG_HOME}/base16-shell
+export BASE16_THEME_DEFAULT=gruvbox-dark-hard
 
 # Bat
 export BAT_CONFIG_DIR=${XDG_CONFIG_HOME}/bat
