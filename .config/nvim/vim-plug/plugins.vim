@@ -68,7 +68,7 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	Plug 'jremmen/vim-ripgrep'
 
 	" Syntactic language support
-	Plug 'cespare/vim-toml'
+	Plug 'cespare/vim-toml', { 'branch': 'main' }
 	Plug 'stephpy/vim-yaml'
 	Plug 'rust-lang/rust.vim'
 	Plug 'plasticboy/vim-markdown'
