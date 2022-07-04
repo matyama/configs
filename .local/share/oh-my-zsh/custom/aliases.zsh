@@ -64,6 +64,7 @@ fi
 
 # Python
 alias py="python3"
+alias wp="which python"
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
 # Haskell
