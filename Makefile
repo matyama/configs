@@ -182,9 +182,9 @@ base16-shell: zsh $(ZSH_CUSTOM)/plugins/base16-shell
 	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
 
 # Resources:
-#  - [Base16 fzf](https://github.com/fnune/base16-fzf)
+#  - [Base16 fzf](https://github.com/base16-project/base16-fzf)
 .PHONY: base16-fzf
-base16-fzf: BASE16_FZF_REPO := https://github.com/fnune/base16-fzf.git
+base16-fzf: BASE16_FZF_REPO := https://github.com/base16-project/base16-fzf.git
 base16-fzf:
 	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)

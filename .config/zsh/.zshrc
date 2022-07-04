@@ -155,7 +155,7 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
   source "${POWERLEVEL9K_CONFIG_FILE}"
 
-# Base16 fzf (https://github.com/fnune/base16-fzf)
+# Base16 fzf (https://github.com/base16-project/base16-fzf)
 BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
 [[ ! -d "$BASE16_FZF_HOME" ]] || \
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
