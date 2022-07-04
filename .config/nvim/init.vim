@@ -297,9 +297,19 @@ nnoremap <leader>sv :source $VIMRC<CR>
 " ; as :
 nnoremap ; :
 
+" FZF key bindings
+"  - open file with FZF using Ctrl+p
+"  - this file can be opened in new tab (Ctrl+t) or horizontal/vertical split
+"    (Ctrl+i/Ctrl+v)
+nnoremap <C-p> :FZF<CR>
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-i': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
 " Open hotkeys
 " FIXME: Files have similar issue with fzf as Rg search does
-map <C-p> :Files<CR>
+"map <C-p> :Files<CR>
 nmap <leader>; :buffers<CR>
 
 " Switch buffers with <leader>+<Right>/<Left>
@@ -339,7 +349,7 @@ tnoremap <C-k> <Esc>
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+"nnoremap <C-f> :NERDTreeFind<CR>
 
 " Metals (Scala language server) shortcuts
 " https://scalameta.org/metals/docs/editors/vim/#recommended-cocnvim-mappings
@@ -525,6 +535,7 @@ xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> for scroll float windows/popups.
+"  - https://github.com/neoclide/coc.nvim#example-vim-configuration
 if has('nvim-0.4.0') || has('patch-8.2.0750')
   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
   nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
