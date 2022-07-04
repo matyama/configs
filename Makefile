@@ -723,11 +723,15 @@ ifeq ($(shell which rustc 2> /dev/null),)
 endif
 	rustup show
 
+# TODO: man pages & completion (bat)
 # Installed tools:
+#  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - click: Command Line Interactive Controller for Kubernetes
 #  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
 #  - fd: A simple, fast and user-friendly alternative to 'find'
 #    (https://github.com/sharkdp/fd)
+#  - git-delta: A syntax-highlighting pager for git, diff, and grep output
+#    (https://github.com/dandavison/delta)
 #  - proximity-search: Simple command-line utility for sorting inputs by
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
@@ -760,12 +764,16 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
+	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
+	cargo install --locked bat
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
 	cargo install fd-find
+	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
+	cargo install git-delta
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
@@ -939,17 +947,6 @@ aws-vault: binenv
 	@binenv update
 	binenv install $@
 	
-.PHONY: bat
-bat: $(XDG_BIN_HOME)
-ifneq ($(shell which bat 2> /dev/null),)
-	@echo ">>> $$($@ --version) already installed"
-else
-	@echo ">>> Installing $@: https://github.com/sharkdp/bat"
-	sudo apt install -y $@
-	ln -svf /usr/bin/batcat $</$@
-	@echo ">>> Installed $$($@ --version)"
-endif
-
 .PHONY: set-swappiness
 set-swappiness: SWAPPINESS := 10
 set-swappiness:
