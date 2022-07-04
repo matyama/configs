@@ -281,6 +281,7 @@ python3.6 python3.7: python
 
 # Installed tools:
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
+#  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
 #  - silversearcher-ag: A code-searching tool (http://geoff.greer.fm/ag/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
@@ -299,6 +300,7 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		byobu \
 		tree \
 		fzf \
+		chafa \
 		silversearcher-ag \
 		gparted \
 		gnome-tweaks \
