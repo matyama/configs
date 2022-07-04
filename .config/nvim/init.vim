@@ -117,8 +117,8 @@ set background=dark
 
 " Pick Base16 color scheme and access colors present in 256 colorspace
 "  - https://github.com/chriskempson/base16-shell#base16-vim-users
-"  - https://github.com/chriskempson/base16-vim#256-colorspace
-"  - https://github.com/chriskempson/base16-vim#installation
+"  - https://github.com/base16-project/base16-vim#256-colorspace
+"  - https://github.com/base16-project/base16-vim#installation
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background

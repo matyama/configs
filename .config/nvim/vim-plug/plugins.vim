@@ -16,8 +16,8 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	" Style
 
 	" Base16 colors
-	" https://github.com/chriskempson/base16-vim#installation
-	Plug 'chriskempson/base16-vim'
+	" https://github.com/base16-project/base16-vim
+	Plug 'base16-project/base16-vim'
 
 	" VIM enhancements
 	
