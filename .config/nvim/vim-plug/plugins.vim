@@ -53,6 +53,10 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	" https://github.com/sheerun/vim-polyglot#installation
 	Plug 'sheerun/vim-polyglot'
 
+	" Git blame
+	" https://github.com/zivyangll/git-blame.vim
+	Plug 'zivyangll/git-blame.vim'
+
 	" Search
 
 	" Change Vim working directory to project root

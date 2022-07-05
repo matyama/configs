@@ -417,6 +417,9 @@ vnoremap <leader>P "+P
 "noremap <leader>p :read !xsel --clipboard --output<cr>
 "noremap <leader>c :w !xsel -ib<cr><cr>
 
+" Use <leader>b to display git blame info for current line
+nnoremap <leader>b :<C-u>call gitblame#echo()<CR>
+
 " FIXME: rg/fzf does not seem to work after reloading vim config
 " Use <leader>s for Rg search
 noremap <leader>s :Rg<Space>
