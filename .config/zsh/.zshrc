@@ -164,13 +164,10 @@ BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
 # Bat customization (https://github.com/sharkdp/bat#customization)
 #  - Do not add `BAT_THEME` to `.zshenv`/`.zprofile` or bat config file as it
 #    might be altered by the Base16 hook above.
-#  - Use `BASE16_THEME` for bat or default to `base16`
+#  - Use `base16-256` for bat which, according to the docs, "is designed for
+#    `base16-shell`"
 #  - Use fully stylized bat by default
-
-export BAT_THEME="${BASE16_THEME:-base16}"
-[[ -f "$BAT_CONFIG_DIR/themes/$BASE16_THEME.tmTheme" ]] || \
-  export BAT_THEME=base16
-
+export BAT_THEME=base16-256
 export BAT_STYLE=full
 
 # Make CapsLock an extra Esc

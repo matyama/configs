@@ -8,15 +8,35 @@
 [core]
 	autocrlf = input
 	safecrlf = true
+	pager = delta
+[interactive]
+	diffFilter = delta --diff-so-fancy
+[delta]
+	features = zebra-dark
+	line-numbers = true
+	side-by-side = true
+	# use n and N to move between diff sections
+	navigate = true
+	# set to true if you're in a terminal w/ a light background color
+	light = false
+	# link GitHub/GitLab/Bitbucket in git blame
+	#  - FIXME: does not display correctly (possibly issue with Alacritty)
+	#  - https://github.com/alacritty/alacritty/issues/922
+	#hyperlinks = true
+[add.interactive]
+	# required for git 2.37.0
+	useBuiltin = false 
 [merge]
 	tool = nvim -d
+	conflictStyle = diff3
 [pull]
 	ff = only
 [push]
 	default = simple
 [diff]
 	algorithm = patience
-	compactionHeuristic = true
+	indentHeuristic = true
+	colorMoved = default
 [alias]
 	c = commit
 	s = status

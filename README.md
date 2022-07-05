@@ -124,17 +124,13 @@ one has to [manually update](https://github.com/aarowill/base16-alacritty#instal
 [Bat](https://github.com/sharkdp/bat) supports `base16` color theme by
 default via `--theme=base16` option or `BAT_THEME` environment variable.
 
-Unfortunately, `gruvbox-dark-hard` (or other variations) is not part of
-the stable Ubuntu/Debian release. Therefore, for the time being, these
-themes are downloaded from [this repository](https://github.com/subnut/gruvbox-tmTheme)
-and linked to bat config dir `BAT_CONFIG_DIR` (`bat --config-dir`).
+Current setting is `BAT_THEME=base16-256` which, according to the
+[documentation](https://github.com/sharkdp/bat#customization):
+> is designed for `base16-shell`
 
-The `BAT_THEME` automatically picks up current theme from `BASE16_THEME`
-if appropriate file exists in `BAT_CONFIG_DIR/themes` or defaults to
-`base16`.
-
-When new themes are downloaded and linked, one must update the cache by
-running:
+Custom themes are supported if appropriate file exists in
+`BAT_CONFIG_DIR/themes` When new themes are downloaded and linked, one
+must update the cache by running:
 ```bash
 bat cache --build
 ```
