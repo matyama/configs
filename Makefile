@@ -291,6 +291,8 @@ python3.6 python3.7: python
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
+#  - neofetch: A command-line system information tool
+#    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
 .PHONY: basic-tools
 basic-tools: net-tools core-utils apt-utils x-utils python
@@ -300,6 +302,7 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		iotop \
 		iftop \
 		tshark \
+		neofetch \
 		mc \
 		neovim \
 		tmux \
