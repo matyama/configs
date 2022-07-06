@@ -296,11 +296,11 @@ nnoremap ; :
 " FZF key bindings
 "  - open file with FZF using Ctrl+p
 "  - this file can be opened in new tab (Ctrl+t) or horizontal/vertical split
-"    (Ctrl+i/Ctrl+v)
+"    (Ctrl+h/Ctrl+v)
 nnoremap <C-p> :FZF<CR>
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
-  \ 'ctrl-i': 'split',
+  \ 'ctrl-h': 'split',
   \ 'ctrl-v': 'vsplit' }
 
 " Open hotkeys
@@ -341,11 +341,19 @@ lnoremap <C-k> <Esc>
 tnoremap <C-k> <Esc>
 
 " NERDTree shortcuts
-" https://github.com/preservim/nerdtree#frequently-asked-questions
+"  - source: https://stackoverflow.com/a/58627426/15112035
+"  - improved: https://bit.ly/3nKuCHb
+
+function NerdTreeToggleFind()
+    if &filetype == 'nerdtree' || exists("g:NERDTree") && g:NERDTree.IsOpen()
+        :NERDTreeToggle
+    else
+        :NERDTreeFind
+    endif
+endfunction
+
+nnoremap <C-n> :call NerdTreeToggleFind()<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-"nnoremap <C-f> :NERDTreeFind<CR>
 
 " Metals (Scala language server) shortcuts
 " https://scalameta.org/metals/docs/editors/vim/#recommended-cocnvim-mappings
@@ -426,9 +434,9 @@ noremap <leader>s :Rg<Space>
 let g:fzf_layout = { 'down': '~20%' }
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --hidden --smart-case --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   'rg --column --line-number --no-heading --hidden --smart-case --color=always -- '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
   \   <bang>0)
 
 function! s:list_cmd()
