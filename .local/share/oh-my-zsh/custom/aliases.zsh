@@ -59,6 +59,11 @@ if (( $+commands[bat] )); then
 	alias bp="bat --plain"
 fi
 
+# hyperfine (https://github.com/sharkdp/hyperfine)
+if (( $+commands[hyperfine] )); then
+	alias bench="hyperfine -S zsh"
+fi
+
 # googler (https://github.com/jarun/googler)
 (( $+commands[googler] )) && alias s="googler"
 

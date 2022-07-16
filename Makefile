@@ -734,7 +734,7 @@ ifeq ($(shell which rustc 2> /dev/null),)
 endif
 	rustup show
 
-# TODO: man pages & completion (bat)
+# TODO: man pages & completion (bat, hyperfine)
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - click: Command Line Interactive Controller for Kubernetes
@@ -744,6 +744,8 @@ endif
 #  - git-delta: A syntax-highlighting pager for git, diff, and grep output
 #    (https://github.com/dandavison/delta)
 #  - gping: Ping, but with a graph (https://github.com/orf/gping)
+#  - hyperfine: A command-line benchmarking tool
+#    (https://github.com/sharkdp/hyperfine)
 #  - proximity-search: Simple command-line utility for sorting inputs by
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
@@ -788,6 +790,8 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install git-delta
 	@echo ">>> Installing gping: https://github.com/orf/gping"
 	cargo install gping
+	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
+	cargo install hyperfine
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
