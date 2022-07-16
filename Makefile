@@ -521,6 +521,14 @@ else
 endif
 	@rm -rf $(DOWNLOAD_DIR)
 
+# Installed tools:
+#  - duf: Disk Usage/Free Utility - a better 'df' alternative
+#    (https://github.com/muesli/duf)
+.PHONY: binenv-tools
+binenv-tools: binenv
+	@echo ">>> Installing duf: https://github.com/muesli/duf"
+	binenv install duf
+
 # Installation resources:
 #  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
 #  - https://github.com/ohmyzsh/ohmyzsh#custom-directory
