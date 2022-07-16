@@ -743,6 +743,7 @@ endif
 #    (https://github.com/sharkdp/fd)
 #  - git-delta: A syntax-highlighting pager for git, diff, and grep output
 #    (https://github.com/dandavison/delta)
+#  - gping: Ping, but with a graph (https://github.com/orf/gping)
 #  - proximity-search: Simple command-line utility for sorting inputs by
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
@@ -785,6 +786,8 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install fd-find
 	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
 	cargo install git-delta
+	@echo ">>> Installing gping: https://github.com/orf/gping"
+	cargo install gping
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
