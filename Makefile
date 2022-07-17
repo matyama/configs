@@ -734,30 +734,8 @@ ifeq ($(shell which rustc 2> /dev/null),)
 endif
 	rustup show
 
-# TODO: man pages & completion (bat, hyperfine)
-# Installed tools:
-#  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
-#  - click: Command Line Interactive Controller for Kubernetes
-#  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
-#  - fd: A simple, fast and user-friendly alternative to 'find'
-#    (https://github.com/sharkdp/fd)
-#  - git-delta: A syntax-highlighting pager for git, diff, and grep output
-#    (https://github.com/dandavison/delta)
-#  - gping: Ping, but with a graph (https://github.com/orf/gping)
-#  - hyperfine: A command-line benchmarking tool
-#    (https://github.com/sharkdp/hyperfine)
-#  - proximity-search: Simple command-line utility for sorting inputs by
-#    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
-#  - ripgrep: Recursively searches directories for a regex pattern
-#    (https://github.com/BurntSushi/ripgrep)
-#  - mdbook: Build a book from Markdown files
-#    (https://github.com/rust-lang/mdBook)
-#  - hyperfine: A command-line benchmarking tool
-#    (https://github.com/sharkdp/hyperfine)
-.PHONY: rust-tools
-rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
-rust-tools: RG_PKG := $(shell mktemp)
-rust-tools: rust $(MAN1_DIR)
+.PHONY: cargo-tools
+cargo-tools: rust
 	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
 	cargo install cargo-readme
 	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
@@ -778,6 +756,29 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
+
+# TODO: man pages & completion (bat, hyperfine)
+# Installed tools:
+#  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
+#  - click: Command Line Interactive Controller for Kubernetes
+#  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
+#  - fd: A simple, fast and user-friendly alternative to 'find'
+#    (https://github.com/sharkdp/fd)
+#  - git-delta: A syntax-highlighting pager for git, diff, and grep output
+#    (https://github.com/dandavison/delta)
+#  - gping: Ping, but with a graph (https://github.com/orf/gping)
+#  - hyperfine: A command-line benchmarking tool
+#    (https://github.com/sharkdp/hyperfine)
+#  - mdbook: Build a book from Markdown files
+#    (https://github.com/rust-lang/mdBook)
+#  - proximity-search: Simple command-line utility for sorting inputs by
+#    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
+#  - ripgrep: Recursively searches directories for a regex pattern
+#    (https://github.com/BurntSushi/ripgrep)
+.PHONY: rust-tools
+rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
+rust-tools: RG_PKG := $(shell mktemp)
+rust-tools: rust $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	cargo install --locked bat
 	@echo ">>> Installing exa: https://the.exa.website/"
@@ -792,6 +793,8 @@ rust-tools: rust $(MAN1_DIR)
 	cargo install gping
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	cargo install hyperfine
+	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
+	cargo install mdbook
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
@@ -803,10 +806,6 @@ rust-tools: rust $(MAN1_DIR)
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
 	@rm -f $(RG_PKG)
-	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
-	cargo install mdbook
-	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
-	cargo install hyperfine
 
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
