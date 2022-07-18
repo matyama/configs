@@ -186,6 +186,13 @@ fi
 if [[ "$(command -v rustup)" ]] && [[ $RUN_RUST -gt 0 ]]; then
 	echo "Upgrading Rust toolchains..."
 	rustup upgrade
+
+	CONF_MK="${HOME}/dev/configs/Makefile"
+	if [[ -f "${CONF_MK}" ]]; then
+		# TODO: autoremove old/unused versions
+		echo "Upgrading Rust applications & Cargo extensions..."
+		make -f "${CONF_MK}" rust-tools cargo-tools
+	fi
 fi
 
 binenv_upgrade() {
