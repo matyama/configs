@@ -59,6 +59,12 @@ ifndef BYOBU_CONFIG_DIR
 BYOBU_CONFIG_DIR=$(XDG_CONFIG_HOME)/byobu
 endif
 
+ifndef CARGO_TARGET_DIR
+CARGO_TARGET_DIR=$(XDG_CACHE_HOME)/cargo-target
+CARGO_RELEASE_DIR=$(CARGO_TARGET_DIR)/release
+CARGO_ARTIFACTS_DIR=$(CARGO_RELEASE_DIR)/artifacts
+endif
+
 ifndef GEM_HOME
 GEM_HOME=$(XDG_CONFIG_HOME)/gem
 endif
@@ -776,7 +782,6 @@ cargo-tools: rust
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
 .PHONY: rust-tools
-rust-tools: BUILD_ARTIFACTS_DIR := $(shell mktemp -d)
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
 rust-tools: zsh rust $(MAN1_DIR)
@@ -793,9 +798,8 @@ rust-tools: zsh rust $(MAN1_DIR)
 	@echo ">>> Installing gping: https://github.com/orf/gping"
 	cargo install gping
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
-	env SHELL_COMPLETIONS_DIR=$(BUILD_ARTIFACTS_DIR) cargo install hyperfine
-	[ ! -f "$(BUILD_ARTIFACTS_DIR)/_hyperfine" ] || \
-		mv "$(BUILD_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
+	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install hyperfine
+	cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
@@ -809,7 +813,6 @@ rust-tools: zsh rust $(MAN1_DIR)
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
 	@rm -f $(RG_PKG)
-	@rm -rf $(BUILD_ARTIFACTS_DIR)
 
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download

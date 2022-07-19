@@ -57,6 +57,7 @@ export CUDA_CACHE_PATH=${XDG_CACHE_HOME}/nv
 export BINENV_HOME=${HOME}/.binenv
 
 # Rust
+#  - See: https://doc.rust-lang.org/cargo/reference/environment-variables.html
 #  - Note: Out-of-the-box XDG support is still an open issue for both `rustup`
 #    and `cargo`, monitor.
 #  - https://github.com/rust-lang/rustup/issues/247
@@ -64,6 +65,9 @@ export BINENV_HOME=${HOME}/.binenv
 export RUSTUP_HOME=${XDG_DATA_HOME}/rustup 
 export CARGO_HOME=${XDG_DATA_HOME}/cargo
 export CARGO_BIN=${CARGO_HOME}/bin
+export CARGO_TARGET_DIR=${XDG_CACHE_HOME}/cargo-target
+export CARGO_RELEASE_DIR=${CARGO_TARGET_DIR}/release
+export CARGO_ARTIFACTS_DIR=${CARGO_RELEASE_DIR}/artifacts
 export CARGO_INCREMENTAL=1
 export RUSTFLAGS="-C target-cpu=native"
 export RUST_BACKTRACE=1
@@ -262,6 +266,7 @@ export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
 typeset -aU path
 path+=${XDG_BIN_HOME}
 path+=${CARGO_BIN}
+path+=${CARGO_RELEASE_DIR}
 path+=${GOBIN}
 path+=${GEM_BIN}
 path+=${KREW_BIN}
