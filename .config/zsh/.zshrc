@@ -74,6 +74,13 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Default browser
+if (( $+commands[google-chrome] )); then
+  export BROWSER="google-chrome"
+else
+  export BROWSER="firefox"
+fi
+
 # History management
 #  - https://stackoverflow.com/a/38549502
 #  - https://unix.stackexchange.com/a/273863
