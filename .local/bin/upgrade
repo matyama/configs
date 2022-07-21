@@ -260,6 +260,14 @@ if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
 	for candidate in $CANDIDATES; do
 		yes Y | head -1 | sdk upgrade "${candidate}"
 	done
+	if [[ -n $ZSH ]] && [[ $ZSH == *oh-my-zsh ]]; then
+		zsh -ic '
+			if (( $+functions[sdk-refresh-completion-files] )); then
+				echo "Updating zsh-sdkman files..."
+				sdk-refresh-completion-files
+			fi
+		'
+	fi
 fi
 
 if [[ -n $ZSH ]] && [[ $ZSH == *oh-my-zsh ]] && [[ $RUN_OMZ -gt 0 ]]; then
