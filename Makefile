@@ -768,7 +768,8 @@ cargo-tools: rust
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
 
-# TODO: man pages & completion (bat, hyperfine)
+# TODO: man pages & completion (bat)
+# TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - click: Command Line Interactive Controller for Kubernetes
@@ -787,6 +788,7 @@ cargo-tools: rust
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
 .PHONY: rust-tools
+rust-tools: CARGO_GH := $(CARGO_HOME)/registry/src/github.com-1ecc6299db9ec823
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
@@ -804,7 +806,9 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install gping
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install hyperfine
-	cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
+	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
+	@gzip -c $(CARGO_GH)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
+		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
