@@ -644,14 +644,18 @@ endif
 
 # Installation resources:
 #  - https://sdkman.io/install
+#  - https://github.com/matthieusb/zsh-sdkman#installation
 #  - Note: Installation won't update rc files since we're using custom `.zshrc`
 #    and `.zshenv`
 .PHONY: sdk
 sdk: SHELL := /bin/bash
-sdk: net-tools
+sdk: ZSH_SDKMAN_REPO := https://github.com/matthieusb/zsh-sdkman.git
+sdk: net-tools zsh
 	@echo ">>> Installing SDKMAN: https://sdkman.io/"
 	curl -s "https://get.sdkman.io?rcupdate=false" | bash
 	source $(SDKMAN_DIR)/bin/sdkman-init.sh
+	@echo ">>> Installing zsh-sdkman: https://github.com/matthieusb/zsh-sdkman"
+	git clone $(ZSH_SDKMAN_REPO) $(ZSH_CUSTOM)/plugins/zsh-sdkman
 
 .PHONY: jvm-tools
 jvm-tools: SHELL := /bin/bash

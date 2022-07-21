@@ -28,6 +28,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 #  - https://github.com/zsh-users/zsh-syntax-highlighting
 #  - https://github.com/zsh-users/zsh-history-substring-search
 #  - https://github.com/zsh-users/zsh-autosuggestions
+#  - https://github.com/matthieusb/zsh-sdkman
 #
 # Plugin directories
 #  - Standard plugins can be found in $ZSH/plugins/
@@ -56,6 +57,7 @@ plugins=(
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
   thefuck                       # press ESC twice to run fuck
+  zsh-sdkman                    # adds aliases and completion scripts for sdk
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
   zsh-autosuggestions           # provides fish-like autosuggestions

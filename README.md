@@ -340,3 +340,14 @@ rm -rf $CARGO_HOME/advisory-db/
 ```
 
 Next invocation of `cargo audit` will fetch it again and fix the issue.
+
+### Sdkman completions
+According to [`zsh-sdkman`](https://github.com/matthieusb/zsh-sdkman)'s
+usage notes:
+> if you do new installations on your sdkman candidate or just play
+> around with new versions, uninstallations or updates, don't forget to
+> refresh the completion script files with the following command:
+```bash
+sdk-refresh-completion-files
+```
+
