@@ -769,7 +769,6 @@ cargo-tools: rust
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
 
-# TODO: man pages & completion (bat)
 # TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
@@ -795,6 +794,9 @@ rust-tools: RG_PKG := $(shell mktemp)
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	cargo install --locked bat
+	@gzip -c "$$(cargo-latest-dirname bat)/out/assets/manual/bat.1" \
+		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
+	@cp "$$(cargo-latest-dirname bat)/out/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
 	@cp "$(CARGO_GH)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/completions.zsh" "$(ZSH_COMPLETIONS)/_exa"
