@@ -323,6 +323,7 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		mypaint \
 		tlp \
 		dos2unix \
+		pandoc \
 		direnv \
 		graphviz \
 		libecpg-dev \
@@ -796,6 +797,11 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install --locked bat
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
+	@cp "$(CARGO_GH)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/completions.zsh" "$(ZSH_COMPLETIONS)/_exa"
+	@pandoc  -s -t man \
+		$(CARGO_GH)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/exa.1.md \
+		| gzip -c \
+		| sudo tee $(MAN1_DIR)/exa.1.gz > /dev/null
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
