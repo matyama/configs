@@ -124,6 +124,7 @@ $(FONTS_DIR) \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
+	$(CARGO_ARTIFACTS_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
@@ -788,7 +789,7 @@ cargo-tools: rust
 .PHONY: rust-tools
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
-rust-tools: zsh rust $(MAN1_DIR)
+rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	cargo install --locked bat
 	@echo ">>> Installing exa: https://the.exa.website/"
