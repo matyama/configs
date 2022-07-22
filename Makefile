@@ -783,6 +783,8 @@ cargo-tools: rust
 #    (https://github.com/sharkdp/hyperfine)
 #  - mdbook: Build a book from Markdown files
 #    (https://github.com/rust-lang/mdBook)
+#  - procs: A modern replacement for ps written in Rust
+#    (https://github.com/dalance/procs)
 #  - proximity-search: Simple command-line utility for sorting inputs by
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
@@ -819,6 +821,9 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
+	@echo ">>> Installing procs: https://github.com/dalance/procs"
+	cargo install procs
+	@procs --completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
