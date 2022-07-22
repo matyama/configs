@@ -533,9 +533,13 @@ endif
 #  - duf: Disk Usage/Free Utility - a better 'df' alternative
 #    (https://github.com/muesli/duf)
 .PHONY: binenv-tools
-binenv-tools: binenv
+binenv-tools: DUF_URL := https://github.com/muesli/duf/archive/refs/tags
+binenv-tools: binenv $(MAN1_DIR)
 	@echo ">>> Installing duf: https://github.com/muesli/duf"
 	binenv install duf
+	@curl -sSL "$(DUF_URL)/v$$(duf -version | cut -d ' ' -f2).tar.gz" | \
+		tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip | \
+		sudo tee $(MAN1_DIR)/duf.1.gz > /dev/null
 
 # Installation resources:
 #  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
