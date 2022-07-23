@@ -352,6 +352,7 @@ function NerdTreeToggleFind()
     endif
 endfunction
 
+" NOTE: This breaks 'New Text File...' in VS Code, use <C-t> there insted
 nnoremap <C-n> :call NerdTreeToggleFind()<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 
@@ -389,6 +390,19 @@ nnoremap <leader><Right> <C-W><Right>
 nnoremap <leader><Left> <C-W><Left>
 nnoremap <leader><Up> <C-W><Up>
 nnoremap <leader><Down> <C-W><Down>
+
+" Use Ctrl+t to open new tab and Ctrl+w to close it
+nnoremap <C-t> :tabnew<CR>
+nnoremap <C-w> :tabclose<CR>
+
+" Use Ctrl+Left/Ctrl+Right (or j/k) to go to the next/previous tab
+"  - note: cannot use <C-tab>/<C-S-tab>, <TAB> is reserved for range selection
+"    with a language server, plus setting this nicely integrates with VS Code
+"  - note: cannot use h/l, <c-h> is reserved for cleaning up search
+nnoremap <C-Left> :tabprevious<CR>                                                                            
+nnoremap <C-Right> :tabnext<CR>
+nnoremap <C-j> :tabprevious<CR>                                                                            
+nnoremap <C-k> :tabnext<CR>
 
 " Save file with <leader>+w
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
