@@ -80,6 +80,10 @@ let g:rustfmt_emit_files = 1
 let g:rustfmt_fail_silently = 0
 let g:rust_clip_command = 'xclip -selection clipboard'
 
+" Neoformat (https://github.com/sbdchd/neoformat)
+"  - Shell (shfmt): indent switch cases
+let g:shfmt_opt="-ci"
+
 " Completion
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
