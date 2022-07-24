@@ -294,6 +294,8 @@ python3.6 python3.7: python
 	sudo apt install -y $@-dev $@-venv
 
 # Installed tools:
+#  - entr: Run arbitrary commands when files change
+#    (https://github.com/eradman/entr)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
@@ -315,6 +317,7 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		tmux \
 		byobu \
 		tree \
+		entr \
 		fzf \
 		chafa \
 		gparted \
