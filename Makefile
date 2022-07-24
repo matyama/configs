@@ -580,11 +580,9 @@ else
 endif
 
 .PHONY: snaps
-snaps: $(GOPATH)
+snaps: golang 
 	@echo ">>> Installing cmake"
 	sudo snap install --classic cmake
-	@echo ">>> Installing Go"
-	sudo snap install --classic go
 	@echo ">>> Installing Slack"
 	sudo snap install slack --classic
 	@echo ">>> Installing Spotify"
@@ -881,6 +879,25 @@ nodejs: $(XDG_DATA_HOME)/npm net-tools
 ruby:
 	@echo ">>> Installing Ruby"
 	sudo apt install -y $@-full
+
+.PHONY: golang
+golang: $(GOPATH)
+	@echo ">>> Installing Go"
+	sudo snap install --classic go
+
+# Formatter for shell programs
+#  - used by `prettybat` from [bat-extras](https://github.com/eth-p/bat-extras)
+.PHONY: shfmt
+shfmt: SHFMT_MOD := mvdan.cc/sh
+shfmt: SHFMT_API := v3
+shfmt: SHFMT_TAG := latest
+shfmt: golang $(MAN1_DIR)
+	@echo ">>> Installing $@: https://github.com/mvdan/sh"
+	go install "$(SHFMT_MOD)/$(SHFMT_API)/cmd/$@@$(SHFMT_TAG)"
+	@pandoc -s -t man \
+		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" | \
+		gzip -c | \
+		sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
 
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
