@@ -902,6 +902,13 @@ shfmt: golang $(MAN1_DIR)
 		gzip -c | \
 		sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
 
+# Fast cross-platform HTTP benchmarking tool
+.PHONY: go-tools
+bombardier: BOMBARDIER_TAG := latest
+bombardier: golang
+	@echo ">>> Installing $@: https://github.com/codesenberg/bombardier"
+	go install "github.com/codesenberg/$@@$(BOMBARDIER_TAG)"
+
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
 #  - [Official post-instegration](https://docs.docker.com/engine/install/linux-postinstall/)
