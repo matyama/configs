@@ -799,6 +799,7 @@ cargo-tools: rust
 #    (https://github.com/BurntSushi/ripgrep)
 #  - xh: Friendly and fast tool for sending HTTP requests
 #    (https://github.com/ducaale/xh)
+#  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CARGO_GH := $(CARGO_HOME)/registry/src/github.com-1ecc6299db9ec823
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
@@ -857,6 +858,11 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/doc/xh.1" | \
 		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
+	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
+	cargo install zoxide --locked
+	@cp "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/contrib/completions/_zoxide" $(ZSH_COMPLETIONS)
+	@gzip -c "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
+		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 	@rm -f $(RG_PKG)
 
 .PHONY: alacritty
