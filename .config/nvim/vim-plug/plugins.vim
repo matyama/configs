@@ -71,6 +71,10 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	" https://github.com/jremmen/vim-ripgrep
 	Plug 'jremmen/vim-ripgrep'
 
+	" Use zoxide in Vim
+	" https://github.com/nanotee/zoxide.vim
+	Plug 'nanotee/zoxide.vim'
+
 	" Syntactic language support
 	Plug 'cespare/vim-toml', { 'branch': 'main' }
 	Plug 'stephpy/vim-yaml'
