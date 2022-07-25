@@ -787,6 +787,8 @@ cargo-tools: rust
 #  - hexyl: A command-line hex viewer (https://github.com/sharkdp/hexyl)
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
+#  - mcfly: an upgraded ctrl-r where history results make sense for what you're
+#    working on right now (https://github.com/cantino/mcfly)
 #  - mdbook: Build a book from Markdown files
 #    (https://github.com/rust-lang/mdBook)
 #  - procs: A modern replacement for ps written in Rust
@@ -833,6 +835,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CARGO_GH)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
+	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
+	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
 	@echo ">>> Installing procs: https://github.com/dalance/procs"

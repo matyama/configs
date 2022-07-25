@@ -105,6 +105,17 @@ zshaddhistory() {
 setopt hist_ignore_all_dups
 setopt hist_ignore_space
 
+# McFly history search
+#  - https://github.com/cantino/mcfly
+#  - NOTE: overrides Ctrl+R from the fzf plugin above
+if (( $+commands[mcfly] )); then 
+  export MCFLY_KEY_SCHEME=vim
+  export MCFLY_FUZZY=2
+  export MCFLY_RESULTS=20
+  export MCFLY_HISTORY_LIMIT=10000
+  eval "$(mcfly init zsh)"
+fi
+
 # History search
 #  - https://github.com/zsh-users/zsh-history-substring-search#configuration
 HISTORY_SUBSTRING_SEARCH_FUZZY=true
