@@ -784,6 +784,7 @@ cargo-tools: rust
 #  - git-delta: A syntax-highlighting pager for git, diff, and grep output
 #    (https://github.com/dandavison/delta)
 #  - gping: Ping, but with a graph (https://github.com/orf/gping)
+#  - hexyl: A command-line hex viewer (https://github.com/sharkdp/hexyl)
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
 #  - mdbook: Build a book from Markdown files
@@ -819,6 +820,12 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install git-delta
 	@echo ">>> Installing gping: https://github.com/orf/gping"
 	cargo install gping
+	@echo ">>> Installing hexyl: https://github.com/sharkdp/hexyl"
+	cargo install hexyl
+	@pandoc  -s -f markdown -t man \
+		$(CARGO_GH)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
+		| gzip -c \
+		| sudo tee $(MAN1_DIR)/hexyl.1.gz > /dev/null
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install hyperfine
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
