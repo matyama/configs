@@ -65,7 +65,7 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	
 	" Command-line fuzzy finder
 	" https://github.com/junegunn/fzf
-	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+	Plug 'junegunn/fzf', { 'dir': $FZF_BASE, 'do': './install --all --no-update-rc' }
 
 	" Use RipGrep in Vim
 	" https://github.com/jremmen/vim-ripgrep

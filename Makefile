@@ -29,6 +29,10 @@ ifndef ZSH_CUSTOM
 ZSH_CUSTOM=$(ZSH)/custom
 endif
 
+ifndef FZF_BASE
+FZF_BASE=$(XDG_DATA_HOME)/fzf
+endif
+
 ifndef BASE16_FZF_HOME
 BASE16_FZF_HOME=$(XDG_CONFIG_HOME)/base16-fzf
 endif
@@ -293,6 +297,26 @@ python3.6 python3.7: python
 	sudo apt update
 	sudo apt install -y $@-dev $@-venv
 
+# fzf: a command-line fuzzy finder
+#  - https://github.com/junegunn/fzf
+#  - Note: installs latest version, apt pkg might be quite old
+#  - Note: `zoxide`'s interactive mode requires fzf at least v0.21.0
+.PHONY: fzf
+fzf: FZF_REPO := https://github.com/junegunn/fzf.git
+fzf: core-utils $(XDG_BIN_HOME) $(MAN1_DIR)
+ifneq ($(shell which fzf 2> /dev/null),)
+	@echo ">>> Updating $@"
+	git -C $(FZF_BASE) pull
+else
+	@echo ">>> Installing $@ to '$(FZF_BASE)'"
+	git clone --depth 1 $(FZF_REPO) $(FZF_BASE)
+endif
+	$(FZF_BASE)/install --bin --no-update-rc
+	@gzip -c $(FZF_BASE)/man/man1/fzf.1 | \
+		sudo tee $(MAN1_DIR)/fzf.1.gz > /dev/null
+	@gzip -c $(FZF_BASE)/man/man1/fzf-tmux.1 | \
+		sudo tee $(MAN1_DIR)/fzf-tmux.1.gz > /dev/null
+
 # Installed tools:
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
@@ -304,7 +328,7 @@ python3.6 python3.7: python
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
 .PHONY: basic-tools
-basic-tools: net-tools core-utils apt-utils x-utils python
+basic-tools: net-tools core-utils apt-utils x-utils fzf python
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		htop \
@@ -318,7 +342,6 @@ basic-tools: net-tools core-utils apt-utils x-utils python
 		byobu \
 		tree \
 		entr \
-		fzf \
 		chafa \
 		gparted \
 		gnome-tweaks \

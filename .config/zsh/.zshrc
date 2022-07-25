@@ -67,7 +67,7 @@ plugins=(
 # fzf
 #  - https://github.com/junegunn/fzf#layout
 #  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf#settings
-export FZF_BASE="${commands[fzf]:P:h}"
+export FZF_BASE="$XDG_DATA_HOME/fzf"
 export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
 export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
 export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
