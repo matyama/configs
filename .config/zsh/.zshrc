@@ -223,6 +223,9 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 [[ -s "${TRAVIS_CONFIG_PATH}/travis.sh" ]] && \
   source "${TRAVIS_CONFIG_PATH}/travis.sh"
 
+# pandoc autocompletion
+(( $+commands[pandoc] )) && eval "$(pandoc --bash-completion)"
+
 # zoxide
 if (( $+commands[zoxide] )); then
   eval "$(zoxide init --cmd cd zsh)"
