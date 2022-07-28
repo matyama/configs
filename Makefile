@@ -820,6 +820,8 @@ cargo-tools: rust
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
+#  - sd: Intuitive find & replace CLI (sed alternative)
+#    (https://github.com/chmln/sd)
 #  - xh: Friendly and fast tool for sending HTTP requests
 #    (https://github.com/ducaale/xh)
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
@@ -876,6 +878,11 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@ar -p $(RG_PKG) data.tar.xz | \
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
+	@echo ">>> Installing sd: https://github.com/chmln/sd"
+	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install sd
+	@cp "$(CARGO_ARTIFACTS_DIR)/_sd" $(ZSH_COMPLETIONS)
+	@gzip -c $$(cargo-latest-dirname sd)/out/sd.1 \
+		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
 	cargo install xh
 	@cp "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
