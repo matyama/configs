@@ -171,6 +171,10 @@ export LESS="-F -X -R"
 export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
 export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 
+# Configure lesspipe.sh (https://github.com/wofr06/lesspipe)
+(( $+commands[lesspipe.sh] )) && export LESSOPEN="|lesspipe.sh %s"
+(( $+commands[bat] )) && export LESSCOLORIZER=bat
+
 # To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
   source "${POWERLEVEL9K_CONFIG_FILE}"

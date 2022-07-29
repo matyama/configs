@@ -317,6 +317,23 @@ endif
 	@gzip -c $(FZF_BASE)/man/man1/fzf-tmux.1 | \
 		sudo tee $(MAN1_DIR)/fzf-tmux.1.gz > /dev/null
 
+# lesspipe.sh: display more with less (https://github.com/wofr06/lesspipe)
+#  - Note: lesspipe.sh is installed system-wide and thus requires sudo
+.PHONY: lesspipe
+lesspipe: LESSPIPE_REPO := wofr06/lesspipe
+lesspipe: LESSPIPE_DIR := $(shell mktemp -d)
+lesspipe: net-tools
+	@curl -sSL "$$(gh_latest_release --tar $(LESSPIPE_REPO))" | \
+		tar -xzf - --strip-components=1 -C $(LESSPIPE_DIR)
+ifneq ($(shell which zsh),)
+	cd $(LESSPIPE_DIR) && \
+		./configure --shell=$(shell which zsh) && \
+		sudo make install
+else
+	cd $(LESSPIPE_DIR) && ./configure && sudo make install
+endif
+	@rm -rf "$(LESSPIPE_DIR)"
+
 # Installed tools:
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)

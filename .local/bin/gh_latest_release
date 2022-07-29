@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+set -eu
+
+__USAGE="Search for the tag or URL of the latest release on GitHub.
+
+USAGE:
+ $(basename $0) [-h|--help] [-u|--url] [-o|--open] REPO
+
+OPTIONS:
+ --url     instead of release tag, print the release URL
+ --tar     instead of release tag, print the URL of released tarball asset
+ --open    open latest release in the default browser
+
+Dependencies:
+ - curl
+ - jq
+ - xdg-open (optional for --open)
+"
+
+usage() {
+	echo "$__USAGE"
+}
+
+POSITIONAL_ARGS=()
+
+JQ_QUERY='.tag_name'
+OPEN=false
+
+while [[ $# -gt 0 ]]; do
+	case "${1}" in
+		-h | --help)
+			usage
+			exit 0
+			;;
+		-u | --url)
+			JQ_QUERY='.url'
+			shift
+			;;
+		-t | --tar)
+			JQ_QUERY='.tarball_url'
+			shift
+			;;
+		-o | --open)
+			JQ_QUERY='.html_url'
+			OPEN=true
+			shift
+			;;
+		*)
+			POSITIONAL_ARGS+=("$1")
+			shift
+			;;
+	esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+[[ $# -gt 0 ]] || (usage && exit 1)
+
+URL="https://api.github.com/repos/$1/releases/latest"
+RELEASE=$(curl --connect-timeout 5 -m 10 -sS "${URL}" | jq -re "${JQ_QUERY}")
+
+if $OPEN; then
+	xdg-open "${RELEASE}"
+else
+	echo "${RELEASE}"
+fi
