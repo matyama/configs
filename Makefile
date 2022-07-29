@@ -324,6 +324,8 @@ endif
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
+#  - libimage-exiftool-perl: library and program to read and write meta
+#    information in multimedia files (https://exiftool.org)
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
@@ -354,6 +356,7 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf python
 		graphviz \
 		libecpg-dev \
 		libglpk-dev \
+		libimage-exiftool-perl \
 		glpk-utils \
 		glpk-doc
 
