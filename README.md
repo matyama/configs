@@ -20,6 +20,36 @@ volume and increase swap do the following:
 1. Run the `increase_swap.sh` script that moves 40G space from root to swap
 1. Reboot to installed Ubuntu and continue the setup
 
+### Upgrades
+Ubuntu release upgrades can be done using the `do-release-upgrade`
+utility from the `update-manager-core` package.
+
+One can verify that it's installed from the output of
+```bash
+dpkg -s update-manager-core
+```
+
+As a prerequisite make sure the system is up to date:
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt dist-upgrade
+sudo apt autoremove
+```
+
+And finally, run the release upgrade with
+```bash
+sudo do-release-upgrade
+```
+or to upgrade from the latest supported release to the development
+release, run:
+```bash
+sudo do-release-upgrade -d
+```
+
+Note that new LTS versions become available with release `xx.04.1`, as
+explained [here](https://askubuntu.com/a/1403657).
+
 ## Config Installation
 There is an installation make target that links config files to dedicated
 locations.
@@ -246,6 +276,31 @@ waiting on minikube. It may also leave some resources when it does not
 succeed.
 
 ## Troubleshooting
+
+### LTS release not found
+Ubuntu LTS releases become available with release `xx.04.1`, as
+explained [here](https://askubuntu.com/a/1403657).
+
+The issue manifests when the check indicates there's new LTS release:
+```
+❯ sudo do-release-upgrade -cd
+Checking for a new Ubuntu release
+New release '22.04 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+```
+but it fails to do the release upgrade:
+```
+❯ sudo do-release-upgrade
+Checking for a new Ubuntu release
+There is no development version of an LTS available.
+To upgrade to the latest non-LTS development release
+set Prompt=normal in /etc/update-manager/release-upgrades.
+```
+
+There are two options to solve this problem:
+ 1. Wait for the `xx.04.1` release (~ 3 months from the LTS release)
+ 1. Upgrade to the latest development release, as proposed in the error
+    message. This can be done by `sudo do-release-upgrade -d`.
 
 ### Nvidia Drivers
 Missing `nvidia-smi` after some updates (which was working after
