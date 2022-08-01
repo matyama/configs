@@ -334,6 +334,13 @@ else
 endif
 	@rm -rf "$(LESSPIPE_DIR)"
 
+.PHONY: neovim
+neovim: python
+	@echo ">>> Installing $@"
+	sudo add-apt-repository -y ppa:neovim-ppa/stable
+	sudo apt update
+	sudo apt install -y $@ python3-$@
+
 # Installed tools:
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
@@ -347,7 +354,7 @@ endif
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
 .PHONY: basic-tools
-basic-tools: net-tools core-utils apt-utils x-utils fzf python
+basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		htop \
@@ -356,7 +363,6 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf python
 		tshark \
 		neofetch \
 		mc \
-		neovim \
 		tmux \
 		byobu \
 		tree \
