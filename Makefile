@@ -983,11 +983,18 @@ shfmt: golang $(MAN1_DIR)
 		sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
 
 # Fast cross-platform HTTP benchmarking tool
-.PHONY: go-tools
+.PHONY: bombardier
 bombardier: BOMBARDIER_TAG := latest
 bombardier: golang
 	@echo ">>> Installing $@: https://github.com/codesenberg/bombardier"
 	go install "github.com/codesenberg/$@@$(BOMBARDIER_TAG)"
+
+# Like cURL, but for gRPC
+.PHONY: grpcurl
+grpcurl: GRPCURL_TAG := latest
+grpcurl: golang
+	@echo ">>> Installing $@: https://github.com/fullstorydev/grpcurl"
+	go install "github.com/fullstorydev/grpcurl/cmd/grpcurl@$(GRPCURL_TAG)"
 
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
