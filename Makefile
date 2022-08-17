@@ -353,6 +353,8 @@ neovim: python
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
+#  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
+#    (https://github.com/protocolbuffers/protobuf)
 .PHONY: basic-tools
 basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 	@echo ">>> Installing basic tools"
@@ -381,7 +383,8 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		libglpk-dev \
 		libimage-exiftool-perl \
 		glpk-utils \
-		glpk-doc
+		glpk-doc \
+		protobuf-compiler
 
 # FIXME: Use CPU_MODEL instead of plain 'intel' in sed replacement
 # Resources:
