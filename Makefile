@@ -93,6 +93,10 @@ ifndef SDKMAN_DIR
 SDKMAN_DIR=$(XDG_DATA_HOME)/sdkman
 endif
 
+ifndef ZSH_SDKMAN_DIR
+ZSH_SDKMAN_DIR=$(XDG_DATA_HOME)/zsh-sdkman
+endif
+
 ifndef GOPATH
 GOPATH=$(XDG_DATA_HOME)/go
 endif

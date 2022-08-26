@@ -12,7 +12,7 @@
 #    that is only relevant when using an interactive shell, so we may as well
 #    just set that directly in `.zshrc`
 #  - Furthermore, `.zprofile` might be better place for commands and variables
-#    that should be set *once* or which **don't need to be updated frequently** 
+#    that should be set *once* or which **don't need to be updated frequently**
 
 # Ensure that assumed XDG variables exist
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -62,7 +62,7 @@ export BINENV_HOME=${HOME}/.binenv
 #    and `cargo`, monitor.
 #  - https://github.com/rust-lang/rustup/issues/247
 #  - https://github.com/rust-lang/cargo/issues/1734
-export RUSTUP_HOME=${XDG_DATA_HOME}/rustup 
+export RUSTUP_HOME=${XDG_DATA_HOME}/rustup
 export CARGO_HOME=${XDG_DATA_HOME}/cargo
 export CARGO_BIN=${CARGO_HOME}/bin
 export CARGO_TARGET_DIR=${XDG_CACHE_HOME}/cargo-target
@@ -76,7 +76,7 @@ export RUST_BACKTRACE=1
 #  - Any value of `GHCUP_USE_XDG_DIRS` will enable XDG support, see:
 #    https://www.haskell.org/ghcup/guide/#xdg-support
 #  - Note: `XDG_BIN_HOME` will be used for storing binaries and as mentioned in
-#    the docs, there might be clash with other tools using it (stack/cabal/ghc) 
+#    the docs, there might be clash with other tools using it (stack/cabal/ghc)
 export GHCUP_USE_XDG_DIRS=1
 export CABAL_DIR=${XDG_CACHE_HOME}/cabal
 export CABAL_CONFIG=${XDG_CONFIG_HOME}/cabal/config
@@ -127,7 +127,11 @@ export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://github.com/sdkman/sdkman-cli/issues/659
 #  - https://sdkman.io/install
+#
+# ZSH plugin
+#  - https://github.com/matthieusb/zsh-sdkman
 export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
+export ZSH_SDKMAN_DIR=${XDG_DATA_HOME}/zsh-sdkman
 
 # Java
 #  - Workaround to support XDG and move `~/.java` out of `HOME`
@@ -156,7 +160,7 @@ export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
 # Base16
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
 export BASE16_SHELL_PATH=${HOME}/.config/base16-shell
-# TODO: currently base16-project hardcodes `$HOME/.config`, use 
+# TODO: currently base16-project hardcodes `$HOME/.config`, use
 # `XDG_CONFIG_HOME` once supported
 #export BASE16_SHELL_PATH=${XDG_CONFIG_HOME}/base16-shell
 export BASE16_THEME_DEFAULT=gruvbox-dark-hard
@@ -206,7 +210,7 @@ alias spark-shell="spark-shell --conf spark.driver.extraJavaOptions=\"-Dscala.sh
 #  - `sbt -ivy ... -sbt-dir ...` is a workaround to make sbt XDG compliant, see:
 #    - https://github.com/sbt/sbt/issues/3681
 #    - https://wiki.archlinux.org/title/XDG_Base_Directory
-#  - An alternative could be to set `SBT_OPTS` as mentioned in 
+#  - An alternative could be to set `SBT_OPTS` as mentioned in
 #    https://github.com/sbt/sbt/issues/3681#issuecomment-434009989
 #  - Despite the fact it's not recommended to override command behavior in
 #    `.envrc` (since it's always loaded, even for non-interactive shells), here
@@ -274,4 +278,3 @@ path+="/usr/local/bin"
 path+=${BINENV_HOME}
 path+="${CABAL_DIR}/bin"
 path+="${XDG_DATA_HOME}/npm/bin"
-
