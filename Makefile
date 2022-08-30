@@ -294,8 +294,8 @@ python:
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
-.PHONY: python3.6 python3.7
-python3.6 python3.7: python
+.PHONY: python3.6 python3.7 python3.8
+python3.6 python3.7 python3.8: python
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
 	sudo apt update
