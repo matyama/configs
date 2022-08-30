@@ -406,3 +406,20 @@ usage notes:
 sdk-refresh-completion-files
 ```
 
+### Reinstall `pipx` for new Python
+According to this
+[issue comment](https://github.com/pypa/pipx/issues/278#issuecomment-659703665)
+once should be able to fix `pipx` installations as follows:
+```bash
+pipx reinstall-all
+```
+
+Alternatively, one can reinstall `pipx` and the tools manually
+(mentioned in the same issue that was referenced above):
+ 1. Uninstall python tools: `pipx uninstall-all`
+ 1. Uninstall `pipx` and remove `$XDG_BIN_HOME/pipx` and `~/.local/pipx`
+ 1. Re-install `pipx` and tools using `make python-tools`
+
+An indication for issues with `pipx` might be an error log mentioning
+> No module named pip
+
