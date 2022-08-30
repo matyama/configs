@@ -17,12 +17,8 @@
 # Ensure that assumed XDG variables exist
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
-
-# XDG cache under Alacritty terminal points to non-default location
-#  - Hack: make use of the alacritty common dir (assumes alacritty is installed)
-#  - TODO: make alacritty use the default XDG cache directory `$HOME/.cache`
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/snap/alacritty/common/.cache}"
 
 # XDG specification does not define this variable but it is mentioned/assumed by
 # some apps/libs (e.g. `ghcup`) so it might be useful to export it anyway.

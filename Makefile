@@ -125,6 +125,7 @@ DEBIAN_ISO := debian-11.3.0-$(DIST_ARCH)-netinst.iso
 
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
 MAN1_DIR := /usr/local/share/man/man1
+PIXMAPS_DIR := /usr/share/pixmaps
 ZSH_COMPLETIONS := $(ZSH)/completions
 
 # Ensure necessary paths exist
@@ -158,7 +159,7 @@ $(FONTS_DIR) \
 	$(CRAWL_DIR):
 	mkdir -p $@
 
-$(MAN1_DIR):
+$(MAN1_DIR) $(PIXMAPS_DIR):
 	sudo mkdir -p $@
 
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/$(DIST_ARCH)/iso-cd
@@ -928,12 +929,20 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 	@rm -f $(RG_PKG)
 
+# Resources:
+#  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
-alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(ZSH_COMPLETIONS) net-tools x-utils
+alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
+alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(PIXMAPS_DIR) $(ZSH_COMPLETIONS) net-tools x-utils rust
 ifeq ($(shell which alacritty 2> /dev/null),)
-	@echo ">>> Installing $@: https://github.com/alacritty/alacritty"
-	sudo snap install --classic $@
+	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
+	@sudo apt install -y \
+		pkg-config \
+		libfreetype6-dev \
+		libfontconfig1-dev \
+		libxcb-xfixes0-dev \
+		libxkbcommon-dev
 	@echo ">>> Configuring $@"
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.config/$@ -type f); do \
@@ -941,14 +950,24 @@ ifeq ($(shell which alacritty 2> /dev/null),)
 		done;\
 	}
 else
-	@echo ">>> Updating $@"
-	sudo snap refresh $@
+	@echo ">>> Updating $@: https://github.com/alacritty/alacritty"
 endif
-	@echo ">>> Fetching man pages for $$($@ -V)"
-	@sudo $(WGET) -qcNP $(MAN1_DIR) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$@.1.gz"
-	@echo ">>> Fetching zsh completions for $$($@ -V)"
-	@$(WGET) -qcNP $(ZSH_COMPLETIONS) "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/_$@"
+	@cargo install $@
+	@echo ">>> Fetching release assets for $$($@ -V)"
+	@curl -sLO --output-dir $(DOWNLOAD_DIR) \
+		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
+	@echo ">>> Configuring $@ terminfo"
+	@sudo tic -xe $@,$@-direct "$(DOWNLOAD_DIR)/$@.info"
+	@echo ">>> Configuring $@ desktop entry"
+	@sudo mv "$(DOWNLOAD_DIR)/Alacritty.svg" $(PIXMAPS_DIR)
+	@sudo desktop-file-install "$(DOWNLOAD_DIR)/Alacritty.desktop"
+	@sudo update-desktop-database
+	@echo ">>> Configuring $@ man pages"
+	@sudo mv "$(DOWNLOAD_DIR)/$@.1.gz" $(MAN1_DIR)
+	@echo ">>> Configuring $@ zsh completions"
+	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@rm -rf $(DOWNLOAD_DIR)
 
 # Resources:
 #  - https://github.com/vercel/install-node
