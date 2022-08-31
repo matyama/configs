@@ -82,7 +82,9 @@ let g:rust_clip_command = 'xclip -selection clipboard'
 
 " Neoformat (https://github.com/sbdchd/neoformat)
 "  - Shell (shfmt): indent switch cases
+"  - Hotfix: disables formatting zsh files (shfmt breaks `(( $+commands[x] ))`)
 let g:shfmt_opt="-ci"
+let g:neoformat_enabled_zsh = []
 
 " Completion
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
