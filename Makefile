@@ -970,6 +970,7 @@ endif
 # TODO
 #  - use official repo rather than the fork when changes are merged
 #  - enable the extension without restarting Gnome session
+#  - detect X11/Wayland (XDG_SESSION_TYPE) and setup `alacritty-toggle-x11`
 .PHONY: alacritty-toggle
 alacritty-toggle: EXT_REPO := https://github.com/joscherrer/gnome-alacritty-toggle
 alacritty-toggle: EXT_NAME := toggle-alacritty@itstime.tech
