@@ -362,6 +362,21 @@ fails (see [this post](https://bit.ly/3lI2PYd)).
 The solution is as described above (possibly combination of both
 approaches). Also, reboot might be necessary for the fix to take effect.
 
+#### Nvidia on Wayland
+Ubuntu 22.04 (LTS) will fallback to and start with X11 on a machine with
+Nvidia. It's possible, however, to override this rule and run it with
+Wayland just fine.
+
+Enabling Wayland requires a manual change as described
+[here](https://askubuntu.com/a/1403916). Additionally, also modify
+`/etc/gdm3/custom.conf` as follows:
+```
+WaylandEnable=true
+```
+
+Note that on Ubunut, one can tell the session type from the
+`XDG_SESSION_TYPE` environment variable.
+
 ### Minikube fails to start
 If minikube continously fails to boot, and as a last resort, one can
 clean up the whole minikube by running:
