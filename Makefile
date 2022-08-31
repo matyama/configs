@@ -206,33 +206,6 @@ base16-fzf:
 	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
 
-# Resources:
-#  - [dconf backup/restore](https://askubuntu.com/a/844907)
-#  - [Ubuntu wiki](https://wiki.ubuntu.com/Keybindings)
-.PHONY: dconf-dump
-dconf-dump:
-	@echo "Saving Gnome keybindings:"
-	@echo "'/org/gnome/desktop/wm/keybindings/'"
-	@dconf dump \
-		'/org/gnome/desktop/wm/keybindings/' > \
-		$(CFG_DIR)/.config/dconf/gnome-keybindings.dconf
-	@echo "'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/'"
-	@dconf dump \
-		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' > \
-		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
-
-.PHONY: dconf-load
-dconf-load:
-	@echo "Restoring Gnome keybindings:"
-	@echo "'/org/gnome/desktop/wm/keybindings/'"
-	@dconf load \
-		'/org/gnome/desktop/wm/keybindings/' < \
-		$(CFG_DIR)/.config/dconf/gnome-keybindings.dconf
-	@echo "'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/'"
-	@dconf load \
-		'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/' < \
-		$(CFG_DIR)/.config/dconf/gnome-custom-keybindings.dconf
-
 .PHONY: links
 links: \
 	$(ALACRITTY_CONFIG_DIR) \
@@ -255,15 +228,12 @@ links: \
 	@echo "Linking configuration files:"
 	@ln -svft ~ $(CFG_DIR)/.zshenv
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f -not -name '*.dconf'); do \
+		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
 	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
-
-.PHONY: config
-config: dconf-load links
 
 # Installed tools:
 #  - libssl-dev: secure sockets layer toolkit
@@ -951,7 +921,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
-alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(PIXMAPS_DIR) $(ZSH_COMPLETIONS) net-tools xdotool rust
+alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(PIXMAPS_DIR) $(ZSH_COMPLETIONS) net-tools rust
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
 	@sudo apt install -y \
@@ -985,6 +955,35 @@ endif
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
+
+# Resources:
+#  - Official: https://github.com/axxapy/gnome-alacritty-toggle
+#  - Fork: https://github.com/joscherrer/gnome-alacritty-toggle
+# 
+# Notes:
+#  - Manual installation of the fork is due to the Gnome 42 support and
+#    configurable alacritty installation path
+#  - Configures the toggle button to be F1
+#  - Gnome session must be restarted to pick up the extension, so one has to
+#    reboot (or logout & login) and re-run this target to finish the setup
+#
+# TODO
+#  - use official repo rather than the fork when changes are merged
+#  - enable the extension without restarting Gnome session
+.PHONY: alacritty-toggle
+alacritty-toggle: EXT_REPO := https://github.com/joscherrer/gnome-alacritty-toggle
+alacritty-toggle: EXT_NAME := toggle-alacritty@itstime.tech
+alacritty-toggle: EXT_HOME := $(XDG_DATA_HOME)/gnome-shell/extensions/$(EXT_NAME)
+alacritty-toggle: EXT_SCHEMA := org.gnome.shell.extensions.toggle-alacritty
+alacritty-toggle:
+	@echo ">>> Configuring $@: $(EXT_REPO)"
+	@git clone $(EXT_REPO) $(EXT_HOME) 2>/dev/null || true
+	@gsettings --schemadir $(EXT_HOME)/schemas \
+		set $(EXT_SCHEMA) toggle-key "['F1']"
+	@gsettings --schemadir $(EXT_HOME)/schemas \
+		set $(EXT_SCHEMA) command $$(which alacritty)
+	@gnome-extensions enable $(EXT_NAME) || \
+		echo ">>> Restart Gnome session (logout & login) and run this command again"
 
 # Resources:
 #  - https://github.com/vercel/install-node

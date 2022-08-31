@@ -62,17 +62,17 @@ make config
 ## Manual configurations
 
 ### Alacritty terminal
-1. Link script `alacritty_toggle.sh` to an executable path (e.g. with
-   `make links`)
-1. Manually configure toggle keybinging in 'Settings > Keyboard
-   Shortcuts' - for example like this:
-   ```
-   [custom0]
-   binding='F1'
-   command='/home/matyama/.local/bin/alacritty_toggle.sh'
-   name='Toggle Alacritty terminal'
-   ```
-1. Add Alacritty to 'Tweaks > Startup Applications'
+There is a Gnome extension
+[alacritty-toggle](https://github.com/joscherrer/gnome-alacritty-toggle)
+(or rather fork of it), which enables toggling the visibility of the
+terminal window.
+
+This extension can be installed with `make alacritty-toggle` which
+clones the (forked) repository and configures the toggle button to F1.
+
+Unfortunately, the extension is picked up only after restarting current
+Gnome session so one must logout, log back in and re-run the make
+target.
 
 ### Making CapsLock an extra Esc
 1. Make sure [GNOME Tweaks](https://wiki.gnome.org/Apps/Tweaks) is installed

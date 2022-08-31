@@ -1,4 +1,0 @@
-[custom0]
-binding='F1'
-command='/home/matyama/.local/bin/alacritty_toggle.sh'
-name='Toggle Alacritty terminal'
