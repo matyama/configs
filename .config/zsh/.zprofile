@@ -4,6 +4,7 @@
 #  - https://wiki.archlinux.org/title/wayland
 [[ "$(command -v alacritty)" ]] &&
   [[ "${XDG_SESSION_TYPE:-}" == wayland ]] &&
+  [[ "$(command -v nvidia-smi)" ]] &&
   [[ -f /usr/share/glvnd/egl_vendor.d/50_mesa.json ]] &&
   export __NV_PRIME_RENDER_OFFLOAD=1 &&
   export GBM_BACKEND=nvidia-drm &&
