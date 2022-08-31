@@ -1164,6 +1164,25 @@ else
 	@echo ">>> Manually change value of 'vm.swappiness' in '/etc/sysctl.conf'"
 endif
 
+define DISABLE_ADMIN_FILE_IN_HOME
+# Disable ~/.sudo_as_admin_successful file
+Defaults !admin_flag
+endef
+
+export DISABLE_ADMIN_FILE_IN_HOME
+
+# Resources:
+#  - https://github.com/sudo-project/sudo/issues/56
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#
+# Notes:
+#  - Requires sudo >= 1.9.6
+#  - Contents of the output file is defined by DISABLE_ADMIN_FILE_IN_HOME
+.PHONY: disable-sudo-admin-file
+disable-sudo-admin-file: OUT_FILE := /etc/sudoers.d/disable_admin_file_in_home
+disable-sudo-admin-file:
+	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
+
 # Resources:
 #  - [Automating setup](https://bit.ly/2SMFmsj)
 .PHONY: jetbrains-toolbox
