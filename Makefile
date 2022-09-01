@@ -1181,6 +1181,7 @@ export DISABLE_ADMIN_FILE_IN_HOME
 .PHONY: disable-sudo-admin-file
 disable-sudo-admin-file: OUT_FILE := /etc/sudoers.d/disable_admin_file_in_home
 disable-sudo-admin-file:
+	@echo ">>> Creating or rewriting file '$(OUT_FILE)'"
 	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
 
 # Resources:
