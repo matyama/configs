@@ -6,7 +6,8 @@
   [[ "${XDG_SESSION_TYPE:-}" == wayland ]] &&
   [[ "$(command -v nvidia-smi)" ]] &&
   [[ -f /usr/share/glvnd/egl_vendor.d/50_mesa.json ]] &&
-  export __NV_PRIME_RENDER_OFFLOAD=1 &&
-  export GBM_BACKEND=nvidia-drm &&
-  export __GLX_VENDOR_LIBRARY_NAME=nvidia &&
+  #export GBM_BACKEND=nvidia-drm &&
+  #export __NV_PRIME_RENDER_OFFLOAD=1 &&
+  #export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0 &&
+  #export __GLX_VENDOR_LIBRARY_NAME=nvidia &&
   export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
