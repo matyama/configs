@@ -172,6 +172,17 @@ export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
+# nvidia-settings
+#  - `nvidia-settings --config ...` is a workaround to make nvidia-settings XDG
+#    compliant, see: https://github.com/NVIDIA/nvidia-settings/issues/30
+#  - Despite the fact it's not recommended to override command behavior in
+#    `.envrc` (since it's always loaded, even for non-interactive shells), here
+#    we actually want to prevent all executions from creating
+#    `~/.nvidia-settings-rc`
+#  - Note: Make sure that the directory with custom config exists.
+#  - FIXME: still creates rc file in HOME when running from Gnome menu
+alias nvidia-settings="nvidia-settings --config ${XDG_CONFIG_HOME}/nvidia-settings/nvidia-settings-rc"
+
 # wget
 #  - Despite the fact it's not recommended to override command behavior in
 #    `.envrc` (since it's always loaded, even for non-interactive shells), here
