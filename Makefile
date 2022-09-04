@@ -151,6 +151,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/npm \
+	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
@@ -1183,6 +1184,24 @@ disable-sudo-admin-file: OUT_FILE := /etc/sudoers.d/disable_admin_file_in_home
 disable-sudo-admin-file:
 	@echo ">>> Creating or rewriting file '$(OUT_FILE)'"
 	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
+
+# Resources:
+#  - https://github.com/NVIDIA/nvidia-settings/issues/30
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+.PHONY: nvidia-settings-rc-xdg-path
+nvidia-settings-rc-xdg-path: NVIDIA_SETTINGS_DESKTOP := /usr/share/applications/nvidia-settings.desktop
+nvidia-settings-rc-xdg-path: NVIDIA_SETTINGS_RC := ~/.config/nvidia-settings/nvidia-settings-rc
+nvidia-settings-rc-xdg-path: $(XDG_CONFIG_HOME)/nvidia-settings
+ifeq ($(shell which nvidia-settings 2> /dev/null),)
+	@echo ">>> Nothing to do, nvidia-settings is not installed"
+else
+	@echo ">>> Setting nvidia-settings config file to '$(NVIDIA_SETTINGS_RC)'"
+	@sudo desktop-file-edit \
+		--set-key=Exec \
+		--set-value='nvidia-settings --config "$(NVIDIA_SETTINGS_RC)"' \
+		$(NVIDIA_SETTINGS_DESKTOP)
+	@sudo update-desktop-database
+endif
 
 # Resources:
 #  - [Automating setup](https://bit.ly/2SMFmsj)

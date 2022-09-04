@@ -242,6 +242,22 @@ make haskell
 Settings are automatically synchronized via [build-in mechanism](https://code.visualstudio.com/docs/editor/settings-sync)
 so one can just login to GitHub.
 
+### Nvidia Settings
+The `nvidia-settings` application does not currently support
+[XDG specification](https://wiki.archlinux.org/title/XDG_Base_Directory).
+The workaround is to set custom config path using the `--config` option.
+
+`.envrc` defines an alias for this so when running `nvidia-settings`
+from shell it will automatically use
+`$XDG_CONFIG_HOME/nvidia-settings/nvidia-settings-rc` as the config file.
+
+However, the desktop entry (i.e. when running the app from Gnome menu)
+must be edited manually. One can do this by executing the following make
+target:
+```bash
+make nvidia-settings-rc-xdg-path
+```
+
 ## Saving configurations
 Edits to any linked configurations is automatically propagated here 
 (via the symlink). Then simply commit and push the changes. 

@@ -180,8 +180,8 @@ export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 #    we actually want to prevent all executions from creating
 #    `~/.nvidia-settings-rc`
 #  - Note: Make sure that the directory with custom config exists.
-#  - FIXME: still creates rc file in HOME when running from Gnome menu
-alias nvidia-settings="nvidia-settings --config ${XDG_CONFIG_HOME}/nvidia-settings/nvidia-settings-rc"
+export NVIDIA_SETTINGS_RC=${XDG_CONFIG_HOME}/nvidia-settings/nvidia-settings-rc
+alias nvidia-settings="nvidia-settings --config ${NVIDIA_SETTINGS_RC}"
 
 # wget
 #  - Despite the fact it's not recommended to override command behavior in
