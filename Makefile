@@ -677,6 +677,8 @@ python-tools: pipx
 #	pipx install black $(OPS)
 #	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"
 #	pipx install wemake-python-styleguide --include-deps $(OPS)
+	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
+	pipx install sqlfluff
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
 	pipx install kaggle $(OPS)
 
