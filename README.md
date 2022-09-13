@@ -335,6 +335,22 @@ There are two options to solve this problem:
  1. Upgrade to the latest development release, as proposed in the error
     message. This can be done by `sudo do-release-upgrade -d`.
 
+### Pending snap updates
+With Ubuntu 22.04 a notification might appear reporting
+["Pending Update of Snap Store"](https://askubuntu.com/a/1412580).
+
+The issue is that neither from terminal nor from *Ubuntu Software*
+application the update works. This is because `snap-store` starts
+automatically on login.
+
+So first `kill` the process (either from command line or using *System
+Monitor*), and then run
+```bash
+sudo snap refresh
+```
+
+Note: see all pending updates by running `snap refresh --list`.
+
 ### Nvidia Drivers
 Missing `nvidia-smi` after some updates (which was working after
 installation):
