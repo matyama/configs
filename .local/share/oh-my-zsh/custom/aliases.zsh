@@ -16,6 +16,7 @@ alias rmclip="echo '' | c"
 
 # EDITOR
 alias e="nvim"
+alias ep="nvim -p"
 alias v="nvim"
 alias vim="nvim"
 alias vi="nvim"
