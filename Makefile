@@ -975,6 +975,9 @@ alacritty-toggle: EXT_SCHEMA := org.gnome.shell.extensions.toggle-alacritty
 alacritty-toggle:
 	@echo ">>> Configuring $@: $(EXT_REPO)"
 	@git clone $(EXT_REPO) $(EXT_HOME) 2>/dev/null || true
+	@echo ">>> Validating the integrity of compiled $@ schemas"
+	@glib-compile-schemas $(EXT_HOME)/schemas && \
+		git -C $(EXT_HOME) status --porcelain --untracked-files=no
 	@gsettings --schemadir $(EXT_HOME)/schemas \
 		set $(EXT_SCHEMA) toggle-key "['F1']"
 	@gsettings --schemadir $(EXT_HOME)/schemas \
