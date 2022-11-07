@@ -1198,22 +1198,6 @@ else
 	@sudo update-desktop-database
 endif
 
-# Resources:
-#  - [Automating setup](https://bit.ly/2SMFmsj)
-.PHONY: jetbrains-toolbox
-jetbrains-toolbox: TOOLBOX_URL := "https://data.services.jetbrains.com/products/download?platform=linux&code=TBA"
-jetbrains-toolbox: TOOLBOX_DIR := $(shell mktemp -d)
-jetbrains-toolbox: net-tools
-ifneq ($(shell which jetbrains-toolbox 2> /dev/null),)
-	@echo ">>> JetBrains Toolbox already installed"
-else
-	@echo ">>> Downloading and unpacking $(TOOLBOX_URL)"
-	curl -sL $(TOOLBOX_URL) | tar -xvzf - --strip-components=1 -C $(TOOLBOX_DIR)
-	@echo ">>> Installing JetBrains Toolbox"
-	$(TOOLBOX_DIR)/$@
-endif
-	rm -rf $(TOOLBOX_DIR)
-
 .PHONY: keybase
 keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_$(DIST_ARCH).deb
 keybase: KEYBASE_PKG := $(shell mktemp)
