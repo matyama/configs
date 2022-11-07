@@ -18,9 +18,12 @@
 #  - exclude .git/
 --glob=!.git/*
 
-# TODO: base16 colors
 # Set the colors
---color=always
+#  - options: never | auto (default) | always | ansi
+#  - `auto` will cause ripgrep to only enable colors when it is printing to a
+#    terminal, if its output is piped to a file or process, colors will be
+#    suppressed
+--color=auto
 
 # Because who cares about case!?
 --smart-case
