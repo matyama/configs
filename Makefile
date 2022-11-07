@@ -37,7 +37,7 @@ ifndef BASE16_FZF_HOME
 BASE16_FZF_HOME=$(XDG_CONFIG_HOME)/base16-fzf
 endif
 
-# TODO: currently base16-project hardcodes `$HOME/.config`, use 
+# TODO: currently tinted-theming hardcodes `$HOME/.config`, use 
 # `XDG_CONFIG_HOME` once supported
 ifndef BASE16_SHELL_PATH
 BASE16_SHELL_PATH=$(HOME)/.config/base16-shell
@@ -184,9 +184,9 @@ install-fonts: $(FONTS_DIR)
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 
 # Resources:
-#  - [Base16 Shell](https://github.com/base16-project/base16-shell)
+#  - [Base16 Shell](https://github.com/tinted-theming/base16-shell)
 .PHONY: base16-shell
-base16-shell: BASE16_SHELL_REPO := https://github.com/base16-project/base16-shell.git
+base16-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/base16-shell.git
 base16-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
 base16-shell: BASE16_THEME := gruvbox-dark-hard
 base16-shell: zsh $(ZSH_CUSTOM)/plugins/base16-shell
@@ -200,9 +200,9 @@ base16-shell: zsh $(ZSH_CUSTOM)/plugins/base16-shell
 	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
 
 # Resources:
-#  - [Base16 fzf](https://github.com/base16-project/base16-fzf)
+#  - [Base16 fzf](https://github.com/tinted-theming/base16-fzf)
 .PHONY: base16-fzf
-base16-fzf: BASE16_FZF_REPO := https://github.com/base16-project/base16-fzf.git
+base16-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/base16-fzf.git
 base16-fzf:
 	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)

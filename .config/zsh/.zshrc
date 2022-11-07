@@ -24,7 +24,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
 # Plugins
 #  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-#  - https://github.com/base16-project/base16-shell
+#  - https://github.com/tinted-theming/base16-shell
 #  - https://github.com/zsh-users/zsh-syntax-highlighting
 #  - https://github.com/zsh-users/zsh-history-substring-search
 #  - https://github.com/zsh-users/zsh-autosuggestions
@@ -179,7 +179,7 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
   source "${POWERLEVEL9K_CONFIG_FILE}"
 
-# Base16 fzf (https://github.com/base16-project/base16-fzf)
+# Base16 fzf (https://github.com/tinted-theming/base16-fzf)
 BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
 [[ ! -d "$BASE16_FZF_HOME" ]] || \
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \

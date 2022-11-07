@@ -142,10 +142,10 @@ instructed. The font download is part of `make fonts`.
 ### Base16 colors
 
 #### Base16 Shell
-[Base16 Shell](https://github.com/base16-project/base16-shell) can be
+[Base16 Shell](https://github.com/tinted-theming/base16-shell) can be
 installed with `make base16-shell`. One can then manually switch themes
 with `base16_<theme>` which creates/updates a link
-`$HOME/.config/base16-project/base16_shell_theme`.
+`$HOME/.config/tinted-theming/base16_shell_theme`.
 
 Note that the shell hook is already added to and liked the oh-my-zsh
 plugin `base16-shell`, so after installation with `make` one just needs
@@ -158,11 +158,11 @@ base16_gruvbox-dark-hard
 The default theme is set in `.zshenv` to 
 `BASE16_THEME_DEFAULT=gruvbox-dark-hard`.
 
-One can also [test](https://github.com/base16-project/base16-shell#troubleshooting)
+One can also [test](https://github.com/tinted-theming/base16-shell#troubleshooting)
 the themes with included `colortest` tool.
 
 #### Alacritty terminal
-Note that when changing the [Base16 theme](https://github.com/base16-project/base16)
+Note that when changing the [Base16 theme](https://github.com/tinted-theming/base16)
 one has to [manually update](https://github.com/aarowill/base16-alacritty#installation)
 `alacritty.yml` with appropriate colors from that color scheme.
 

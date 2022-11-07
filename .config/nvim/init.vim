@@ -122,9 +122,9 @@ endif
 set background=dark
 
 " Pick Base16 color scheme and access colors present in 256 colorspace
-"  - https://github.com/base16-project/base16-shell#base16-vim-users
-"  - https://github.com/base16-project/base16-vim#256-colorspace
-"  - https://github.com/base16-project/base16-vim#installation
+"  - https://github.com/tinted-theming/base16-shell#base16-vim-users
+"  - https://github.com/tinted-theming/base16-vim#256-colorspace
+"  - https://github.com/tinted-theming/base16-vim#installation
 if exists('$BASE16_THEME')
     \ && (!exists('g:colors_name') 
     \ || g:colors_name != 'base16-$BASE16_THEME')
