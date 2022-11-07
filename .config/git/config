@@ -20,9 +20,7 @@
 	# set to true if you're in a terminal w/ a light background color
 	light = false
 	# link GitHub/GitLab/Bitbucket in git blame
-	#  - FIXME: does not display correctly (possibly issue with Alacritty)
-	#  - https://github.com/alacritty/alacritty/issues/922
-	#hyperlinks = true
+	hyperlinks = true
 [add.interactive]
 	# required for git 2.37.0
 	useBuiltin = false 
