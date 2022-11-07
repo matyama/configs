@@ -959,23 +959,16 @@ endif
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
 
-# Resources:
-#  - Official: https://github.com/axxapy/gnome-alacritty-toggle
-#  - Fork: https://github.com/joscherrer/gnome-alacritty-toggle
-# 
 # Notes:
-#  - Manual installation of the fork is due to the Gnome 42 support and
-#    configurable alacritty installation path
 #  - Configures the toggle button to be F1
 #  - Gnome session must be restarted to pick up the extension, so one has to
 #    reboot (or logout & login) and re-run this target to finish the setup
 #
 # TODO
-#  - use official repo rather than the fork when changes are merged
 #  - enable the extension without restarting Gnome session
 #  - detect X11/Wayland (XDG_SESSION_TYPE) and setup `alacritty-toggle-x11`
 .PHONY: alacritty-toggle
-alacritty-toggle: EXT_REPO := https://github.com/joscherrer/gnome-alacritty-toggle
+alacritty-toggle: EXT_REPO := https://github.com/axxapy/gnome-alacritty-toggle
 alacritty-toggle: EXT_NAME := toggle-alacritty@itstime.tech
 alacritty-toggle: EXT_HOME := $(XDG_DATA_HOME)/gnome-shell/extensions/$(EXT_NAME)
 alacritty-toggle: EXT_SCHEMA := org.gnome.shell.extensions.toggle-alacritty

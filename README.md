@@ -80,12 +80,11 @@ First check whether the system runs X11 or Wayland, e.g. by looking at
 
 #### Wayland
 There is a Gnome extension
-[alacritty-toggle](https://github.com/joscherrer/gnome-alacritty-toggle)
-(or rather fork of it), which enables toggling the visibility of the
-terminal window.
+[alacritty-toggle](https://github.com/axxapy/gnome-alacritty-toggle),
+which enables toggling the visibility of the terminal window.
 
 This extension can be installed with `make alacritty-toggle` which
-clones the (forked) repository and configures the toggle button to F1.
+clones the repository and configures the toggle button to F1.
 
 Unfortunately, the extension is picked up only after restarting current
 Gnome session so one must logout, log back in and re-run the make
