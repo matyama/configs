@@ -25,6 +25,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 # Plugins
 #  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
 #  - https://github.com/tinted-theming/base16-shell
+#  - https://github.com/wfxr/forgit
 #  - https://github.com/zsh-users/zsh-syntax-highlighting
 #  - https://github.com/zsh-users/zsh-history-substring-search
 #  - https://github.com/zsh-users/zsh-autosuggestions
@@ -43,6 +44,7 @@ plugins=(
   fd                            # adds completion for fd
   fzf                           # enables fuzzy auto-completion & key bindings
   git                           # adds many aliases & few useful functions
+  forgit                        # interactive git+fzf & overrides git aliases
   gh                            # adds completion for the GitHub CLI
   helm                          # adds completion for helm
   history                       # adds a couple of convenient aliases

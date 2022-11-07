@@ -14,7 +14,7 @@
 [delta]
 	features = zebra-dark
 	line-numbers = true
-	side-by-side = true
+	#side-by-side = true
 	# use n and N to move between diff sections
 	navigate = true
 	# set to true if you're in a terminal w/ a light background color

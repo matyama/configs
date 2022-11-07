@@ -142,6 +142,7 @@ $(FONTS_DIR) \
 	$(ZSH_COMPLETIONS) \
 	$(ZSH_CUSTOM) \
 	$(ZSH_CUSTOM)/plugins/base16-shell \
+	$(ZSH_CUSTOM)/plugins/forgit \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/vm \
@@ -309,6 +310,18 @@ endif
 		sudo tee $(MAN1_DIR)/fzf.1.gz > /dev/null
 	@gzip -c $(FZF_BASE)/man/man1/fzf-tmux.1 | \
 		sudo tee $(MAN1_DIR)/fzf-tmux.1.gz > /dev/null
+
+.PHONY: forgit
+forgit: FORGIT_REPO := https://github.com/wfxr/forgit.git
+forgit: zsh fzf $(ZSH_CUSTOM)/plugins/forgit
+ifneq ($(wildcard $(ZSH_CUSTOM)/plugins/forgit/.),)
+	@echo ">>> Updating $@"
+	@git -C $(ZSH_CUSTOM)/plugins/$@ pull
+else
+	@echo ">>> Installing $@ to '$(ZSH_CUSTOM)/plugins/$@'"
+	@git clone $(FORGIT_REPO) $(ZSH_CUSTOM)/plugins/$@
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+endif
 
 # lesspipe.sh: display more with less (https://github.com/wofr06/lesspipe)
 #  - Note: lesspipe.sh is installed system-wide and thus requires sudo
