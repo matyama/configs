@@ -48,6 +48,11 @@
 	cl = log -p -- ':(exclude)Cargo.lock'
 	pl = log -p -- ':(exclude)poetry.lock'
 	f = push --force-with-lease
+	# https://stackoverflow.com/questions/3103589
+	fixup = !sh -c 'git commit --fixup=$1' -
+	squash = !sh -c 'git commit --squash=$1' -
+	ri = rebase -i --autosquash
+	fu = "!git commit --fixup=${1:-$(git rev-parse HEAD)} && GIT_EDITOR=true git rebase -i --autosquash ${1:-$(git rev-parse HEAD~2)}~1"
 	# https://stackoverflow.com/a/11688523/472927
 	ss = "!f() { git stash show stash^{/$*} -p; }; f"
 	sa = "!f() { git stash apply stash^{/$*}; }; f"
