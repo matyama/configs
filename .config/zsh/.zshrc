@@ -74,6 +74,10 @@ export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
 export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
 export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
 
+# forgit
+#  - https://github.com/wfxr/forgit#git
+path+="${FORGIT_INSTALL_DIR}/bin"
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
