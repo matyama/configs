@@ -833,6 +833,8 @@ cargo-tools: rust
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
+	@echo ">>> Installing cargo-watch: https://github.com/watchexec/cargo-watch"
+	cargo install cargo-watch
 
 # TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
