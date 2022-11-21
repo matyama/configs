@@ -1198,6 +1198,13 @@ disable-sudo-admin-file:
 	@echo ">>> Creating or rewriting file '$(OUT_FILE)'"
 	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
 
+# Notes:
+#  - Modifies /etc/ubuntu-advantage/uaclient.conf
+.PHONY: disable-ubuntu-news
+disable-ubuntu-news:
+	@echo ">>> Disabling Ubuntu news in apt output"
+	sudo pro config set apt_news=false
+
 # Resources:
 #  - https://github.com/NVIDIA/nvidia-settings/issues/30
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
