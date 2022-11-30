@@ -222,6 +222,37 @@ binenv_upgrade() {
 	binenv install "${dist}" "${version}"
 }
 
+binenv_clean() {
+	local dist="$(echo $1 | cut -d: -f1)"
+
+	# FIXME: https://github.com/matyama/configs/issues/15
+	if [[ "${dist}" == "krew" ]]; then
+		return 0
+	fi
+
+	# TODO: improvement - silence or skip version wihich is not installed
+	#  - Note: this can happen becuase `binenv_clean` is called even if `dist`
+	#    was not recently updated
+	# TODO: improvement - uninsall _all_ non-default currently installed versions
+	local version=$(
+		echo $1 |
+			# select release version list
+			cut -d : -f 2 |
+			# select only earlier releases than the currently installed one
+			sed -e 's|^.*(default)||g' |
+			tr " " "\n" |
+			tail -n +2 |
+			# filter out any RC/alpha/beta releases and non-version outputs
+			egrep -v "rc|alpha|beta|^[[:space:]]*$" |
+			# select the latest release version
+			head -1 |
+			# make sure to select only semantic version and strip color outputs
+			egrep -o "[[:digit:]]+(\.[[:digit:]]+)+"
+	)
+
+	binenv uninstall "${dist}" "${version}"
+}
+
 if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
 	echo "Upgrading binenv distributions..."
 	binenv update
@@ -230,6 +261,7 @@ if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
 	binenv update
 	while read -r binenv_dist; do
 		binenv_upgrade "${binenv_dist}"
+		binenv_clean "${binenv_dist}"
 	done <<<"$(binenv versions | grep default | grep -v binenv)"
 fi
 
