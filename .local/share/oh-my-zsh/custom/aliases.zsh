@@ -11,6 +11,12 @@ alias c="xclip -i -selection clipboard"
 alias p="xclip -o -selection clipboard"
 alias rmclip="echo '' | c"
 
+# Bitwarden
+#  - https://bitwarden.com/help/cli/#log-in
+#  - NOTE: currently using two-step login via an authenticator app
+#  - TODO: switch to FIDO2 two-step login method once supported by the app
+alias bwl="bw login --method 0 ${EMAIL}"
+
 # Command auto-correction
 (( $+commands[fuck] )) && alias f="fuck"
 

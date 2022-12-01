@@ -244,10 +244,13 @@ net-tools:
 	@echo ">>> Installing basic network tools"
 	sudo apt install -y curl jq net-tools wget libssl-dev
 
+# Installed tools:
+#  - libfuse2: Filesystem in Userspace
+#    [AppImage - FUSE](https://github.com/AppImage/AppImageKit/wiki/FUSE)
 .PHONY: core-tools
 core-utils:
 	@echo ">>> Installing core utilities"
-	sudo apt install -y git lsb-core moreutils
+	sudo apt install -y git lsb-core moreutils libfuse2
 
 .PHONY: apt-utils
 apt-utils:
@@ -1221,6 +1224,21 @@ else
 		--set-value='nvidia-settings --config "$(NVIDIA_SETTINGS_RC)"' \
 		$(NVIDIA_SETTINGS_DESKTOP)
 	@sudo update-desktop-database
+endif
+
+# Resources:
+#  - https://bitwarden.com/download/
+#  - https://bitwarden.com/help/cli/
+.PHONY: bitwarden
+bitwarden: $(ZSH_COMPLETIONS)
+ifneq ($(shell which bw 2> /dev/null),)
+	@echo ">>> $$(bw --version) already installed"
+else
+	@echo ">>> Installing Bitwarden Desktop & CLI"
+	sudo snap install bitwarden bw
+	@echo ">>> Setting up bw zsh completions"
+	bw completion --shell zsh > "$(ZSH_COMPLETIONS)/_bw"
+	@echo ">>> Finish bw completion setup by reloading zsh with 'omz reload'"
 endif
 
 .PHONY: keybase
