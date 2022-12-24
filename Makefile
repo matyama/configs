@@ -351,6 +351,7 @@ neovim: python
 	sudo apt install -y $@ python3-$@
 
 # Installed tools:
+#  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
@@ -368,7 +369,8 @@ neovim: python
 basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
-		htop \
+		git-lfs \
+ 		htop \
 		iotop \
 		iftop \
 		tshark \
