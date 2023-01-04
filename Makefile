@@ -838,6 +838,8 @@ cargo-tools: rust
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
 	cargo install --locked cargo-udeps
+	@echo ">>> Installing cargo-bloat: https://github.com/RazrFalcon/cargo-bloat"
+	cargo install cargo-bloat
 	@echo ">>> Installing cargo-watch: https://github.com/watchexec/cargo-watch"
 	cargo install cargo-watch
 
