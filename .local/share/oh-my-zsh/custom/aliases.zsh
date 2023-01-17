@@ -66,6 +66,12 @@ if (( $+commands[bat] )); then
 	alias bp="bat --plain"
 fi
 
+# wireguard (https://wiki.archlinux.org/title/WireGuard)
+if (( $+commands[wg-quick] )); then
+	alias wgup="wg-quick up"
+	alias wgdn="wg-quick down"
+fi
+
 # hyperfine (https://github.com/sharkdp/hyperfine)
 if (( $+commands[hyperfine] )); then
 	alias bench="hyperfine -S zsh"

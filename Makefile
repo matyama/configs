@@ -235,6 +235,8 @@ links: \
 		done;\
 	}
 	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
+	@echo "Making 'resolvectl' act as 'resolvconf': https://superuser.com/a/1544697"
+	@sudo ln -svf /usr/bin/resolvectl /usr/local/bin/resolvconf
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 # Installed tools:
@@ -365,6 +367,7 @@ neovim: python
 #  - tshark: Terminal version of wireshark
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
 #    (https://github.com/protocolbuffers/protobuf)
+#  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
 basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 	@echo ">>> Installing basic tools"
@@ -395,7 +398,8 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		libimage-exiftool-perl \
 		glpk-utils \
 		glpk-doc \
-		protobuf-compiler
+		protobuf-compiler \
+		wireguard
 
 # FIXME: Use CPU_MODEL instead of plain 'intel' in sed replacement
 # Resources:
