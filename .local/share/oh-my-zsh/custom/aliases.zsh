@@ -68,8 +68,8 @@ fi
 
 # wireguard (https://wiki.archlinux.org/title/WireGuard)
 if (( $+commands[wg-quick] )); then
-	alias wgup="wg-quick up"
-	alias wgdn="wg-quick down"
+	alias wgup="sudo wg-quick up"
+	alias wgdn="sudo wg-quick down"
 fi
 
 # hyperfine (https://github.com/sharkdp/hyperfine)
