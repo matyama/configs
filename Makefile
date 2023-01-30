@@ -345,12 +345,16 @@ else
 endif
 	@rm -rf "$(LESSPIPE_DIR)"
 
+# TODO: non-snap installation, man page
+# Resources:
+#  - https://github.com/neovim/neovim/wiki/Installing-Neovim
+# Notes:
+#  - PPA repository contains an quite old stable release compared to GitHub and
+#    Snap (Neovim team does not maintain the PPA packages)
 .PHONY: neovim
-neovim: python
+neovim:
 	@echo ">>> Installing $@"
-	sudo add-apt-repository -y ppa:neovim-ppa/stable
-	sudo apt update
-	sudo apt install -y $@ python3-$@
+	sudo snap install --beta nvim --classic
 
 # Installed tools:
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
