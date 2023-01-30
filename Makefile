@@ -846,6 +846,8 @@ cargo-tools: rust
 	cargo install cargo-bloat
 	@echo ">>> Installing cargo-watch: https://github.com/watchexec/cargo-watch"
 	cargo install cargo-watch
+	@echo ">>> Installing cargo-deb: https://github.com/kornelski/cargo-deb"
+	cargo install cargo-deb
 
 # TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
