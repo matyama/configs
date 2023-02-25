@@ -63,6 +63,10 @@ ifndef BYOBU_CONFIG_DIR
 BYOBU_CONFIG_DIR=$(XDG_CONFIG_HOME)/byobu
 endif
 
+ifndef CARGO_HOME
+CARGO_HOME=$(XDG_DATA_HOME)/cargo
+endif
+
 ifndef CARGO_TARGET_DIR
 CARGO_TARGET_DIR=$(XDG_CACHE_HOME)/cargo-target
 CARGO_RELEASE_DIR=$(CARGO_TARGET_DIR)/release
@@ -133,6 +137,7 @@ $(FONTS_DIR) \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
+	$(CARGO_HOME) \
 	$(CARGO_ARTIFACTS_DIR) \
 	$(FD_CONFIG_HOME) \
 	$(GOPATH) \
@@ -212,6 +217,7 @@ base16-fzf:
 links: \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(BYOBU_CONFIG_DIR) \
+	$(CARGO_HOME) \
 	$(FD_CONFIG_HOME) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
@@ -237,6 +243,8 @@ links: \
 	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
 	@echo "Making 'resolvectl' act as 'resolvconf': https://superuser.com/a/1544697"
 	@sudo ln -svf /usr/bin/resolvectl /usr/local/bin/resolvconf
+	@echo "Making 'g++' act as 'musl-g++': https://github.com/rust-lang/cargo/issues/3359"
+	@sudo ln -svf /usr/bin/g++ /usr/bin/musl-g++
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 # Installed tools:
@@ -369,6 +377,8 @@ neovim:
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
+#  - musl-tools: tools for cross-compilation to musl target
+#  - capnproto, libcapnp-dev: Cap'N Proto compiler tools (https://capnproto.org)
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
 #    (https://github.com/protocolbuffers/protobuf)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
@@ -402,6 +412,9 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		libimage-exiftool-perl \
 		glpk-utils \
 		glpk-doc \
+		musl-tools \
+		capnproto \
+		libcapnp-dev \
 		protobuf-compiler \
 		wireguard
 
@@ -707,6 +720,10 @@ python-tools: pipx
 	pipx install sqlfluff
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
 	pipx install kaggle $(OPS)
+	@echo ">>> Installing gdbgui: https://www.gdbgui.com"
+	pipx install gdbgui
+	@echo ">>> Installing yamllint: https://github.com/adrienverge/yamllint"
+	pipx install yamllint
 
 # Installation resources:
 #  - https://python-poetry.org/docs/#installation
@@ -852,6 +869,8 @@ cargo-tools: rust
 	cargo install cargo-watch
 	@echo ">>> Installing cargo-deb: https://github.com/kornelski/cargo-deb"
 	cargo install cargo-deb
+	@echo ">>> Installing cargo-modules: https://github.com/regexident/cargo-modules"
+	cargo install cargo-modules
 
 # TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
@@ -878,6 +897,8 @@ cargo-tools: rust
 #    (https://github.com/BurntSushi/ripgrep)
 #  - sd: Intuitive find & replace CLI (sed alternative)
 #    (https://github.com/chmln/sd)
+#  - tokio-console: A debugger for async Rust
+#    (https://github.com/tokio-rs/console) 
 #  - xh: Friendly and fast tool for sending HTTP requests
 #    (https://github.com/ducaale/xh)
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
@@ -939,6 +960,9 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_ARTIFACTS_DIR)/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c $$(cargo-latest-dirname sd)/out/sd.1 \
 		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
+	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
+	cargo install --locked tokio-console
+	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
 	cargo install xh
 	@cp "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
@@ -1147,6 +1171,19 @@ ifdef NVIDIA_CTRL
 else
 	$(error >>> No NVIDIA GPU available)
 endif
+
+# TODO: fetch latest version, shell completions, man page
+# Hadolint: Dockerfile linter
+.PHONY: hadolint
+hadolint: REPO_URL := https://github.com/hadolint/hadolint
+hadolint: VERSION := 2.12.0
+hadolint: net-tools
+	@echo ">>> Downloading $@ from $(REPO_URL)"
+	$(WGET) -q \
+		-O $(XDG_BIN_HOME)/$@ \
+		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
+	@chmod +x $(XDG_BIN_HOME)/$@
+	@echo ">>> Installed: $$($@ -v)"
 
 .PHONY: google-chrome
 google-chrome: CHROME_PKG := google-chrome-stable_current_$(DIST_ARCH).deb
