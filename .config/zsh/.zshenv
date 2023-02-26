@@ -93,6 +93,9 @@ export AWS_CLI_HISTORY_FILE="${XDG_STATE_HOME}/aws/history"
 export AWS_SHARED_CREDENTIALS_FILE="${XDG_DATA_HOME}/aws/credentials}"
 export AWS_VAULT_FILE_DIR="${XDG_DATA_HOME}/awsvault/keys"
 
+# Docker
+export DOCKER_CONFIG=${XDG_CONFIG_HOME}/docker
+
 # Minikube
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 #  - https://github.com/kubernetes/minikube/issues/4109
