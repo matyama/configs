@@ -49,6 +49,9 @@ alias gah="git stash && git pull --rebase && git stash pop"
 # make
 alias m="make"
 
+# just
+(( $+commands[just] )) && alias j="just"
+
 # grep
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'

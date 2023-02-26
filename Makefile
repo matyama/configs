@@ -885,6 +885,8 @@ cargo-tools: rust
 #  - hexyl: A command-line hex viewer (https://github.com/sharkdp/hexyl)
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
+#  - just: Just a command runner / simplified make
+#    (https://github.com/casey/just)
 #  - mcfly: an upgraded ctrl-r where history results make sense for what you're
 #    working on right now (https://github.com/cantino/mcfly)
 #  - mdbook: Build a book from Markdown files
@@ -904,6 +906,7 @@ cargo-tools: rust
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CARGO_GH := $(CARGO_HOME)/registry/src/github.com-1ecc6299db9ec823
+rust-tools: JUST_URL := https://raw.githubusercontent.com/casey
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
@@ -938,6 +941,12 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CARGO_GH)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
+	@echo ">>> Installing just: https://github.com/casey/just"
+	cargo install just
+	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
+	@curl -sSL "$(JUST_URL)/$$(just --version | sed 's| |\/|')/man/just.1" \
+		| gzip -c \
+		| sudo tee $(MAN1_DIR)/just.1.gz > /dev/null
 	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
 	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
@@ -955,6 +964,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@ar -p $(RG_PKG) data.tar.xz | \
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
+	@rm -f $(RG_PKG)
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install sd
 	@cp "$(CARGO_ARTIFACTS_DIR)/_sd" $(ZSH_COMPLETIONS)
@@ -973,7 +983,6 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/contrib/completions/_zoxide" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
-	@rm -f $(RG_PKG)
 
 # Resources:
 #  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
