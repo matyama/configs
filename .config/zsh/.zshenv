@@ -82,6 +82,10 @@ export STACK_ROOT=${XDG_DATA_HOME}/stack
 export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
+# ClickHouse Client
+#  - https://github.com/ClickHouse/ClickHouse/issues/10024 
+export CLICKHOUSE_HISTORY_FILE="${XDG_DATA_HOME}/clickhouse/client-history"
+
 # AWS CLI & Vault
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://docs.aws.amazon.com/cli/latest/topic/config-vars.html

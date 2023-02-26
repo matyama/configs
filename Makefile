@@ -1197,6 +1197,21 @@ else
 endif
 	rm -rf /tmp/$(CHROME_PKG)
 
+# ClickHouse
+#  - https://clickhouse.com/docs/en/integrations/sql-clients/cli/
+#  - https://clickhouse.com/docs/en/integrations/sql-clients/clickhouse-client-local/
+.PHONY: clickhouse
+clickhouse: CLICKHOUSE_URL:= https://clickhouse.com/
+clickhouse: INSTALL_DIR := $(XDG_BIN_HOME)
+clickhouse: net-tools
+ifneq ($(shell which clickhouse 2> /dev/null),)
+	@echo ">>> $@ already installed"
+else
+	@echo ">>> Installing or upgrading ClickHouse Client"
+	@cd $(INSTALL_DIR) && curl $(CLICKHOUSE_URL) | sh && cd -
+	@echo ">>> Using $$($@ client --version)"
+endif
+
 # https://github.com/cli/cli
 .PHONY: gh
 gh: zsh
