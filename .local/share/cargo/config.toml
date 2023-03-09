@@ -1,3 +1,6 @@
+[registries.crates-io]
+protocol = "sparse"
+
 [alias]
 br = "build --release"
 rr = "run --release"
