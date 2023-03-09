@@ -486,3 +486,32 @@ Alternatively, one can reinstall `pipx` and the tools manually
 An indication for issues with `pipx` might be an error log mentioning
 > No module named pip
 
+### Profiling tools need additional support from the system
+
+#### Performance events
+Some profiling tools (e.g. `samply` or `flamegraph`) require access to
+the _performance events system_.
+
+These settings can help:
+```bash
+sudo sysctl kernel.perf_event_paranoid=1
+sudo sysctl kernel.perf_event_mlock_kb=2048
+```
+
+#### Tracing scope
+Some tools (e.g. `heaptrack`) need adjustment of the `ptrace` scope:
+```bash
+echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+```
+
+#### Debug symbols
+Also, for _Rust_ binaries it's necessary __not__ to strip debug symbols
+from the binary. This might be the case when building/running in the
+`--release` profile. One possibility is to add a custom profile like the
+following one:
+```toml
+[profile.profiling]
+inherits = "release"
+debug = true
+```
+

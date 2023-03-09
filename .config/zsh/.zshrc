@@ -50,6 +50,7 @@ plugins=(
   history                       # adds a couple of convenient aliases
   kubectl                       # adds completion & some aliases
   minikube                      # adds completion for minikube
+  nmap                          # adds some useful aliases for Nmap
   pip                           # adds completion & some aliases
   poetry                        # adds completion & keeps it up to date
   ripgrep                       # adds completion for ripgrep

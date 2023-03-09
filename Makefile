@@ -252,7 +252,7 @@ links: \
 .PHONY: net-tools
 net-tools:
 	@echo ">>> Installing basic network tools"
-	sudo apt install -y curl jq net-tools wget libssl-dev
+	sudo apt install -y curl jq net-tools ncat nmap wget libssl-dev
 
 # Installed tools:
 #  - libfuse2: Filesystem in Userspace
@@ -365,10 +365,13 @@ neovim:
 	sudo snap install --beta nvim --classic
 
 # Installed tools:
+#  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
+#  - heaptrack(-gui): A heap memory profiler for Linux
+#    (https://github.com/KDE/heaptrack)
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
 #  - libecpg-dev: Postgres instegrations
@@ -413,6 +416,10 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		glpk-utils \
 		glpk-doc \
 		musl-tools \
+		heaptrack \
+		heaptrack-gui \
+		coz-profiler \
+		valgrind \
 		capnproto \
 		libcapnp-dev \
 		protobuf-compiler \
@@ -897,6 +904,8 @@ cargo-tools: rust
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
+#  - samply: Command-line sampling profiler for macOS and Linux
+#    (https://github.com/mstange/samply)
 #  - sd: Intuitive find & replace CLI (sed alternative)
 #    (https://github.com/chmln/sd)
 #  - tokio-console: A debugger for async Rust
@@ -953,7 +962,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install mdbook
 	@echo ">>> Installing procs: https://github.com/dalance/procs"
 	cargo install procs
-	@procs --completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
+	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
 	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
@@ -965,6 +974,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
 		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
 	@rm -f $(RG_PKG)
+	@echo ">>> Installing samply: https://github.com/mstange/samply"
+	cargo install samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install sd
 	@cp "$(CARGO_ARTIFACTS_DIR)/_sd" $(ZSH_COMPLETIONS)
@@ -1055,9 +1066,10 @@ alacritty-toggle:
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 # TODO: migrate to https://github.com/nvm-sh/nvm
 .PHONY: nodejs
+nodejs: VERSION := lts
 nodejs: $(XDG_DATA_HOME)/npm net-tools
 	@echo ">>> Installing nodejs (LTS)"
-	sudo curl -sL install-node.now.sh/lts | \
+	sudo curl -sL install-node.now.sh/$(VERSION) | \
 		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
 
 # Install ruby using apt instead of snap
