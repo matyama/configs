@@ -35,6 +35,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 #  - Standard plugins can be found in $ZSH/plugins/
 #  - Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
+  ansible                       # adds some useful aliases for ansible
   aws                           # completion support for awscli & few utilities 
   base16-shell                  # provides support for Base16 Shell themes
   copybuffer                    # copy shell buffer to clipboard with ctrl-o

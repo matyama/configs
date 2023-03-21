@@ -86,6 +86,11 @@ export GOBIN=${GOPATH}/bin
 #  - https://github.com/ClickHouse/ClickHouse/issues/10024 
 export CLICKHOUSE_HISTORY_FILE="${XDG_DATA_HOME}/clickhouse/client-history"
 
+# Ansible
+export ANSIBLE_HOME="${XDG_CONFIG_HOME}/ansible"
+export ANSIBLE_CONFIG="${XDG_CONFIG_HOME}/ansible.cfg"
+export ANSIBLE_GALAXY_CACHE_DIR="${XDG_CACHE_HOME}/ansible/galaxy_cache"
+
 # AWS CLI & Vault
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://docs.aws.amazon.com/cli/latest/topic/config-vars.html

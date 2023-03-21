@@ -711,6 +711,8 @@ python-tools: pipx
 	pipx install virtualenv $(OPS)
 	# @echo ">>> Installing Pipenv: https://pipenv.pypa.io/"
 	# pipx install pipenv $(OPS)  
+	@echo ">>> Installing Ansible: https://www.ansible.com"
+	pipx install --include-deps ansible
 	@echo ">>> Installing AWS CLI"
 	pipx install awscli $(OPS)
 	@echo ">>> Installing Pythonize: https://github.com/CZ-NIC/pz"
