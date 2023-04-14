@@ -916,7 +916,7 @@ cargo-tools: rust
 #    (https://github.com/ducaale/xh)
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
-rust-tools: CARGO_GH := $(CARGO_HOME)/registry/src/github.com-1ecc6299db9ec823
+rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
 rust-tools: JUST_URL := https://raw.githubusercontent.com/casey
 rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
 rust-tools: RG_PKG := $(shell mktemp)
@@ -928,9 +928,9 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$$(cargo-latest-dirname bat)/out/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing exa: https://the.exa.website/"
 	cargo install exa
-	@cp "$(CARGO_GH)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/completions.zsh" "$(ZSH_COMPLETIONS)/_exa"
+	@cp "$(CRATES_SRC)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/completions.zsh" "$(ZSH_COMPLETIONS)/_exa"
 	@pandoc  -s -t man \
-		$(CARGO_GH)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/exa.1.md \
+		$(CRATES_SRC)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/exa.1.md \
 		| gzip -c \
 		| sudo tee $(MAN1_DIR)/exa.1.gz > /dev/null
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
@@ -944,13 +944,13 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing hexyl: https://github.com/sharkdp/hexyl"
 	cargo install hexyl
 	@pandoc  -s -f markdown -t man \
-		$(CARGO_GH)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
+		$(CRATES_SRC)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
 		| gzip -c \
 		| sudo tee $(MAN1_DIR)/hexyl.1.gz > /dev/null
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install hyperfine
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
-	@gzip -c $(CARGO_GH)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
+	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
 	@echo ">>> Installing just: https://github.com/casey/just"
 	cargo install just
@@ -988,13 +988,13 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
 	cargo install xh
-	@cp "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CARGO_GH)/$$(xh -V | head -1 | sed 's| |-|g')/doc/xh.1" | \
+	@cp "$(CRATES_SRC)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
+	@gzip -c "$(CRATES_SRC)/$$(xh -V | head -1 | sed 's| |-|g')/doc/xh.1" | \
 		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
-	@cp "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/contrib/completions/_zoxide" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CARGO_GH)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
+	@cp "$(CRATES_SRC)/$$(zoxide -V | sed 's| v|-|g')/contrib/completions/_zoxide" $(ZSH_COMPLETIONS)
+	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 
 # Resources:
