@@ -69,6 +69,11 @@ if (( $+commands[bat] )); then
 	alias bp="bat --plain"
 fi
 
+# Docker
+if (( $+commands[docker] )); then
+	alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
+fi
+
 # wireguard (https://wiki.archlinux.org/title/WireGuard)
 if (( $+commands[wg-quick] )); then
 	alias wgup="sudo wg-quick up"
