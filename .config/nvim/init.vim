@@ -175,11 +175,6 @@ set nojoinspaces
 " https://github.com/justinmk/vim-sneak#usage
 let g:sneak#s_next = 1
 
-" Print config
-set printfont=:h10
-set printencoding=utf-8
-set printoptions=paper:letter
-
 " Always draw sign column. Prevent buffer moving when adding/deleting sign.
 " https://github.com/neoclide/coc.nvim#example-vim-configuration 
 if has("patch-8.1.1564")
