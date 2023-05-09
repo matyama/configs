@@ -410,6 +410,7 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		pandoc \
 		direnv \
 		graphviz \
+		libzstd-dev \
 		libecpg-dev \
 		libglpk-dev \
 		libimage-exiftool-perl \
