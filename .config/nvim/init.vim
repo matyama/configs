@@ -132,6 +132,13 @@ if exists('$BASE16_THEME')
   colorscheme base16-$BASE16_THEME
 endif
 
+" Enable spell check
+"  - https://linuxhint.com/vim_spell_check
+"  - ']s' or '[s' - navigate, 'z=' - correct, 'zg' - add word to 'spellfile'
+set spell
+set spelllang=en_us
+set spellfile=$XDG_STATE_HOME/nvim/spell/en-utf-8.add
+
 " Enable syntax highlight
 "  - alternatively change to `syntax on`
 syntax enable
@@ -422,6 +429,9 @@ vmap <C-v> <Plug>(expand_region_shrink)
 " Ctrl+h to stop searching
 vnoremap <C-h> :nohlsearch<cr>
 nnoremap <C-h> :nohlsearch<cr>
+
+" Spell check hint/correction with z+f
+nmap zf z=
 
 " Jump to start and end of line using the home row keys
 map H ^

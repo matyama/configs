@@ -17,6 +17,10 @@ ifndef XDG_DATA_HOME
 XDG_DATA_HOME=$(HOME)/.local/share
 endif
 
+ifndef XDG_STATE_HOME
+XDG_STATE_HOME=$(HOME)/.local/state
+endif
+
 ifndef ZDOTDIR
 ZDOTDIR=$(XDG_CONFIG_HOME)/zsh
 endif
@@ -164,6 +168,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_DATA_HOME)/xdotool \
+	$(XDG_STATE_HOME)/nvim/spell \
 	$(CRAWL_DIR):
 	mkdir -p $@
 
@@ -356,13 +361,15 @@ endif
 # TODO: non-snap installation, man page
 # Resources:
 #  - https://github.com/neovim/neovim/wiki/Installing-Neovim
+#  - https://linuxhint.com/vim_spell_check
 # Notes:
 #  - PPA repository contains an quite old stable release compared to GitHub and
 #    Snap (Neovim team does not maintain the PPA packages)
 .PHONY: neovim
-neovim:
+neovim: $(XDG_STATE_HOME)/nvim/spell
 	@echo ">>> Installing $@"
 	sudo snap install --beta nvim --classic
+	touch $(XDG_STATE_HOME)/nvim/spell/en-utf-8.add
 
 # Installed tools:
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
