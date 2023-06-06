@@ -60,6 +60,11 @@ alias egrep='egrep --color=auto'
 # history
 alias hg='history | egrep'
 
+# Ansible
+if (( $+commands[ansible-lint] )); then
+	alias alint="ansible-lint"
+fi
+
 # exa (https://the.exa.website/)
 (( $+commands[exa] )) && alias l="exa -lahg@ --git"
 
