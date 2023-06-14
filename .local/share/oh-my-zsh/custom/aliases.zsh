@@ -79,6 +79,15 @@ if (( $+commands[docker] )); then
 	alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
 fi
 
+# parallel-ssh (https://github.com/ParallelSSH/parallel-ssh)
+if (( $+commands[parallel-ssh] )); then
+	alias pssh="parallel-ssh"
+	alias pscp="parallel-scp"
+	alias prsync="parallel-rsync"
+	alias pnuke="parallel-nuke"
+	alias pslurp="parallel-slurp"
+fi
+
 # wireguard (https://wiki.archlinux.org/title/WireGuard)
 if (( $+commands[wg-quick] )); then
 	alias wgup="sudo wg-quick up"

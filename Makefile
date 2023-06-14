@@ -254,10 +254,11 @@ links: \
 
 # Installed tools:
 #  - libssl-dev: secure sockets layer toolkit
+#  - pssh: asynchronous parallel SSH library (https://parallel-ssh.org)
 .PHONY: net-tools
 net-tools:
 	@echo ">>> Installing basic network tools"
-	sudo apt install -y curl jq net-tools ncat nmap wget libssl-dev
+	sudo apt install -y curl jq net-tools ncat nmap wget libssl-dev pssh
 
 # Installed tools:
 #  - libfuse2: Filesystem in Userspace
