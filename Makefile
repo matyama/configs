@@ -889,6 +889,8 @@ cargo-tools: rust
 	cargo install cargo-deb
 	@echo ">>> Installing cargo-modules: https://github.com/regexident/cargo-modules"
 	cargo install cargo-modules
+	@echo ">>> Installing cargo-workspaces: https://github.com/pksunkara/cargo-workspaces"
+	cargo install cargo-workspaces
 	@echo ">>> Installing cargo-msrv: https://github.com/foresterre/cargo-msrv"
 	cargo install cargo-msrv
 
