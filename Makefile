@@ -873,6 +873,8 @@ cargo-tools: rust
 	cargo install cargo-hack
 	@echo ">>> Installing cargo-deny: https://crates.io/crates/cargo-deny"
 	cargo install --locked cargo-deny
+	@echo ">>> Installing cargo-auditable: https://github.com/rust-secure-code/cargo-auditable"
+	cargo install cargo-auditable
 	@echo ">>> Installing cargo-audit: https://crates.io/crates/cargo-audit"
 	cargo install cargo-audit --features=fix
 	@echo ">>> Installing cargo-vet: https://github.com/mozilla/cargo-vet"
