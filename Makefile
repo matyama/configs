@@ -875,6 +875,8 @@ cargo-tools: rust
 	cargo install --locked cargo-deny
 	@echo ">>> Installing cargo-audit: https://crates.io/crates/cargo-audit"
 	cargo install cargo-audit --features=fix
+	@echo ">>> Installing cargo-vet: https://github.com/mozilla/cargo-vet"
+	cargo install --locked cargo-vet
 	@echo ">>> Installing cargo-llvm-lines: https://github.com/dtolnay/cargo-llvm-lines"
 	cargo install cargo-llvm-lines
 	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
