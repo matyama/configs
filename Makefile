@@ -21,6 +21,8 @@ ifndef XDG_STATE_HOME
 XDG_STATE_HOME=$(HOME)/.local/state
 endif
 
+GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
+
 ifndef ZDOTDIR
 ZDOTDIR=$(XDG_CONFIG_HOME)/zsh
 endif
@@ -730,6 +732,7 @@ python-tools: pipx
 	pipx install thefuck $(OPS)
 	@echo ">>> Installing pre-commit hooks globally"
 	pipx install pre-commit $(OPS)
+	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
 #	@echo ">>> Installing black formatter for Python"
 #	pipx install black $(OPS)
 #	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"

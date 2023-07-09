@@ -5,6 +5,7 @@
 	user = matyama
 [init]
 	defaultBranch = main
+	templateDir = ~/.local/share/git-core/templates
 [core]
 	autocrlf = input
 	safecrlf = true
