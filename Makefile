@@ -4,74 +4,31 @@
 CFG_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Make sure XDG is set: https://wiki.archlinux.org/title/XDG_Base_Directory
-
-ifndef XDG_CONFIG_HOME
-XDG_CONFIG_HOME=$(HOME)/.config
-endif
-
-ifndef XDG_BIN_HOME
-XDG_BIN_HOME=$(HOME)/.local/bin
-endif
-
-ifndef XDG_DATA_HOME
-XDG_DATA_HOME=$(HOME)/.local/share
-endif
-
-ifndef XDG_STATE_HOME
-XDG_STATE_HOME=$(HOME)/.local/state
-endif
+XDG_CONFIG_HOME ?= $(HOME)/.config
+XDG_BIN_HOME ?= $(HOME)/.local/bin
+XDG_DATA_HOME ?= $(HOME)/.local/share
+XDG_STATE_HOME ?= $(HOME)/.local/state
 
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
-ifndef ZDOTDIR
-ZDOTDIR=$(XDG_CONFIG_HOME)/zsh
-endif
+ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
+ZSH ?= $(XDG_DATA_HOME)/oh-my-zsh
+ZSH_CUSTOM ?= $(ZSH)/custom
 
-ifndef ZSH
-ZSH=$(XDG_DATA_HOME)/oh-my-zsh
-endif
+FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 
-ifndef ZSH_CUSTOM
-ZSH_CUSTOM=$(ZSH)/custom
-endif
-
-ifndef FZF_BASE
-FZF_BASE=$(XDG_DATA_HOME)/fzf
-endif
-
-ifndef BASE16_FZF_HOME
-BASE16_FZF_HOME=$(XDG_CONFIG_HOME)/base16-fzf
-endif
-
+BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
 # TODO: currently tinted-theming hardcodes `$HOME/.config`, use 
 # `XDG_CONFIG_HOME` once supported
-ifndef BASE16_SHELL_PATH
-BASE16_SHELL_PATH=$(HOME)/.config/base16-shell
-endif
+BASE16_SHELL_PATH ?= $(HOME)/.config/base16-shell
 
-ifndef ALACRITTY_CONFIG_DIR 
-ALACRITTY_CONFIG_DIR=$(XDG_CONFIG_HOME)/alacritty
-endif
+ALACRITTY_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/alacritty
+BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
+BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
+FD_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/fd
+RIPGREP_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/rg
 
-ifndef BAT_CONFIG_DIR
-BAT_CONFIG_DIR=$(XDG_CONFIG_HOME)/bat
-endif
-
-ifndef FD_CONFIG_HOME
-FD_CONFIG_HOME=$(XDG_CONFIG_HOME)/fd
-endif
-
-ifndef RIPGREP_CONFIG_HOME
-RIPGREP_CONFIG_HOME=$(XDG_CONFIG_HOME)/rg
-endif
-
-ifndef BYOBU_CONFIG_DIR 
-BYOBU_CONFIG_DIR=$(XDG_CONFIG_HOME)/byobu
-endif
-
-ifndef CARGO_HOME
-CARGO_HOME=$(XDG_DATA_HOME)/cargo
-endif
+CARGO_HOME ?= $(XDG_DATA_HOME)/cargo
 
 ifndef CARGO_TARGET_DIR
 CARGO_TARGET_DIR=$(XDG_CACHE_HOME)/cargo-target
@@ -79,51 +36,25 @@ CARGO_RELEASE_DIR=$(CARGO_TARGET_DIR)/release
 CARGO_ARTIFACTS_DIR=$(CARGO_RELEASE_DIR)/artifacts
 endif
 
-ifndef GEM_HOME
-GEM_HOME=$(XDG_CONFIG_HOME)/gem
-endif
+GEM_HOME ?= $(XDG_CONFIG_HOME)/gem
+GEM_SPEC_CACHE ?= $(XDG_CACHE_HOME)/gem
 
-ifndef GEM_SPEC_CACHE
-GEM_SPEC_CACHE=$(XDG_CACHE_HOME)/gem
-endif
+TRAVIS_CONFIG_PATH ?= $(XDG_CONFIG_HOME)/travis
 
-ifndef TRAVIS_CONFIG_PATH
-TRAVIS_CONFIG_PATH=$(XDG_CONFIG_HOME)/travis
-endif
+GHCUP_USE_XDG_DIRS ?= 1
+STACK_ROOT ?= $(XDG_DATA_HOME)/stack
 
-ifndef GHCUP_USE_XDG_DIRS
-GHCUP_USE_XDG_DIRS=1
-endif
+SDKMAN_DIR ?= $(XDG_DATA_HOME)/sdkman
+ZSH_SDKMAN_DIR ?= $(XDG_DATA_HOME)/zsh-sdkman
 
-ifndef STACK_ROOT
-STACK_ROOT=$(XDG_DATA_HOME)/stack
-endif
+GOPATH ?= $(XDG_DATA_HOME)/go
 
-ifndef SDKMAN_DIR
-SDKMAN_DIR=$(XDG_DATA_HOME)/sdkman
-endif
-
-ifndef ZSH_SDKMAN_DIR
-ZSH_SDKMAN_DIR=$(XDG_DATA_HOME)/zsh-sdkman
-endif
-
-ifndef GOPATH
-GOPATH=$(XDG_DATA_HOME)/go
-endif
-
-ifndef MINIKUBE_HOME
-MINIKUBE_HOME=$(XDG_DATA_HOME)/minikube
-endif
-
-ifndef KREW_ROOT
-KREW_ROOT=$(XDG_DATA_HOME)/krew
-endif
+MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
+KREW_ROOT ?= $(XDG_DATA_HOME)/krew
 
 # The trailing slash is required - see: 
 # https://wiki.archlinux.org/title/XDG_Base_Directory
-ifndef CRAWL_DIR
-CRAWL_DIR=$(XDG_DATA_HOME)/crawl/
-endif
+CRAWL_DIR ?= $(XDG_DATA_HOME)/crawl/
 
 DIST_ARCH := $(shell dpkg --print-architecture)
 
