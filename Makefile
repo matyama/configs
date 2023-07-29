@@ -52,10 +52,6 @@ GOPATH ?= $(XDG_DATA_HOME)/go
 MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
 KREW_ROOT ?= $(XDG_DATA_HOME)/krew
 
-# The trailing slash is required - see: 
-# https://wiki.archlinux.org/title/XDG_Base_Directory
-CRAWL_DIR ?= $(XDG_DATA_HOME)/crawl/
-
 DIST_ARCH := $(shell dpkg --print-architecture)
 
 # Aliases to make tools respect XDG specification
@@ -101,8 +97,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_DATA_HOME)/xdotool \
-	$(XDG_STATE_HOME)/nvim/spell \
-	$(CRAWL_DIR):
+	$(XDG_STATE_HOME)/nvim/spell:
 	mkdir -p $@
 
 $(MAN1_DIR) $(PIXMAPS_DIR):
@@ -1293,21 +1288,6 @@ zoom:
 calibre:
 	@echo ">>> Installing calibre"
 	sudo apt install -y calibre
-
-.PHONY: games
-games: crawl
-
-.PHONY: crawl
-crawl: $(CRAWL_DIR) net-tools
-ifneq ($(shell which crawl 2> /dev/null),)
-	@echo ">>> $$($@ --version | head -n1) already installed"
-else
-	@echo ">>> Installing Dungeon Crawl Stone Soup: https://crawl.develz.org/"
-	echo 'deb https://crawl.develz.org/debian crawl 0.23' | sudo tee -a /etc/apt/sources.list
-	$(WGET) https://crawl.develz.org/debian/pubkey -O - | sudo apt-key add -
-	sudo apt update
-	sudo apt install -y $@ $@-tiles
-endif
 
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
