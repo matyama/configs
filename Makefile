@@ -939,7 +939,6 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
-	@cp "$(CRATES_SRC)/$$(zoxide -V | sed 's| v|-|g')/contrib/completions/_zoxide" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 
