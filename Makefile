@@ -1297,6 +1297,7 @@ fix-ssh-perms:
 	chmod 644 "$(SSH_DIR)/*.pub"
 	chmod 600 "$(SSH_DIR)/id_rsa*"
 	chmod 600 "$(SSH_DIR)/config"
+	chmod 700 "$(SSH_DIR)/config.d"
 	chmod 600 "$(SSH_DIR)/known_hosts*"
 	chmod 400 "$(SSH_DIR)/*.pem"
 
