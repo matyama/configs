@@ -663,6 +663,8 @@ python-tools: pipx
 #	pipx install black $(OPS)
 #	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"
 #	pipx install wemake-python-styleguide --include-deps $(OPS)
+	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"
+	pipx install pycobertura
 	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
 	pipx install sqlfluff
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
@@ -808,6 +810,11 @@ cargo-tools: rust
 	cargo install cargo-audit --features=fix
 	@echo ">>> Installing cargo-vet: https://github.com/mozilla/cargo-vet"
 	cargo install --locked cargo-vet
+	@echo ">>> Installing cargo-tarpaulin: https://github.com/xd009642/tarpaulin"
+	cargo install cargo-tarpaulin
+	@echo ">>> Installing cargo-llvm-cov: https://github.com/taiki-e/cargo-llvm-cov"
+	cargo install cargo-llvm-cov --locked
+	rustup component add llvm-tools-preview --toolchain nightly
 	@echo ">>> Installing cargo-llvm-lines: https://github.com/dtolnay/cargo-llvm-lines"
 	cargo install cargo-llvm-lines
 	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
@@ -840,6 +847,8 @@ cargo-tools: rust
 #  - hexyl: A command-line hex viewer (https://github.com/sharkdp/hexyl)
 #  - hyperfine: A command-line benchmarking tool
 #    (https://github.com/sharkdp/hyperfine)
+#  - junitify: takes JSON tests from stdin and writes JUnit XML
+#    (https://gitlab.com/Kores/junitify)
 #  - just: Just a command runner / simplified make
 #    (https://github.com/casey/just)
 #  - mcfly: an upgraded ctrl-r where history results make sense for what you're
@@ -898,6 +907,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
+	@echo ">>> Installing junitify: https://gitlab.com/Kores/junitify"
+	cargo install junitify
 	@echo ">>> Installing just: https://github.com/casey/just"
 	cargo install just
 	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
