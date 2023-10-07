@@ -171,7 +171,7 @@ if [[ $PROMPT -eq 0 ]]; then
 fi
 
 if [[ $RUN_APT -gt 0 ]]; then
-	echo "Ugrading system programs..."
+	echo "Upgrading system programs..."
 	sudo apt update
 	sudo apt upgrade -y
 	sudo apt autoremove -y
@@ -198,11 +198,6 @@ fi
 binenv_upgrade() {
 	local dist="$(echo $1 | cut -d: -f1)"
 
-	# FIXME: https://github.com/matyama/configs/issues/15
-	if [[ "${dist}" == "krew" ]]; then
-		return 0
-	fi
-
 	# TODO: improvement - don't unnecessarily check for current (default) version
 	local version=$(
 		echo $1 |
@@ -225,15 +220,10 @@ binenv_upgrade() {
 binenv_clean() {
 	local dist="$(echo $1 | cut -d: -f1)"
 
-	# FIXME: https://github.com/matyama/configs/issues/15
-	if [[ "${dist}" == "krew" ]]; then
-		return 0
-	fi
-
-	# TODO: improvement - silence or skip version wihich is not installed
-	#  - Note: this can happen becuase `binenv_clean` is called even if `dist`
+	# TODO: improvement - silence or skip version which is not installed
+	#  - Note: this can happen because `binenv_clean` is called even if `dist`
 	#    was not recently updated
-	# TODO: improvement - uninsall _all_ non-default currently installed versions
+	# TODO: improvement - uninstall all non-default currently installed versions
 	local version=$(
 		echo $1 |
 			# select release version list
@@ -255,10 +245,10 @@ binenv_clean() {
 
 if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
 	echo "Upgrading binenv distributions..."
-	binenv update
+	binenv update -a
 	# upgrade binenv before any other distribution and refresh distribution list
 	binenv_upgrade $(binenv versions | grep binenv)
-	binenv update
+	binenv update -a
 	while read -r binenv_dist; do
 		binenv_upgrade "${binenv_dist}"
 		binenv_clean "${binenv_dist}"
@@ -280,7 +270,7 @@ if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
 			head -1 |
 			# list upgradable candidates
 			sdk ug |
-			# strip irrelevant ouput and keep only lines with candidates
+			# strip irrelevant output and keep only lines with candidates
 			grep local |
 			# skipping automatic java upgrade because it breaks apps
 			grep -v java |

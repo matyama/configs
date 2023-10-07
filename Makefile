@@ -461,7 +461,7 @@ else
 	@echo ">>> Installing minikube: https://minikube.sigs.k8s.io/docs/"
 	binenv install minikube
 	@echo ">>> Installing krew: https://krew.sigs.k8s.io/"
-	binenv install krew
+	binenv install kubectl-krew
 	@echo ">>> Installing kvm2 driver: https://minikube.sigs.k8s.io/docs/drivers/kvm2/"
 	curl -L -o "/tmp/$(KVM2_DRIVER)" "$(KVM2_DRIVER_URL)/$(KVM2_DRIVER)" \
 		&& sudo install "/tmp/$(KVM2_DRIVER)" /usr/local/bin/
@@ -473,7 +473,7 @@ else
 	@echo ">>> Installing helm-operator: https://github.com/fluxcd/helm-operator"
 	binenv install helm-operator
 	@echo ">>> Installing kubectx: https://github.com/ahmetb/kubectx"
-	krew install ctx
+	kubectl krew install ctx
 	@echo ">>> Current k8s context is '$$(kubectl ctx -c)'"
 	@echo ">>> Shutting down $$(minikube version --short)"
 	minikube stop
