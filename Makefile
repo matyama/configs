@@ -1061,6 +1061,15 @@ shfmt: golang $(MAN1_DIR)
 		gzip -c | \
 		sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
 
+# Makefile linter
+#
+# TODO: man pages
+.PHONY: checkmake
+checkmake: CHECKMAKE_TAG := latest
+checkmake: golang
+	@echo ">>> Installing $@: https://github.com/mrtazz/checkmake"
+	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
+
 # Fast cross-platform HTTP benchmarking tool
 .PHONY: bombardier
 bombardier: BOMBARDIER_TAG := latest
