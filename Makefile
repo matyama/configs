@@ -60,7 +60,9 @@ WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
 
 DEBIAN_ISO := debian-11.3.0-$(DIST_ARCH)-netinst.iso
 
+APT_KEYRINGS := /etc/apt/keyrings
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
+KEYRINGS_DIR := /usr/share/keyrings
 MAN1_DIR := /usr/local/share/man/man1
 PIXMAPS_DIR := /usr/share/pixmaps
 ZSH_COMPLETIONS := $(ZSH)/completions
@@ -100,7 +102,7 @@ $(FONTS_DIR) \
 	$(XDG_STATE_HOME)/nvim/spell:
 	mkdir -p $@
 
-$(MAN1_DIR) $(PIXMAPS_DIR):
+$(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
 	sudo mkdir -p $@
 
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/$(DIST_ARCH)/iso-cd
@@ -1078,8 +1080,8 @@ grpcurl: golang
 #  - [Official post-instegration](https://docs.docker.com/engine/install/linux-postinstall/)
 .PHONY: docker
 docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
-docker: DOCKER_GPG := /usr/share/keyrings/docker-archive-keyring.gpg
-docker: core-utils apt-utils
+docker: DOCKER_GPG := $(KEYRINGS_DIR)/docker-archive-keyring.gpg
+docker: core-utils apt-utils $(KEYRINGS_DIR)
 	@echo ">>> Installing Docker: https://docs.docker.com/engine/install/ubuntu/"
 	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' and configuring apt sources"
 	curl -fsSL $(DOCKER_URL)/gpg | gpg --dearmor | sudo tee $(DOCKER_GPG) > /dev/null
@@ -1128,9 +1130,9 @@ endif
 .PHONY: nvidia-docker
 nvidia-docker: NVIDIA_DOCKER_PKG := nvidia-docker2
 nvidia-docker: NVIDIA_DOCKER_URL := https://nvidia.github.io/nvidia-docker
-nvidia-docker: NVIDIA_DOCKER_GPG := /usr/share/keyrings/nvidia-docker-archive-keyring.gpg
+nvidia-docker: NVIDIA_DOCKER_GPG := $(KEYRINGS_DIR)/nvidia-docker-archive-keyring.gpg
 nvidia-docker: DOCKERD_CFG := /etc/docker/daemon.json
-nvidia-docker: core-utils net-tools
+nvidia-docker: core-utils net-tools apt-utils $(KEYRINGS_DIR)
 ifdef NVIDIA_CTRL
 	@echo ">>> Installing NVIDIA Docker"
 	@echo ">>> Downloading GPG key as '$(NVIDIA_DOCKER_GPG)' and configuring apt sources"
