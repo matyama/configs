@@ -2,14 +2,11 @@
 " https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 let mapleader = "\<Space>"
 
-" Change <leader> from '/' to ','
-" let mapleader = ","
-
 " =============================================================================
 " # PLUGINS
 " =============================================================================
 
-" Necesary for lots of cool vim things
+" Necessary for lots of cool vim things
 set nocompatible
 
 " Setup plugins
@@ -55,23 +52,6 @@ if executable('rg')
 	set grepprg=rg\ --no-heading\ --vimgrep
 	set grepformat=%f:%l:%c:%m
 endif
-
-" NERDTree
-" https://github.com/preservim/nerdtree#frequently-asked-questions
-"  - https://github.com/Xuyuanp/nerdtree-git-plugin#faq
-
-" Start NERDTree, unless a file or session is specified, eg. vim -S session_file.vim.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
-
-" Show hidden files in NERDTree by default
-let g:NERDTreeShowHidden = 1
-
-" Enable NerdFonts for NERDTree
-let g:NERDTreeGitStatusUseNerdFonts = 1
-
-" Show git ignored status for files in NERDTree
-let g:NERDTreeGitStatusShowIgnored = 1
 
 " Rust
 " https://github.com/rust-lang/rust.vim#features
@@ -270,7 +250,7 @@ set diffopt+=iwhite
 set diffopt+=algorithm:patience
 set diffopt+=indent-heuristic
 
-" Show red vertical bar at coloumn 80
+" Show red vertical bar at column 80
 set colorcolumn=80
 
 " Show (partial) command in status line.
@@ -343,22 +323,6 @@ cnoremap <C-k> <C-c>
 onoremap <C-k> <Esc>
 lnoremap <C-k> <Esc>
 tnoremap <C-k> <Esc>
-
-" NERDTree shortcuts
-"  - source: https://stackoverflow.com/a/58627426/15112035
-"  - improved: https://bit.ly/3nKuCHb
-
-function NerdTreeToggleFind()
-    if &filetype == 'nerdtree' || exists("g:NERDTree") && g:NERDTree.IsOpen()
-        :NERDTreeToggle
-    else
-        :NERDTreeFind
-    endif
-endfunction
-
-" NOTE: This breaks 'New Text File...' in VS Code, use <C-t> there insted
-nnoremap <C-n> :call NerdTreeToggleFind()<CR>
-nnoremap <leader>n :NERDTreeFocus<CR>
 
 " Metals (Scala language server) shortcuts
 " https://scalameta.org/metals/docs/editors/vim/#recommended-cocnvim-mappings
@@ -471,7 +435,7 @@ command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, {'source': s:list_cmd(),
   \                               'options': '--tiebreak=index'}, <bang>0)
 
-" Open new file located in the same direactory as current file
+" Open new file located in the same directory as current file
 nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 " Mappings to move line up with Alt+k and down with Alt+j
@@ -483,7 +447,7 @@ inoremap <A-k> <Esc>:m .-2<CR>==gi
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
-" 'Smart' nevigation
+" 'Smart' navigation
 " - https://github.com/neoclide/coc.nvim#example-vim-configuration
 " - https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
 
