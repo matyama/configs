@@ -178,10 +178,6 @@ set nowrap
 " Join lines without an extra space
 set nojoinspaces
 
-" Go to next search match with another 's'
-" https://github.com/justinmk/vim-sneak#usage
-let g:sneak#s_next = 1
-
 " Always draw sign column. Prevent buffer moving when adding/deleting sign.
 " https://github.com/neoclide/coc.nvim#example-vim-configuration 
 if has("patch-8.1.1564")
