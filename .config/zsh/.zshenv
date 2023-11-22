@@ -141,6 +141,11 @@ export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
 export ZSH_SDKMAN_DIR=${XDG_DATA_HOME}/zsh-sdkman
 
+# Coursier: SDKMAN for Scala
+#  - https://get-coursier.io/docs/cli-install#installation-directory
+export COURSIER_DIR=${XDG_DATA_HOME}/coursier
+export COURSIER_BIN_DIR=${COURSIER_DIR}/bin
+
 # Java
 #  - Workaround to support XDG and move `~/.java` out of `HOME`
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -296,4 +301,5 @@ path+=${KREW_BIN}
 path+="/usr/local/bin"
 path+=${BINENV_HOME}
 path+="${CABAL_DIR}/bin"
+path+="${COURSIER_BIN_DIR}"
 path+="${XDG_DATA_HOME}/npm/bin"

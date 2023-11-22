@@ -12,6 +12,9 @@ set nocompatible
 " Setup plugins
 source $XDG_CONFIG_HOME/nvim/vim-plug/plugins.vim
 
+" LSP configuration
+lua require('lsp')
+
 " Secure modeline config
 " https://www.vim.org/scripts/script.php?script_id=1876
 let g:secure_modelines_allowed_items = [
@@ -33,25 +36,35 @@ let g:secure_modelines_allowed_items = [
 let g:lightline = {
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileencoding', 'filetype' ] ],
       \ },
       \ 'component_function': {
-      \   'filename': 'LightlineFilename',
-      \   'cocstatus': 'coc#status'
+      \   'filename': 'LightlineFilename'
       \ },
       \ }
 function! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfunction
 
-" Use auocmd to force lightline update.
-autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-
 " from http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 if executable('rg')
 	set grepprg=rg\ --no-heading\ --vimgrep
 	set grepformat=%f:%l:%c:%m
 endif
+
+" Java
+let java_ignore_javadoc=1
+
+" JavaScript
+let javaScript_fold=0
+
+" Latex
+let g:latex_indent_enabled = 1
+let g:latex_fold_envs = 0
+let g:latex_fold_sections = []
 
 " Rust
 " https://github.com/rust-lang/rust.vim#features
@@ -66,12 +79,16 @@ let g:rust_clip_command = 'xclip -selection clipboard'
 let g:shfmt_opt="-ci"
 let g:neoformat_enabled_zsh = []
 
-" Completion
-" https://github.com/neoclide/coc.nvim#example-vim-configuration
+" Better completion
+"  - menuone: popup even when there's only one match
+"  - noinsert: do not insert text until a selection is made
+"  - noselect: do not select, force user to select one from the menu
+set completeopt=menuone,noinsert,noselect
 
 " Better display for messages
 set cmdheight=2
-" You will have bad experience for diagnostic messages when it's default 4000.
+
+" You will have bad experience for diagnostic messages when it's default 4000
 set updatetime=300
 
 " Fix folding and unfolding of Markdown files
@@ -132,6 +149,15 @@ hi Normal ctermbg=NONE
 " Brighter comments
 call Base16hi("Comment", g:base16_gui09, "", g:base16_cterm09, "", "", "")
 
+" Highlight current arguments
+call Base16hi("LspSignatureActiveParameter",
+      \ g:base16_gui05,
+      \ g:base16_gui03,
+      \ g:base16_cterm05,
+      \ g:base16_cterm03,
+      \ "bold",
+      \ "")
+
 " https://github.com/rust-lang/rust.vim#installation
 filetype plugin indent on
 set autoindent
@@ -149,7 +175,6 @@ set scrolloff=2
 set noshowmode
 
 " TextEdit might fail if hidden is not set.
-" https://github.com/neoclide/coc.nvim#example-vim-configuration
 set hidden
 
 " Stop line breaking
@@ -159,7 +184,6 @@ set nowrap
 set nojoinspaces
 
 " Always draw sign column. Prevent buffer moving when adding/deleting sign.
-" https://github.com/neoclide/coc.nvim#example-vim-configuration 
 if has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
   set signcolumn=number
@@ -260,7 +284,6 @@ set showcmd
 set mouse=a
 
 " Don't pass messages to |ins-completion-menu|.
-" https://github.com/neoclide/coc.nvim#example-vim-configuration
 set shortmess+=c
 
 " Show those damn hidden characters
@@ -323,21 +346,6 @@ cnoremap <C-k> <C-c>
 onoremap <C-k> <Esc>
 lnoremap <C-k> <Esc>
 tnoremap <C-k> <Esc>
-
-" Metals (Scala language server) shortcuts
-" https://scalameta.org/metals/docs/editors/vim/#recommended-cocnvim-mappings
-"  - Expand decorations in worksheets
-"  - Toggle panel with Tree Views
-"  - Toggle Tree View 'metalsPackages'
-"  - Toggle Tree View 'metalsCompile'
-"  - Toggle Tree View 'metalsBuild'
-"  - Reveal current current class (trait or object) in Tree View 'metalsPackages'
-nmap <Leader>ws <Plug>(coc-metals-expand-decoration)
-nnoremap <silent> <space>t :<C-u>CocCommand metals.tvp<CR>
-nnoremap <silent> <space>tp :<C-u>CocCommand metals.tvp metalsPackages<CR>
-nnoremap <silent> <space>tc :<C-u>CocCommand metals.tvp metalsCompile<CR>
-nnoremap <silent> <space>tb :<C-u>CocCommand metals.tvp metalsBuild<CR>
-nnoremap <silent> <space>tf :<C-u>CocCommand metals.revealInTreeView metalsPackages<CR>
 
 " Open a new file with <leader>+o and replicate with <leader>+op
 nnoremap <leader>o :vnew<CR>
@@ -447,128 +455,51 @@ inoremap <A-k> <Esc>:m .-2<CR>==gi
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
-" 'Smart' navigation
-" - https://github.com/neoclide/coc.nvim#example-vim-configuration
-" - https://github.com/jonhoo/configs/blob/master/editor/.config/nvim/init.vim
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1):
-      \ <SID>CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice.
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call ShowDocumentation()<CR>
-
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-
 " Show stats with <leader>+q
 nnoremap <leader>q g<c-g>
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Run the Code Lens action on the current line.
-nmap <leader>cl  <Plug>(coc-codelens-action)
 
 " Keymap for replacing up to next _ or -
 noremap <leader>m ct_
 
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
+" Crates (Cargo.toml)
+" https://github.com/Saecki/crates.nvim
 
-" Remap <C-f> and <C-b> for scroll float windows/popups.
-"  - https://github.com/neoclide/coc.nvim#example-vim-configuration
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
+nnoremap <silent> <leader>ct :lua require('crates').toggle()<cr>
+nnoremap <silent> <leader>cr :lua require('crates').reload()<cr>
 
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+nnoremap <silent> <leader>cv :lua require('crates').show_versions_popup()<cr>
+nnoremap <silent> <leader>cf :lua require('crates').show_features_popup()<cr>
+nnoremap <silent> <leader>cd :lua require('crates').show_dependencies_popup()<cr>
 
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocActionAsync('format')
+nnoremap <silent> <leader>cu :lua require('crates').update_crate()<cr>
+vnoremap <silent> <leader>cu :lua require('crates').update_crates()<cr>
+nnoremap <silent> <leader>ca :lua require('crates').update_all_crates()<cr>
+nnoremap <silent> <leader>cU :lua require('crates').upgrade_crate()<cr>
+vnoremap <silent> <leader>cU :lua require('crates').upgrade_crates()<cr>
+nnoremap <silent> <leader>cA :lua require('crates').upgrade_all_crates()<cr>
 
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+nnoremap <silent> <leader>ce :lua require('crates').expand_plain_crate_to_inline_table()<cr>
+nnoremap <silent> <leader>cE :lua require('crates').extract_crate_into_table()<cr>
 
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+nnoremap <silent> <leader>cH :lua require('crates').open_homepage()<cr>
+nnoremap <silent> <leader>cR :lua require('crates').open_repository()<cr>
+nnoremap <silent> <leader>cD :lua require('crates').open_documentation()<cr>
+nnoremap <silent> <leader>cC :lua require('crates').open_crates_io()<cr>
 
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" Show appropriate documentation in Cargo.toml
+nnoremap <silent> K :call <SID>show_documentation()<cr>
+
+function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    elseif (index(['man'], &filetype) >= 0)
+        execute 'Man '.expand('<cword>')
+    elseif (expand('%:t') == 'Cargo.toml' && luaeval('require("crates").popup_available()'))
+        lua require('crates').show_popup()
+    else
+        lua vim.lsp.buf.hover()
+    endif
+endfunction
 
 " =============================================================================
 " # Autocommands
@@ -592,15 +523,6 @@ augroup fmt
   autocmd!
   autocmd BufWritePre * undojoin | Neoformat
 augroup END
-
-" https://github.com/neoclide/coc.nvim/#example-vim-configuration
-augroup cocfmt
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
 
 " Follow Rust code style rules
 au Filetype rust source $XDG_CONFIG_HOME/nvim/scripts/spacetab.vim

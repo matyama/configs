@@ -227,6 +227,17 @@ zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
+# coursier autocompletion
+#  - https://get-coursier.io/docs/cli-installation#zsh-completions
+if (( $+commands[cs] )); then
+  mkdir -p "${ZSH}/completion"
+  echo '#compdef _cs cs
+
+  function _cs {
+    eval "$(cs complete zsh-v1 $CURRENT $words[@])"
+  }' > "${ZSH}/completion/_cs"
+fi
+
 # pipx autocompletion
 (( $+commands[pipx] )) && eval "$(register-python-argcomplete pipx)"
 

@@ -33,6 +33,12 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	"  - https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 	Plug 'terryma/vim-expand-region'
 
+	" NeoVim enhancements
+
+	" Library of utility functions in Lua
+	" https://github.com/nvim-lua/plenary.nvim
+	Plug 'nvim-lua/plenary.nvim'
+
 	" GUI enhancements
 	
 	" A light and configurable statusline
@@ -86,16 +92,43 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	Plug 'mpickering/hlint-refactor-vim'
 
 	" Semantic language support
-	" https://github.com/neoclide/coc.nvim#quick-start
-	"  * Rust:
-	"    - https://github.com/fannheyward/coc-rust-analyzer
-	"    - https://rust-analyzer.github.io/manual.html#vimneovim
-	"  * Python:
-	"    - https://github.com/fannheyward/coc-pyright#install
-	"    - https://github.com/microsoft/pyright/blob/main/docs/configuration.md
-	"  * Scala:
-	"    - https://scalameta.org/metals/docs/editors/vim/
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+	" Quickstart configs for Nvim LSP
+	" https://github.com/neovim/nvim-lspconfig
+	Plug 'neovim/nvim-lspconfig'
+
+	" Completion plugin coded in Lua, LSP client buffer, and path integration
+	" https://github.com/hrsh7th/nvim-cmp
+	"
+	" NOTE: `*-vsip` inluded only because nvim-cmp requires snippets
+	Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
+	Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
+	Plug 'hrsh7th/cmp-buffer', {'branch': 'main'}
+	Plug 'hrsh7th/cmp-path', {'branch': 'main'}
+	Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
+	Plug 'hrsh7th/vim-vsnip'
+
+	" LSP signature hint as you type
+	" https://github.com/ray-x/lsp_signature.nvim
+	Plug 'ray-x/lsp_signature.nvim'
+
+	" Inlay hints for the built-in LSP
+	" https://github.com/lvimuser/lsp-inlayhints.nvim
+	Plug 'lvimuser/lsp-inlayhints.nvim'
+
+	" Standalone UI for nvim-lsp progress
+	" https://github.com/j-hui/fidget.nvim
+	Plug 'j-hui/fidget.nvim', { 'tag': 'legacy' }
+
+	" TODO: Debugging
+
+	" Debug Adapter Protocol client implementation
+	" https://github.com/mfussenegger/nvim-dap
+	"Plug 'mfussenegger/nvim-dap'
+
+	" Dependency management
+	"  - Rust: https://github.com/Saecki/crates.nvim
+	Plug 'saecki/crates.nvim'
 
 	call plug#end()
 
