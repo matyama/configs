@@ -878,7 +878,8 @@ cargo-tools: rust
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - click: Command Line Interactive Controller for Kubernetes
-#  - exa: A modern replacement for 'ls' (https://github.com/ogham/exa)
+#  - eza: A modern, maintained replacement for 'ls'
+#    (https://github.com/eza-community/eza)
 #  - fd: A simple, fast and user-friendly alternative to 'find'
 #    (https://github.com/sharkdp/fd)
 #  - git-delta: A syntax-highlighting pager for git, diff, and grep output
@@ -921,13 +922,13 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@gzip -c "$$(cargo-latest-dirname bat)/out/assets/manual/bat.1" \
 		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
 	@cp "$$(cargo-latest-dirname bat)/out/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
-	@echo ">>> Installing exa: https://the.exa.website/"
-	cargo install exa
-	@cp "$(CRATES_SRC)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/completions.zsh" "$(ZSH_COMPLETIONS)/_exa"
+	@echo ">>> Installing eza: https://eza.rocks"
+	cargo install eza
+	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
 	@pandoc  -s -t man \
-		$(CRATES_SRC)/exa-$$(exa -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/exa.1.md \
+		$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/eza.1.md \
 		| gzip -c \
-		| sudo tee $(MAN1_DIR)/exa.1.gz > /dev/null
+		| sudo tee $(MAN1_DIR)/eza.1.gz > /dev/null
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"

@@ -65,8 +65,8 @@ if (( $+commands[ansible-lint] )); then
 	alias alint="ansible-lint"
 fi
 
-# exa (https://the.exa.website/)
-(( $+commands[exa] )) && alias l="exa -lahg@ --git"
+# eza (https://eza.rocks)
+(( $+commands[eza] )) && alias l="eza -lahg@ --git"
 
 # bat (https://github.com/sharkdp/bat)
 if (( $+commands[bat] )); then
