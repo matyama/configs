@@ -394,6 +394,11 @@ nnoremap <leader>w :w<CR>
 vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
 
+" Suspend with Ctrl+f
+inoremap <C-f> :sus<cr>
+vnoremap <C-f> :sus<cr>
+nnoremap <C-f> :sus<cr>
+
 " Ctrl+h to stop searching
 vnoremap <C-h> :nohlsearch<cr>
 nnoremap <C-h> :nohlsearch<cr>
@@ -510,6 +515,9 @@ autocmd BufRead *.orig set readonly
 
 " Leave paste mode when leaving insert mode
 autocmd InsertLeave * set nopaste
+
+" Highlight yank
+au TextYankPost * silent! lua vim.highlight.on_yank()
 
 " Jump to last edit position on opening file
 " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand

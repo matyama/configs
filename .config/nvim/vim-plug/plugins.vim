@@ -44,9 +44,6 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	" A light and configurable statusline
 	Plug 'itchyny/lightline.vim'
 
-	" Make the yanked region apparent
-	Plug 'machakann/vim-highlightedyank'
-
 	" Navigate and highlight matching words
 	" https://github.com/andymass/vim-matchup
 	Plug 'andymass/vim-matchup'
