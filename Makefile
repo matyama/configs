@@ -913,9 +913,6 @@ cargo-tools: rust
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
-rust-tools: JUST_URL := https://raw.githubusercontent.com/casey
-rust-tools: RG_URL := https://github.com/BurntSushi/ripgrep/releases/download
-rust-tools: RG_PKG := $(shell mktemp)
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	cargo install --locked bat
@@ -953,9 +950,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing just: https://github.com/casey/just"
 	cargo install just
 	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
-	@curl -sSL "$(JUST_URL)/$$(just --version | sed 's| |\/|')/man/just.1" \
-		| gzip -c \
-		| sudo tee $(MAN1_DIR)/just.1.gz > /dev/null
+	@gzip -c "$(CRATES_SRC)/$$(just --version | sed 's| |-|g')/man/just.1" | \
+		sudo tee $(MAN1_DIR)/just.1.gz > /dev/null
 	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
 	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
@@ -969,11 +965,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install click
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
-	@$(WGET) -q -O $(RG_PKG) "$(RG_URL)/$$(rg -V | cut -d ' ' -f2)/$$(rg -V | sed 's| |_|g')_$(DIST_ARCH).deb"
-	@ar -p $(RG_PKG) data.tar.xz | \
-		tar -xOJf - --strip-components=4 --wildcards '*/rg.1.gz' | \
-		sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
-	@rm -f $(RG_PKG)
+	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
+	@rg --generate man | gzip -c | sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
 	cargo install samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
@@ -991,7 +984,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
-	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| v|-|g')/man/man1/zoxide.1" | \
+	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 
 # Resources:
@@ -1242,17 +1235,23 @@ else
 	@echo ">>> Using $$($@ client --version)"
 endif
 
-# https://github.com/cli/cli
+# GitHub CLI (https://cli.github.com)
+#  - https://github.com/cli/cli/blob/trunk/docs/install_linux.md
 .PHONY: gh
-gh: zsh
+gh: GH_URL := https://cli.github.com/packages
+gh: GH_GPG := $(KEYRINGS_DIR)/githubcli-archive-keyring.gpg
+gh: zsh $(KEYRINGS_DIR)
 ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
-	@echo ">>> Installing Github CLI"
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-	sudo apt-add-repository https://cli.github.com/packages
+	@echo ">>> Installing Github CLI: https://cli.github.com"
+	@curl -fsSL $(GH_URL)/githubcli-archive-keyring.gpg | sudo dd of=$(GH_GPG)
+	sudo chmod go+r $(GH_GPG)
+	echo "deb [arch=$(DIST_ARCH) signed-by=$(GH_GPG)] $(GH_URL) stable main" | \
+		sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
 	sudo apt update
 	sudo apt install -y $@
+	@echo ">>> Installed $$($@ --version)"
 endif
 
 # Note: `--no-user-install` forces gem to respect `$GEM_HOME`
