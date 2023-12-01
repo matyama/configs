@@ -102,8 +102,8 @@ export HISTSIZE=5000
 export SAVEHIST="${HISTSIZE}"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export HISTFILESIZE=10000
-export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:exa"
-export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|exa)"
+export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
+export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
 
 zshaddhistory() {
   emulate -L zsh
