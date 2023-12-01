@@ -181,6 +181,8 @@ links: \
 	@sudo ln -svf /usr/bin/resolvectl /usr/local/bin/resolvconf
 	@echo "Making 'g++' act as 'musl-g++': https://github.com/rust-lang/cargo/issues/3359"
 	@sudo ln -svf /usr/bin/g++ /usr/bin/musl-g++
+	@echo "Making 'lldb-vscode' point to 'lldb-vscode-15'"
+	@sudo ln -sv /usr/bin/lldb-vscode-15 /usr/bin/lldb-vscode
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 # Installed tools:
@@ -316,6 +318,7 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #  - libecpg-dev: Postgres instegrations
 #  - libimage-exiftool-perl: library and program to read and write meta
 #    information in multimedia files (https://exiftool.org)
+#  - lldb-15: High-performance debugger (https://lldb.llvm.org)
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
 #  - tshark: Terminal version of wireshark
@@ -356,6 +359,7 @@ basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
 		glpk-utils \
 		glpk-doc \
 		musl-tools \
+		lldb-15 \
 		heaptrack \
 		heaptrack-gui \
 		coz-profiler \
