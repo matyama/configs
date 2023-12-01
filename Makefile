@@ -874,7 +874,6 @@ cargo-tools: rust
 	@echo ">>> Installing cargo-msrv: https://github.com/foresterre/cargo-msrv"
 	cargo install cargo-msrv
 
-# TODO: generalize the hardcoded value of `CARGO_GH`
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - click: Command Line Interactive Controller for Kubernetes
@@ -915,10 +914,10 @@ cargo-tools: rust
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
-	cargo install --locked bat
-	@gzip -c "$$(cargo-latest-dirname bat)/out/assets/manual/bat.1" \
+	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) cargo install --locked bat
+	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
 		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
-	@cp "$$(cargo-latest-dirname bat)/out/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
+	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing eza: https://eza.rocks"
 	cargo install eza
 	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
@@ -970,17 +969,17 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
 	cargo install samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
-	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install sd
-	@cp "$(CARGO_ARTIFACTS_DIR)/_sd" $(ZSH_COMPLETIONS)
-	@gzip -c $$(cargo-latest-dirname sd)/out/sd.1 \
+	cargo install sd
+	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
+	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
 		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
 	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
 	cargo install --locked tokio-console
 	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
 	cargo install xh
-	@cp "$(CRATES_SRC)/$$(xh -V | head -1 | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CRATES_SRC)/$$(xh -V | head -1 | sed 's| |-|g')/doc/xh.1" | \
+	@cp "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
+	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" | \
 		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
