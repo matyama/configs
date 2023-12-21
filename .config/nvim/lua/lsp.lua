@@ -155,7 +155,7 @@ vim.api.nvim_create_autocmd("BufRead", {
 })
 
 -- Display inlay hints on cursor hover
-vim.api.nvim_create_autocmd("CursorHold,CursorHoldI", {
+vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
   callback = function()
     inlayhints.show()
   end,
