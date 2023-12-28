@@ -182,7 +182,7 @@ links: \
 	@echo "Making 'g++' act as 'musl-g++': https://github.com/rust-lang/cargo/issues/3359"
 	@sudo ln -svf /usr/bin/g++ /usr/bin/musl-g++
 	@echo "Making 'lldb-vscode' point to 'lldb-vscode-15'"
-	@sudo ln -sv /usr/bin/lldb-vscode-15 /usr/bin/lldb-vscode
+	@sudo ln -svf /usr/bin/lldb-vscode-15 /usr/bin/lldb-vscode
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 # Installed tools:
