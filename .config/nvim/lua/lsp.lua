@@ -106,10 +106,6 @@ lspconfig.hls.setup {
   filetypes = { 'haskell', 'lhaskell', 'cabal' },
 }
 
--- TODO: consider https://scalameta.org/metals/docs/editors/vim/#nvim-metals
--- Setup metals
-lspconfig.metals.setup {}
-
 -- Setup rust-analyzer (https://rust-analyzer.github.io/manual.html#nvim-lsp)
 lspconfig.rust_analyzer.setup {
 
@@ -178,9 +174,6 @@ require("fidget").setup {
 
   -- Ignore some LSP servers: https://github.com/j-hui/fidget.nvim/issues/17
   sources = {
-    -- TODO: add a hack for metals
-    -- https://github.com/j-hui/fidget.nvim/issues/17#issuecomment-1083389908
-    ["metals"] = { ignore = true },
     ["jdtls"] = { ignore = true },
     ["elixirls"] = { ignore = true },
   }

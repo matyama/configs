@@ -212,13 +212,6 @@ language support for various languages, refer to corresponding sub-section.
 * https://github.com/fannheyward/coc-pyright#install
 * https://github.com/microsoft/pyright/blob/main/docs/configuration.md
 
-#### Scala
-```vim
-:CocInstall coc-metals
-```
-* https://scalameta.org/metals/docs/editors/vim/#installing-coc-metals
-* https://scalameta.org/metals/docs/editors/vim/#available-configuration-options
-
 Custom configurations can be found in
 `$XDG_CONFIG_HOME/coc/coc-settings.json`.
 

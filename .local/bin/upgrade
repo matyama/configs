@@ -12,7 +12,6 @@ SKIP: Skip selected tool(s), overrides RUN.
 	pipx         Skip pipx upgrade
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
-	cs           Skip cs update
 	sdk          Skip sdk upgrade
 	omz          Skip omz update 
 	vim          Skip (neo)vim updates (vim-plug, coc) 
@@ -23,7 +22,6 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 	pipx         Run only pipx upgrade
 	rust         Run only rustup update
 	binenv       Run only binenv upgrade
-	cs           Run only cs update
 	sdk          Run only sdk upgrade
 	omz          Run only omz update
 	vim          Run only (neo)vim updates (vim-plug, coc)
@@ -39,7 +37,6 @@ RUN_APT=0
 RUN_PIPX=0
 RUN_RUST=0
 RUN_BINENV=0
-RUN_CS=0
 RUN_SDK=0
 RUN_OMZ=0
 RUN_VIM=0
@@ -70,9 +67,6 @@ while [[ $# -gt 0 ]]; do
 				binenv)
 					RUN_BINENV=$((RUN_BINENV - 2))
 					;;
-				cs)
-					RUN_CS=$((RUN_CS - 2))
-					;;
 				sdk)
 					RUN_SDK=$((RUN_SDK - 2))
 					;;
@@ -86,7 +80,6 @@ while [[ $# -gt 0 ]]; do
 					RUN_PIPX=$((RUN_PIPX - 2))
 					RUN_RUST=$((RUN_RUST - 2))
 					RUN_BINENV=$((RUN_BINENV - 2))
-					RUN_CS=$((RUN_CS - 2))
 					RUN_SDK=$((RUN_SDK - 2))
 					RUN_OMZ=$((RUN_OMZ - 2))
 					RUN_VIM=$((RUN_VIM - 2))
@@ -122,7 +115,6 @@ if [[ $# -eq 0 ]]; then
 	RUN_PIPX=$((RUN_PIPX + 1))
 	RUN_RUST=$((RUN_RUST + 1))
 	RUN_BINENV=$((RUN_BINENV + 1))
-	RUN_CS=$((RUN_CS + 1))
 	RUN_SDK=$((RUN_SDK + 1))
 	RUN_OMZ=$((RUN_OMZ + 1))
 	RUN_VIM=$((RUN_VIM + 1))
@@ -143,10 +135,6 @@ else
 				;;
 			binenv)
 				RUN_BINENV=$((RUN_BINENV + 1))
-				shift
-				;;
-			cs)
-				RUN_CS=$((RUN_CS + 1))
 				shift
 				;;
 			sdk)
@@ -302,14 +290,6 @@ if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
 				sdk-refresh-completion-files
 			fi
 		'
-	fi
-fi
-
-if [[ "$(command -v cs)" ]] && [[ $RUN_CS -gt 0 ]]; then
-	# Make sure to run this in ZSH to init env properly (PATH, aliases, etc.)
-	if [[ -f "${CONF_MK}" ]] && [[ -s /usr/bin/zsh ]]; then
-		echo "Updating Scala toolchain & applications..."
-		make -f "${CONF_MK}" SHELL=/usr/bin/zsh scala-tools
 	fi
 fi
 

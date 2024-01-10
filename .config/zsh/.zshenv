@@ -141,11 +141,6 @@ export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
 export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
 export ZSH_SDKMAN_DIR=${XDG_DATA_HOME}/zsh-sdkman
 
-# Coursier: SDKMAN for Scala
-#  - https://get-coursier.io/docs/cli-install#installation-directory
-export COURSIER_DIR=${XDG_DATA_HOME}/coursier
-export COURSIER_BIN_DIR=${COURSIER_DIR}/bin
-
 # Java
 #  - Workaround to support XDG and move `~/.java` out of `HOME`
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -210,37 +205,6 @@ alias nvidia-settings="nvidia-settings --config ${NVIDIA_SETTINGS_RC}"
 #  - Uncomment `WGETRC` if it's present and should be used
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
-
-# Scala: REPL
-#  - `-Dscala.shell.histfile=...` is a workaround to make Scala REPL write
-#    command history to custom location respecting XDG specification
-#  - Despite the fact it's not recommended to override command behavior in
-#    `.envrc` (since it's always loaded, even for non-interactive shells), here
-#    we actually want to prevent all executions from creating `~/.scala_history`
-#  - Configuration of `spark-shell` could alternatively be done by setting
-#    `spark.driver.extraJavaOptions` in `$SPARK_HOME/conf/spark-defaults.conf`
-#    (possibly symlinked conf file). Note that the default location can be
-#    altered with `SPARK_CONF_DIR`.
-#  - Note that `SCALA_HISTFILE` is custom environment variable which won't be by
-#    itself recognized by Scala/Spark REPL
-#  - FIXME: Scala 3 uses `~/.dotty_history` and does not recognize the
-#    `-Dscala.shell.histfile` option
-#  - Note: Spark (shell) runs on Scala 2
-export SCALA_HISTFILE="${XDG_STATE_HOME}/scala/history"
-alias scala="scala -Dscala.shell.histfile=${SCALA_HISTFILE}"
-alias spark-shell="spark-shell --conf spark.driver.extraJavaOptions=\"-Dscala.shell.histfile=${SCALA_HISTFILE}\""
-
-# Scala: sbt & ivy2
-#  - `sbt -ivy ... -sbt-dir ...` is a workaround to make sbt XDG compliant, see:
-#    - https://github.com/sbt/sbt/issues/3681
-#    - https://wiki.archlinux.org/title/XDG_Base_Directory
-#  - An alternative could be to set `SBT_OPTS` as mentioned in
-#    https://github.com/sbt/sbt/issues/3681#issuecomment-434009989
-#  - Despite the fact it's not recommended to override command behavior in
-#    `.envrc` (since it's always loaded, even for non-interactive shells), here
-#    we actually want to prevent all executions from creating `~/.sbt` and
-#    `~/.ivy2`
-alias sbt="sbt -ivy ${XDG_DATA_HOME}/ivy2 -sbt-dir ${XDG_DATA_HOME}/sbt"
 
 # Maven
 #  - `mvn -gs` is a workaround to make maven XDG compliant

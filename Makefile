@@ -727,48 +727,9 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 		sdk install kotlin;\
 		echo ">>> Installing kscript";\
 		sdk install kscript;\
-		echo ">>> Installing Spark";\
-		sdk install spark;\
 		echo ">>> Installing VisualVM";\
 		sdk install visualvm;\
 	}
-
-# TODO: install via sdk (coming soon)
-# TODO: install specific version & self update
-#
-# Coursier - Pure Scala Artifact Fetching (SDKMAN for Scala)
-#  - https://get-coursier.io/docs/cli-installation
-.PHONY: coursier
-coursier: ARCH := $(shell arch)
-coursier: DOWNLOAD_URL := https://github.com/coursier/launchers/raw/master
-coursier: $(ZSH_COMPLETIONS)
-	@echo ">>> Installing $@: https://get-coursier.io"
-	@curl -fL "$(DOWNLOAD_URL)/cs-$(ARCH)-pc-linux.gz" \
-		| gzip -d > "$(XDG_BIN_HOME)/cs"
-	@chmod +x "$(XDG_BIN_HOME)/cs"
-	@echo ">>> Installed $@ $$(cs version)"
-	@echo ">>> Setting up Scala development environment"
-	@cs setup
-	@echo ">>> Finish $@ setup by reloading zsh with 'omz reload'"
-
-# Scala toolchain and applications
-#  - toolchain: https://get-coursier.io/docs/cli-installation
-#  - metals: Scala language server with rich IDE features
-.PHONY: scala
-scala-tools: SHELL := /bin/sh
-scala-tools:
-ifeq ($(shell which cs 2> /dev/null),)
-	make coursier
-endif
-ifeq ($(shell which scalac 2> /dev/null),)
-	@echo ">>> Setting up Scala development environment"
-	@cs setup
-	@echo ">>> Installing metals: https://scalameta.org/metals"
-	@cs install -q metals
-else
-	@echo ">>> Updating Scala development tools & applications"
-	@cs update
-endif
 
 # Haskell toolchain and project builder
 #  - [ghcup](https://www.haskell.org/ghcup/)
