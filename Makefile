@@ -653,21 +653,13 @@ python-tools: OPS :=
 python-tools: pipx
 	@echo ">>> Installing Python virtual environment"
 	pipx install virtualenv $(OPS)
-	# @echo ">>> Installing Pipenv: https://pipenv.pypa.io/"
-	# pipx install pipenv $(OPS)  
 	@echo ">>> Installing Ansible: https://www.ansible.com"
 	pipx install --include-deps ansible
 	@echo ">>> Installing AWS CLI"
 	pipx install awscli $(OPS)
-	@echo ">>> Installing Pythonize: https://github.com/CZ-NIC/pz"
-	pipx install pz $(OPS)
-	@echo ">>> Installing The Fuck shell command corrector: https://github.com/nvbn/thefuck"
-	pipx install thefuck $(OPS)
 	@echo ">>> Installing pre-commit hooks globally"
 	pipx install pre-commit $(OPS)
 	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
-#	@echo ">>> Installing black formatter for Python"
-#	pipx install black $(OPS)
 #	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"
 #	pipx install wemake-python-styleguide --include-deps $(OPS)
 	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"

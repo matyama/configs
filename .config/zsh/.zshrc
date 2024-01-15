@@ -58,7 +58,6 @@ plugins=(
   rust                          # adds completion for rustc, rustup and cargo
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
-  thefuck                       # press ESC twice to run fuck
   zsh-sdkman                    # adds aliases and completion scripts for sdk
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
