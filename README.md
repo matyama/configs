@@ -395,7 +395,9 @@ Enabling Wayland requires a manual change as described
 [here](https://askubuntu.com/a/1403916). Additionally, also modify
 `/etc/gdm3/custom.conf` as follows:
 ```
+PreferredDisplayServer=wayland
 WaylandEnable=true
+XorgEnable=false
 ```
 
 Note that on Ubunut, one can tell the session type from the
