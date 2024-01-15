@@ -641,7 +641,10 @@ snaps: golang
 .PHONY: pipx
 pipx: python
 ifneq ($(shell which pipx 2> /dev/null),)
-	@echo ">>> $@ $$($@ --version) already installed"
+	@echo ">>> $@ already installed, upgrading to the latest version"
+	python3 -m pip install --user $@ --upgrade
+	python3 -m $@ ensurepath
+	@echo ">>> Using $@ $$($@ --version)"
 else
 	@echo ">>> Installing $@"
 	python3 -m pip install --user $@

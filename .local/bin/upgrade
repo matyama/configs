@@ -181,6 +181,10 @@ if [[ $RUN_APT -gt 0 ]]; then
 fi
 
 if [[ "$(command -v pipx)" ]] && [[ $RUN_PIPX -gt 0 ]]; then
+	if [[ -f "${CONF_MK}" ]]; then
+		echo "Upgrading pipx..."
+		make -f "${CONF_MK}" pipx
+	fi
 	echo "Upgrading pipx tools..."
 	pipx upgrade-all
 fi
