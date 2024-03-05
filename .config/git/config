@@ -33,7 +33,7 @@
 [push]
 	default = simple
 [diff]
-	algorithm = patience
+	algorithm = histogram
 	indentHeuristic = true
 	colorMoved = default
 [alias]
