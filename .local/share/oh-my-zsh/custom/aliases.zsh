@@ -11,6 +11,10 @@ alias c="xclip -i -selection clipboard"
 alias p="xclip -o -selection clipboard"
 alias rmclip="echo '' | c"
 
+# Find why is a given package installed via apt
+#  - Based on a comment under this answer: https://askubuntu.com/a/5637
+alias why="apt-cache rdepends --no-{suggests,conflicts,breaks,replaces,enhances} --installed --recurse"
+
 # Bitwarden
 #  - https://bitwarden.com/help/cli/#log-in
 #  - NOTE: currently using two-step login via an authenticator app
