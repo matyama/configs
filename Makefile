@@ -617,10 +617,14 @@ else
 		$(ZSH_CUSTOM)/plugins/zsh-autosuggestions
 endif
 
+# Installation resources:
+#  - https://github.com/bash-lsp/bash-language-server 
 .PHONY: snaps
 snaps: golang 
 	@echo ">>> Installing cmake"
 	sudo snap install --classic cmake
+	@echo ">>> Installing bash-language-server"
+	sudo snap install --classic bash-language-server
 	@echo ">>> Installing Slack"
 	sudo snap install slack --classic
 	@echo ">>> Installing Spotify"

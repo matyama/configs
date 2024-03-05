@@ -96,6 +96,9 @@ end
 -- Server configurations
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
+-- Setup bashls (https://github.com/bash-lsp/bash-language-server)
+lspconfig.bashls.setup {}
+
 -- Setup pyright (https://microsoft.github.io/pyright/#/settings)
 lspconfig.pyright.setup {}
 
