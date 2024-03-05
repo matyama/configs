@@ -207,11 +207,11 @@ apt-utils:
 	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 
 # Installed tools:
-#  - xclip: X11 clipboard selection
-.PHONY: x-utils
-x-utils:
-	@echo ">>> Installing X11 utilities"
-	sudo apt install -y xclip
+#  - wl-clipboard: copy/paste utilities for Wayland
+.PHONY: wl-utils
+wl-utils:
+	@echo ">>> Installing Wayland copy/paste utilities"
+	sudo apt install -y wl-clipboard
 
 # X11 automation tool (https://github.com/jordansissel/xdotool)
 #  - XWayland support since v3.20210903.1 (note: current apt package is older)
@@ -328,7 +328,7 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #    (https://github.com/protocolbuffers/protobuf)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
-basic-tools: net-tools core-utils apt-utils x-utils fzf neovim
+basic-tools: net-tools core-utils apt-utils wl-utils fzf neovim
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		git-lfs \

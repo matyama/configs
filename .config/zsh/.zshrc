@@ -77,7 +77,7 @@ export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
 #  - https://github.com/wfxr/forgit#git
 path+="${FORGIT_INSTALL_DIR}/bin"
 
-export FORGIT_COPY_CMD='xclip -selection clipboard'
+export FORGIT_COPY_CMD='wl-copy'
 
 source $ZSH/oh-my-zsh.sh
 

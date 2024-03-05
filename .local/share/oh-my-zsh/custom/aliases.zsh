@@ -6,10 +6,10 @@ alias zconf="nvim ${ZDOTDIR}/.zshrc"
 alias o="xdg-open"
 
 # Copy/Paste
-alias y="xclip -i -selection clipboard"
-alias c="xclip -i -selection clipboard"
-alias p="xclip -o -selection clipboard"
-alias rmclip="echo '' | c"
+alias y="wl-copy"
+alias c="wl-copy"
+alias p="wl-paste"
+alias rmclip="wl-copy -c"
 
 # Find why is a given package installed via apt
 #  - Based on a comment under this answer: https://askubuntu.com/a/5637
