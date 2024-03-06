@@ -62,21 +62,8 @@ make config
 ## Manual configurations
 
 ### Alacritty terminal
-First check whether the system runs X11 or Wayland, e.g. by looking at
+First check whether the system runs Wayland - e.g., by looking at
 `XDG_SESSION_TYPE`.
-
-#### X11
-1. Link script `alacritty-toggle-x11` to an executable path (e.g. with
-   `make links`)
-1. Manually configure toggle keybinging in 'Settings > Keyboard
-   Shortcuts' - for example like this:
-   ```
-   [custom0]
-   binding='F1'
-   command='/home/matyama/.local/bin/alacritty-toggle-x11'
-   name='Toggle Alacritty terminal'
-   ```
-1. Add Alacritty to 'Tweaks > Startup Applications'
 
 #### Wayland
 There is a Gnome extension

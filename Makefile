@@ -99,7 +99,6 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_DATA_HOME)/npm \
-	$(XDG_DATA_HOME)/xdotool \
 	$(XDG_STATE_HOME)/nvim/spell:
 	mkdir -p $@
 
@@ -212,23 +211,6 @@ apt-utils:
 wl-utils:
 	@echo ">>> Installing Wayland copy/paste utilities"
 	sudo apt install -y wl-clipboard
-
-# X11 automation tool (https://github.com/jordansissel/xdotool)
-#  - XWayland support since v3.20210903.1 (note: current apt package is older)
-.PHONY: xdotool
-xdotool: XDOTOOL_VERSION := $(shell gh_latest_release jordansissel/xdotool)
-xdotool: XDOTOOL_HOME := $(XDG_DATA_HOME)/xdotool
-xdotool: $(XDOTOOL_HOME)
-	@echo ">>> Installing $@ prerequisites"
-	@sudo apt install -y libxtst-dev libxinerama-dev
-	@echo ">>> Checking out $@ $(XDOTOOL_VERSION)"
-	@git clone git@github.com:jordansissel/xdotool.git $(XDOTOOL_HOME) 2>/dev/null || true
-	@git -C $(XDOTOOL_HOME) switch master
-	@git -C $(XDOTOOL_HOME) pull --all --tags --prune
-	@git -C $(XDOTOOL_HOME) checkout -q $(XDOTOOL_VERSION)
-	@echo ">>> Installing $@ $(XDOTOOL_VERSION)"
-	@cd $(XDOTOOL_HOME) && make && sudo make install
-	@echo ">>> Using $$($@ --version)"
 
 # NOTE: python-is-python3 makes python available as python3
 python:
@@ -997,7 +979,6 @@ endif
 #
 # TODO
 #  - enable the extension without restarting Gnome session
-#  - detect X11/Wayland (XDG_SESSION_TYPE) and setup `alacritty-toggle-x11`
 .PHONY: alacritty-toggle
 alacritty-toggle: EXT_REPO := https://github.com/axxapy/gnome-alacritty-toggle
 alacritty-toggle: EXT_NAME := toggle-alacritty@itstime.tech
