@@ -87,8 +87,8 @@ $(FONTS_DIR) \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CACHE_HOME)/zsh \
-	$(XDG_CONFIG_HOME)/coc \
 	$(XDG_CONFIG_HOME)/direnv \
+	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/npm \
@@ -159,6 +159,7 @@ links: \
 	$(STACK_ROOT) \
 	$(XDG_BIN_HOME) \
 	$(XDG_CONFIG_HOME)/direnv \
+	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/npm \
@@ -171,13 +172,14 @@ links: \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
-	@ln -svft ~ $(CFG_DIR)/.zshenv
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
 	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
+	@echo "Refreshing systemd user environment (note: requires session restart)"
+	@systemctl daemon-reload --user
 	@echo "Making 'resolvectl' act as 'resolvconf': https://superuser.com/a/1544697"
 	@sudo ln -svf /usr/bin/resolvectl /usr/local/bin/resolvconf
 	@echo "Making 'g++' act as 'musl-g++': https://github.com/rust-lang/cargo/issues/3359"
