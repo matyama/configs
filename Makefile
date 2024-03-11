@@ -52,6 +52,7 @@ GOPATH ?= $(XDG_DATA_HOME)/go
 MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
 KREW_ROOT ?= $(XDG_DATA_HOME)/krew
 
+CPU_ARCH ?= $(shell uname -p)
 DIST_ARCH := $(shell dpkg --print-architecture)
 
 # Aliases to make tools respect XDG specification
@@ -813,8 +814,7 @@ cargo-tools: rust
 	cargo install --locked cargo-udeps
 	@echo ">>> Installing cargo-bloat: https://github.com/RazrFalcon/cargo-bloat"
 	cargo install cargo-bloat
-	@echo ">>> Installing cargo-watch: https://github.com/watchexec/cargo-watch"
-	cargo install cargo-watch
+	make -C $(CFG_DIR) cargo-watch
 	@echo ">>> Installing cargo-deb: https://github.com/kornelski/cargo-deb"
 	cargo install cargo-deb
 	@echo ">>> Installing cargo-modules: https://github.com/regexident/cargo-modules"
@@ -823,6 +823,21 @@ cargo-tools: rust
 	cargo install cargo-workspaces
 	@echo ">>> Installing cargo-msrv: https://github.com/foresterre/cargo-msrv"
 	cargo install cargo-msrv
+
+.PHONY: cargo-watch
+cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
+cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
+cargo-watch: TARBALL := $(CPU_ARCH)-unknown-linux-gnu.tar.xz
+cargo-watch: $(ZSH_COMPLETIONS) $(MAN1_DIR) net-tools rust
+	@echo ">>> Installing $@: https://github.com/watchexec/cargo-watch"
+	cargo install $@
+	@echo ">>> Downloading man pages and zsh completions for $$($@ -V)"
+	@curl -sSL "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$$($@ -V | sed 's| |-v|')-$(TARBALL)" | \
+		tar -C $(DOWNLOAD_DIR) -xJf - --strip-components=1 --wildcards */$@.1 */completions/zsh
+	@gzip -c $(DOWNLOAD_DIR)/$@.1 | sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
+	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
+	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@rm -rf $(DOWNLOAD_DIR)
 
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
@@ -1178,7 +1193,7 @@ hadolint: net-tools
 	@echo ">>> Downloading $@ from $(REPO_URL)"
 	$(WGET) -q \
 		-O $(XDG_BIN_HOME)/$@ \
-		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
+		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(CPU_ARCH)
 	@chmod +x $(XDG_BIN_HOME)/$@
 	@echo ">>> Installed: $$($@ -v)"
 
