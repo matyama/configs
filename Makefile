@@ -98,6 +98,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
+	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_STATE_HOME)/nvim/spell:
 	mkdir -p $@
@@ -166,6 +167,7 @@ links: \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
+	$(XDG_CONFIG_HOME)/tealdeer \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
@@ -851,6 +853,8 @@ cargo-tools: rust
 #    (https://github.com/mstange/samply)
 #  - sd: Intuitive find & replace CLI (sed alternative)
 #    (https://github.com/chmln/sd)
+#  - tealdeer: A very fast implementation of tldr in Rust
+#    (https://github.com/dbrgn/tealdeer)
 #  - tokio-console: A debugger for async Rust
 #    (https://github.com/tokio-rs/console) 
 #  - xh: Friendly and fast tool for sending HTTP requests
@@ -919,6 +923,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
 		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
+	make -C $(CFG_DIR) tldr
 	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
 	cargo install --locked tokio-console
 	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
@@ -931,6 +936,17 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install zoxide --locked
 	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
+
+.PHONY: tldr
+tldr: DOWNLOAD_URL := https://github.com/dbrgn/tealdeer/releases/download
+tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
+	@echo ">>> Installing $@: https://github.com/dbrgn/tealdeer"
+	cargo install tealdeer
+	@echo ">>> Configuring $$($@ -v)"
+	@ln -svft $(XDG_CONFIG_HOME)/tealdeer $(CFG_DIR)/.config/tealdeer/*
+	@echo ">>> Downloading zsh completions for $$($@ -v)"
+	@curl -sSL -o $</_$@ \
+		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
 
 # Resources:
 #  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
