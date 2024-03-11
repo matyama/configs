@@ -46,6 +46,11 @@ export VIMRC=${XDG_CONFIG_HOME}/nvim/init.vim
 export NAME="Martin Matyášek"
 export EMAIL=martin.matyasek@gmail.com
 
+# RPM: hack to get rid of `~/.rpmdb` on Ubuntu (https://askubuntu.com/a/476941)
+#  - Currently this is hard-coded: `rpm -v --showrc | grep "/.rpmdb"`
+#  - Note that it should be safe to delete the dir, hence the `XDG_CACHE_HOME`
+alias rpm="rpm --dbpath=${XDG_CACHE_HOME}/rpmdb"
+
 # CUDA
 export CUDA_CACHE_PATH=${XDG_CACHE_HOME}/nv
 
