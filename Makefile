@@ -15,6 +15,9 @@ ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
 ZSH ?= $(XDG_DATA_HOME)/oh-my-zsh
 ZSH_CUSTOM ?= $(ZSH)/custom
 
+BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
+BINENV_LINKDIR ?= $(XDG_BIN_HOME)
+
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
@@ -534,7 +537,7 @@ binenv: BINENV_BIN := binenv_linux_$(DIST_ARCH)
 binenv: DOWNLOAD_DIR := $(shell mktemp -d)
 binenv: $(ZSH_COMPLETIONS) net-tools
 ifneq ($(shell which binenv 2> /dev/null),)
-	@echo ">>> $@ already installed to '$(BINENV_HOME)'"
+	@echo ">>> $@ already installed to '$(BINENV_BINDIR)'"
 else
 	@echo ">>> Downloading $@"
 	$(WGET) -q -P $(DOWNLOAD_DIR) \
@@ -545,9 +548,10 @@ else
 		sha256sum -c --strict --status --ignore-missing checksums.txt) || \
 		(echo ">>> Failed to verify checksum" && rm -rf $(DOWNLOAD_DIR) && exit 1)
 	@echo ">>> Installing $@"
-	@chmod +x "$(DOWNLOAD_DIR)/$(BINENV_BIN)"
-	"$(DOWNLOAD_DIR)/$(BINENV_BIN)" update
-	"$(DOWNLOAD_DIR)/$(BINENV_BIN)" install $@
+	@mv "$(DOWNLOAD_DIR)/$(BINENV_BIN)" "$(DOWNLOAD_DIR)/$@"
+	@chmod +x "$(DOWNLOAD_DIR)/$@"
+	"$(DOWNLOAD_DIR)/$@" update
+	"$(DOWNLOAD_DIR)/$@" install $@
 	@echo ">>> Generating zsh completions for $@"
 	$@ completion zsh > $</_$@
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"

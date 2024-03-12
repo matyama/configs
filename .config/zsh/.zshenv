@@ -55,7 +55,8 @@ alias rpm="rpm --dbpath=${XDG_CACHE_HOME}/rpmdb"
 export CUDA_CACHE_PATH=${XDG_CACHE_HOME}/nv
 
 # Binenv
-export BINENV_HOME=${HOME}/.binenv
+export BINENV_BINDIR=${XDG_DATA_HOME}/binenv
+export BINENV_LINKDIR=${XDG_BIN_HOME}
 
 # Rust
 #  - See: https://doc.rust-lang.org/cargo/reference/environment-variables.html
@@ -268,7 +269,6 @@ path+=${GOBIN}
 path+=${GEM_BIN}
 path+=${KREW_BIN}
 path+="/usr/local/bin"
-path+=${BINENV_HOME}
 path+="${CABAL_DIR}/bin"
 path+="${COURSIER_BIN_DIR}"
 path+="${XDG_DATA_HOME}/npm/bin"
