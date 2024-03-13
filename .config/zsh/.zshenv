@@ -108,6 +108,11 @@ export AWS_CLI_HISTORY_FILE="${XDG_STATE_HOME}/aws/history"
 export AWS_SHARED_CREDENTIALS_FILE="${XDG_DATA_HOME}/aws/credentials}"
 export AWS_VAULT_FILE_DIR="${XDG_DATA_HOME}/awsvault/keys"
 
+# KVM
+#  - https://bit.ly/339BtPT
+#  - Use same connection and objects as sudo
+export LIBVIRT_DEFAULT_URI=qemu:///system
+
 # Docker
 export DOCKER_CONFIG=${XDG_CONFIG_HOME}/docker
 

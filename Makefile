@@ -62,7 +62,9 @@ DIST_ARCH := $(shell dpkg --print-architecture)
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
 
-DEBIAN_ISO := debian-11.3.0-$(DIST_ARCH)-netinst.iso
+DEBIAN_ISO := debian-12.5.0-$(DIST_ARCH)-netinst.iso
+
+LIBVIRT_DEFAULT_URI ?= ""
 
 APT_KEYRINGS := /etc/apt/keyrings
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
@@ -110,9 +112,9 @@ $(FONTS_DIR) \
 $(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
 	sudo mkdir -p $@
 
-$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/current/$(DIST_ARCH)/iso-cd
+$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.5.0/$(DIST_ARCH)/iso-cd
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
-	@echo ">>> Downloading Debian Buster net installer for x86_64" 
+	@echo ">>> Downloading Debian Bookworm net installer for $(DIST_ARCH)" 
 	@[ -f $@ ] || $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
 DOCKER_CMD := $(shell command -v docker 2> /dev/null)
@@ -359,12 +361,12 @@ basic-tools: net-tools core-utils apt-utils wl-utils fzf neovim
 		protobuf-compiler \
 		wireguard
 
-# FIXME: Use CPU_MODEL instead of plain 'intel' in sed replacement
 # Resources:
 #  - [Simple tutorial](https://phoenixnap.com/kb/ubuntu-install-kvm)
 #  - [Comprehensive guide](https://bit.ly/339BtPT)
 # Notes:
-#  - [IOMMU GRUB fix](https://serverfault.com/a/633322)
+#  - IOMMU GRUB fix: https://serverfault.com/a/633322
+#  - cgroup GRUB fix: https://unix.stackexchange.com/a/727328
 #  - The other WARN should be fine: https://stackoverflow.com/q/65207563
 .PHONY: kvm
 ifdef INTEL_CPU
@@ -372,67 +374,86 @@ kvm: CPU_MODEL := intel
 else
 kvm: CPU_MODEL := amd
 endif
+kvm: GRUB_CMDLINE_LINUX_DEFAULT := "quiet splash $(CPU_MODEL)_iommu=on systemd.unified_cgroup_hierarchy=0"
 kvm: core-utils
 	@[ "$$(kvm-ok | grep exists)" ] || (kvm-ok && return 1)
 	@echo ">>> Installing KVM virtualization"
-	sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+	sudo apt install -y \
+		qemu-kvm \
+		libvirt-daemon-system \
+		libvirt-clients \
+		bridge-utils \
+		virt-manager
 	@echo ">>> Validating virtualization setup"
 	@virt-host-validate || echo ">>> Consider fixing problematic entries"
-	@{ \
-		if [ ! "$$(grep 'iommu=on' /etc/default/grub)" ]; then \
-			echo ">>> Adding '$(CPU_MODEL)_iommu=on' to GRUB config";\
-			sudo sed -i "s|quiet splash|quiet splash intel_iommu=on|g" /etc/default/grub; \
-			sudo update-grub; \
-			echo ">>> Reboot for the GRUB changes to take effect!"; \
-		fi;\
-	}
+	@echo ">>> Configuring GRUB_CMDLINE_LINUX_DEFAULT to '$(GRUB_CMDLINE_LINUX_DEFAULT)'"
+	@sudo sed -i \
+		's|^GRUB_CMDLINE_LINUX_DEFAULT=.*\\$$|GRUB_CMDLINE_LINUX_DEFAULT="$(GRUB_CMDLINE_LINUX_DEFAULT)"|' \
+		/etc/default/grub
+	sudo update-grub
+	@echo ">>> Reboot for the GRUB changes to take effect!"
 	@echo ">>> Adding user '$(USER)' to 'libvirt' and 'kvm' groups"
 	@echo ">>> Original primary group: $$(id -ng)"
 	cat /etc/group | grep libvirt | awk -F':' {'print $$1'} | xargs -n1 sudo adduser $(USER)
 	sudo adduser $(USER) kvm
+	@echo ">>> Make 'qemu:///system' available to group 'libvirt', not just root"
+	@sudo sed -i \
+		's|^#\?unix_sock_group = .*\\$$|unix_sock_group = "libvirt"|' \
+		/etc/libvirt/libvirtd.conf
+	@echo ">>> Configuring QEMU to help with disk permissions"
+	@sudo sed -i \
+		-e 's|^#\?group = .*\\$$|group = "libvirt"|' \
+		-e 's|^#\?dynamic_ownership = .*\\$$|dynamic_ownership = 1|' \
+		/etc/libvirt/qemu.conf
 	sudo systemctl enable libvirtd
+	sudo systemctl restart libvirtd
 	@echo ">>> Finish by system reboot for the changes to take effect"
 
 # This test is based on https://bit.ly/339BtPT
 # Notes:
-#  - Groups will be visibel after login or [newgrp](https://superuser.com/a/345051) hack
+#  - In order not to require sudo, respectively to have access to the 'default'
+#    network, LIBVIRT_DEFAULT_URI should be set to 'qemu:///system'
+#  - Groups will be visible after login or [newgrp](https://superuser.com/a/345051) hack
 #  - Default storage pool will show up AFTER reboot.
 .PHONY: test-kvm
 test-kvm: $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO)
 	@echo ">>> User groups should contain 'kvm' and 'libvirt*'"
 	id -nG | egrep -ow 'kvm|libvirt|libvirt-\w+'
+ifneq ($(LIBVIRT_DEFAULT_URI),qemu:///system)
+	$(error LIBVIRT_DEFAULT_URI should be set to 'qemu:///system')
+endif
 	@echo ">>> Verifying installation"
 	virsh list --all
 	@echo ">>> Showing storage pools"
 	virsh pool-list --all
 	@echo ">>> Showing default network created and used by KVM"
 	ip addr show virbr0
-	@echo ">>> Running test instance of virtual Debian Buster"
+	@echo ">>> Running test instance of virtual Debian Bookworm"
 	virt-install \
-		--name debian_buster \
+		--name debian_bookworm \
 		--virt-type=kvm \
 		--ram 8192 \
 		--vcpus=4 \
 		--hvm \
 		--cdrom $< \
-		--disk path=$(<D)/debian_buster.img,bus=virtio,size=40 \
+		--disk path=$(<D)/debian_bookworm.img,bus=virtio,size=40 \
 		--network network=default,model=virtio \
 		--graphics vnc,listen=0.0.0.0 \
 		--video=vmvga \
 		--noautoconsole
 	@echo ">>> Checking that the VM is running"
 	@{ \
-		VM_STATE=$$(virsh list --all | grep " debian_buster " | awk '{ print $$3}');\
+		VM_STATE=$$(virsh list --all | grep " debian_bookworm " | awk '{ print $$3}');\
 		[ "$$VM_STATE" = "running" ] || (echo ">>> VM is not running" && exit 1);\
 	}
 	@echo ">>> Destroying the VM"
-	virsh destroy debian_buster
-	virsh undefine debian_buster
+	virsh destroy debian_bookworm
+	virsh undefine debian_bookworm
 	@echo ">>> Cleaning up the VM storage pool"
 	virsh pool-list --details
 	virsh pool-autostart vm --disable
 	virsh pool-destroy vm
-	sudo rm -f $(<D)/debian_buster.img
+	sudo rm -f $(<D)/debian_bookworm.img
 	virsh pool-undefine vm
 	virsh pool-list --details
 	@echo ">>> KVM test was successful!"
