@@ -388,7 +388,7 @@ kvm: core-utils
 	@virt-host-validate || echo ">>> Consider fixing problematic entries"
 	@echo ">>> Configuring GRUB_CMDLINE_LINUX_DEFAULT to '$(GRUB_CMDLINE_LINUX_DEFAULT)'"
 	@sudo sed -i \
-		's|^GRUB_CMDLINE_LINUX_DEFAULT=.*\\$$|GRUB_CMDLINE_LINUX_DEFAULT="$(GRUB_CMDLINE_LINUX_DEFAULT)"|' \
+		's|^GRUB_CMDLINE_LINUX_DEFAULT=.*$$|GRUB_CMDLINE_LINUX_DEFAULT=$(GRUB_CMDLINE_LINUX_DEFAULT)|' \
 		/etc/default/grub
 	sudo update-grub
 	@echo ">>> Reboot for the GRUB changes to take effect!"
@@ -466,6 +466,7 @@ endif
 #  - [Helm docs](https://helm.sh/docs/)
 #  - [k8s krew](https://krew.sigs.k8s.io/)
 #  - [krew install warning](https://github.com/kubernetes-sigs/krew/issues/576)
+#  - TODO: https://minikube.sigs.k8s.io/docs/tutorials/nvidia
 .PHONY: k8s
 k8s: KVM2_DRIVER_URL := https://storage.googleapis.com/minikube/releases/latest
 k8s: KVM2_DRIVER := docker-machine-driver-kvm2
@@ -486,6 +487,8 @@ else
 	@echo ">>> Starting minikube"
 	minikube start --cpus 2 --memory 2048 --vm-driver kvm2
 	minikube status
+	@echo ">>> Configure kvm2 as the default driver for minikube"
+	@minikube config set driver kvm2
 	@echo ">>> Installing and initializing helm: https://helm.sh/docs/"
 	binenv install helm
 	@echo ">>> Installing helm-operator: https://github.com/fluxcd/helm-operator"
@@ -496,7 +499,7 @@ else
 	@echo ">>> Shutting down $$(minikube version --short)"
 	minikube stop
 	minikube status || true
-	@echo ">>> Verified kubectl $$(kubectl version --client --short)"
+	@echo ">>> Verified kubectl $$(kubectl version --client -o json | jq -r '.clientVersion.gitVersion')"
 endif
 
 # FIXME: Cleanup resources if service request fails
@@ -506,8 +509,9 @@ endif
 .PHONY: test-k8s
 test-k8s: net-tools
 	@echo ">>> Testing minikube installation"
-	minikube start --cpus 2 --memory 2048 --vm-driver kvm2
+	minikube start --cpus 2 --memory 2048
 	minikube status
+	minikube config get driver
 	kubectl cluster-info
 	kubectl get nodes
 	kubectl get pods --all-namespaces
@@ -515,7 +519,7 @@ test-k8s: net-tools
 	kubectl create deployment hello-minikube \
 		--image=k8s.gcr.io/echoserver:1.10 \
 		--port=8080
-	kubectl wait deploy/hello-minikube --for condition=available
+	kubectl wait deploy/hello-minikube --timeout=90s --for condition=available
 	@echo ">>> Checking that the VM is running"
 	@{ \
 		VM_STATE=$$(virsh list --all | grep " minikube " | awk '{ print $$3}');\
@@ -546,7 +550,7 @@ test-k8s: net-tools
 	@echo ">>> Shutting down $$(minikube version --short)"
 	minikube stop
 	minikube status || true
-	@echo ">>> Verified kubectl $$(kubectl version --client --short)"
+	@echo ">>> Verified kubectl $$(kubectl version --client -o json | jq -r '.clientVersion.gitVersion')"
 
 # Installation resources:
 #  - https://github.com/devops-works/binenv#linux-bashzsh

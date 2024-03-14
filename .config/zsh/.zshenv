@@ -116,6 +116,12 @@ export LIBVIRT_DEFAULT_URI=qemu:///system
 # Docker
 export DOCKER_CONFIG=${XDG_CONFIG_HOME}/docker
 
+# K9s
+#  - https://bit.ly/3VcWhCw
+#  - https://groups.google.com/g/kubernetes-announce/c/LQki8n9ZxCo
+export KUBECONFIG=${XDG_CONFIG_HOME}/kube
+export KUBECACHEDIR=${XDG_CACHE_HOME}/kube
+
 # Minikube
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 #  - https://github.com/kubernetes/minikube/issues/4109
