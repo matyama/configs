@@ -318,6 +318,7 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #  - capnproto, libcapnp-dev: Cap'N Proto compiler tools (https://capnproto.org)
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
 #    (https://github.com/protocolbuffers/protobuf)
+#    sqlite3: Command line interface for SQLite 3 (https://www.sqlite.org)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
 basic-tools: net-tools core-utils apt-utils wl-utils fzf neovim
@@ -359,6 +360,7 @@ basic-tools: net-tools core-utils apt-utils wl-utils fzf neovim
 		capnproto \
 		libcapnp-dev \
 		protobuf-compiler \
+		sqlite3 \
 		wireguard
 
 # Resources:
