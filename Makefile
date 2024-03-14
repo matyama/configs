@@ -107,6 +107,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_STATE_HOME)/nvim/spell:
+	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
 $(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
@@ -321,11 +322,18 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #    sqlite3: Command line interface for SQLite 3 (https://www.sqlite.org)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
-basic-tools: net-tools core-utils apt-utils wl-utils fzf neovim
+basic-tools: \
+	net-tools \
+	core-utils \
+	apt-utils \
+	wl-utils \
+	fzf \
+	neovim \
+	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		git-lfs \
- 		htop \
+		htop \
 		iotop \
 		iftop \
 		tshark \

@@ -88,6 +88,9 @@ export STACK_ROOT=${XDG_DATA_HOME}/stack
 export GOPATH=${XDG_DATA_HOME}/go
 export GOBIN=${GOPATH}/bin
 
+# SQLite Client
+export SQLITE_HISTORY="${XDG_STATE_HOME}/sqlite3/sqlite_history"
+
 # ClickHouse Client
 #  - https://github.com/ClickHouse/ClickHouse/issues/10024 
 export CLICKHOUSE_HISTORY_FILE="${XDG_DATA_HOME}/clickhouse/client-history"
