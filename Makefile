@@ -1124,12 +1124,17 @@ shfmt: golang $(MAN1_DIR)
 
 # Makefile linter
 #
-# TODO: man pages
+# FIXME: use `CHECKMAKE_TAG := latest` when `checkmake --version` is fixed
 .PHONY: checkmake
-checkmake: CHECKMAKE_TAG := latest
-checkmake: golang
+checkmake: CHECKMAKE_TAG := 0.2.2
+checkmake: DOWNLOAD_URL := https://github.com/mrtazz/checkmake/releases/download
+checkmake: golang $(MAN1_DIR)
 	@echo ">>> Installing $@: https://github.com/mrtazz/checkmake"
 	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
+	@echo ">>> Downloading man pages for $@ $(CHECKMAKE_TAG)"
+	@curl -sSL "$(DOWNLOAD_URL)/$(CHECKMAKE_TAG)/$@.1" \
+		| gzip -c \
+		| sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
 
 # Fast cross-platform HTTP benchmarking tool
 .PHONY: bombardier
