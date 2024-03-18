@@ -196,6 +196,17 @@ links: \
 	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
 
 # Installed tools:
+#  - Kernel version locked tools (such as `perf` and `x86_energy_perf_policy`)
+.PHONY: kernel-tools
+kernel-tools: KERNEL_RELEASE := $(shell uname -r)
+kernel-tools: PERF_BUILDID_DIR := /var/cache/perf-buildid
+kernel-tools:
+	@echo ">>> Installing tools for kernel $(KERNEL_RELEASE)"
+	@sudo apt install -y linux-tools-$(KERNEL_RELEASE)
+	@echo ">>> Configuring perf 'buildid.dir=$(PERF_BUILDID_DIR)'"
+	@sudo perf config --system buildid.dir=$(PERF_BUILDID_DIR)
+
+# Installed tools:
 #  - libssl-dev: secure sockets layer toolkit
 #  - pssh: asynchronous parallel SSH library (https://parallel-ssh.org)
 .PHONY: net-tools
@@ -323,6 +334,7 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
 basic-tools: \
+	kernel-tools \
 	net-tools \
 	core-utils \
 	apt-utils \
