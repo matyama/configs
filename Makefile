@@ -858,6 +858,8 @@ cargo-tools: rust
 	rustup component add llvm-tools-preview --toolchain nightly
 	@echo ">>> Installing cargo-llvm-lines: https://github.com/dtolnay/cargo-llvm-lines"
 	cargo install cargo-llvm-lines
+	@echo ">>> Installing cargo-check-external-types: https://github.com/awslabs/cargo-check-external-types"
+	cargo install --locked cargo-check-external-types
 	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
