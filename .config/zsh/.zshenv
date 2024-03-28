@@ -30,12 +30,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 # System and architecture
 #  - https://zsh.sourceforge.io/Doc/Release/Parameters.html
-#  - TODO: consider adding `DIST_ARCH` derived from `ARCH` for `amd64 ~ x86_64`
-export ARCH="${CPUTYPE:-x86_64}"
-#export DIST_ARCH=amd64
-
-# Compilation flags
-# export ARCHFLAGS="-arch $ARCH"
+export ARCH="${MACHTYPE:-x86_64}"
+export DIST_ARCH="$(dpkg --print-architecture)"
 
 # Editor setup
 export VISUAL=nvim

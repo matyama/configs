@@ -55,8 +55,8 @@ GOPATH ?= $(XDG_DATA_HOME)/go
 MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
 KREW_ROOT ?= $(XDG_DATA_HOME)/krew
 
-CPU_ARCH ?= $(shell uname -p)
-DIST_ARCH := $(shell dpkg --print-architecture)
+ARCH ?= $(shell arch)
+DIST_ARCH ?= $(shell dpkg --print-architecture)
 
 # Aliases to make tools respect XDG specification
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -878,7 +878,7 @@ cargo-tools: rust
 .PHONY: cargo-watch
 cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
 cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
-cargo-watch: TARBALL := $(CPU_ARCH)-unknown-linux-gnu.tar.xz
+cargo-watch: TARBALL := $(ARCH)-unknown-linux-gnu.tar.xz
 cargo-watch: $(ZSH_COMPLETIONS) $(MAN1_DIR) net-tools rust
 	@echo ">>> Installing $@: https://github.com/watchexec/cargo-watch"
 	cargo install $@
@@ -1249,7 +1249,7 @@ hadolint: net-tools
 	@echo ">>> Downloading $@ from $(REPO_URL)"
 	$(WGET) -q \
 		-O $(XDG_BIN_HOME)/$@ \
-		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(CPU_ARCH)
+		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
 	@chmod +x $(XDG_BIN_HOME)/$@
 	@echo ">>> Installed: $$($@ -v)"
 
