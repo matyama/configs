@@ -106,7 +106,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_DATA_HOME)/npm \
-	$(XDG_STATE_HOME)/nvim/spell:
+	$(XDG_STATE_HOME)/nvim/spell \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
@@ -655,29 +655,26 @@ else
 endif
 
 # Installation resources:
-#  - https://github.com/bash-lsp/bash-language-server 
-.PHONY: snaps
-snaps: golang 
-	@echo ">>> Installing cmake"
-	sudo snap install --classic cmake
-	@echo ">>> Installing bash-language-server"
-	sudo snap install --classic bash-language-server
-	@echo ">>> Installing Slack"
-	sudo snap install slack --classic
-	@echo ">>> Installing Spotify"
-	sudo snap install spotify
-	@echo ">>> Installing Skype"
-	sudo snap install skype
-	@echo ">>> Installing gimp"
-	sudo snap install gimp
-	@echo ">>> Installing Postman"
-	sudo snap install postman
-	@echo ">>> Installing DBeaver: https://dbeaver.io/"
-	sudo snap install dbeaver-ce
-	@echo ">>> Installing Visual Studio Code"
-	sudo snap install code --classic
-	@echo ">>> Installing googler: https://github.com/jarun/googler"
-	sudo snap install googler
+#  - cmake: software build system for C/C++ (https://cmake.org)
+#  - bash-language-server: language server for Bash
+#    (https://github.com/bash-lsp/bash-language-server)
+#  - code: Visual Studio Code (https://github.com/microsoft/vscode)
+.PHONY: cmake bash-language-server slack code
+cmake bash-language-server slack code:
+	@echo ">>> Installing $@: https://snapcraft.io/$@"
+	sudo snap install --classic $@
+
+# XXX: deprecate googler (archived)
+#
+# Installation resources:
+#  - dbeaver-ce: universal database tool (https://dbeaver.io) 
+#  - gimp: GNU Image Manipulation Program (https://www.gimp.org)
+#  - googler: Google from the terminal (https://github.com/jarun/googler)
+#  - postman: API platform for building & using APIs (https://www.postman.com)
+.PHONY: dbeaver-ce gimp googler postman skype spotify zoom-client
+dbeaver-ce gimp googler postman skype spotify zoom-client:
+	@echo ">>> Installing $@: https://snapcraft.io/$@"
+	sudo snap install $@
 
 .PHONY: pipx
 pipx: python
@@ -1385,15 +1382,10 @@ else
 endif
 	rm -f $(KEYBASE_PKG)
 
-.PHONY: zoom
-zoom:
-	@echo ">>> Installing zoom client"
-	sudo snap install zoom-client
-
 .PHONY: calibre
 calibre:
-	@echo ">>> Installing calibre"
-	sudo apt install -y calibre
+	@echo ">>> Installing $@"
+	sudo apt install -y $@
 
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
