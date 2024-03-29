@@ -677,7 +677,7 @@ cmake bash-language-server slack code:
 #  - netron: visualizer for neural network, deep learning & ML models
 #    (https://github.com/lutzroeder/netron)
 #  - postman: API platform for building & using APIs (https://www.postman.com)
-.PHONY: dbeaver-ce gimp googler postman skype spotify zoom-client
+.PHONY: dbeaver-ce gimp googler netron postman skype spotify zoom-client
 dbeaver-ce gimp googler netron postman skype spotify zoom-client:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install $@
