@@ -1410,6 +1410,17 @@ newsboat: $(XDG_CONFIG_HOME)/newsboat $(XDG_CACHE_HOME)/newsboat/articles $(XDG_
 	@ln -svft $< $(CFG_DIR)/.config/$@/*
 	@echo ">>> Installed $$($@ -v | head -1)"
 
+# Remove unused applications from the distribution
+.PHONY: cleanup
+cleanup: thunderbird
+	sudo apt autoremove -y
+	sudo apt autoclean
+
+.PHONY: thunderbird
+thunderbird:
+	@echo ">>> Uninstalling $@"
+	sudo apt purge -y $@
+
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
 fix-ssh-perms:
