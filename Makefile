@@ -1388,8 +1388,11 @@ else
 endif
 	rm -f $(KEYBASE_PKG)
 
-.PHONY: calibre
-calibre:
+# Installation resources:
+#  - calibre: ebook manager (https://calibre-ebook.com)
+#  - mpv: command line video player (https://mpv.io)
+.PHONY: calibre mpv
+calibre mpv:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
 
@@ -1399,7 +1402,7 @@ calibre:
 #  - TODO: consider installing latest version from source
 #  - TODO: link default `urls` config file once it supports private includes
 .PHONY: newsboat
-newsboat: $(XDG_CONFIG_HOME)/newsboat $(XDG_CACHE_HOME)/newsboat/articles $(XDG_CACHE_HOME)/newsboat/podcasts
+newsboat: $(XDG_CONFIG_HOME)/newsboat $(XDG_CACHE_HOME)/newsboat/articles $(XDG_CACHE_HOME)/newsboat/podcasts mpv
 	@echo ">>> Installing $@: https://github.com/newsboat/newsboat"
 	sudo apt install -y $@
 	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
