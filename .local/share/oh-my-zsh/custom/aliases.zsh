@@ -103,6 +103,12 @@ if (( $+commands[hyperfine] )); then
 	alias bench="hyperfine -S zsh"
 fi
 
+# Newsboat RSS/Atom feed reader (https://newsboat.org)
+if (( $+commands[newsboat] )); then
+	alias news="newsboat -q"
+	alias podcasts="podboat -a"
+fi
+
 # googler (https://github.com/jarun/googler)
 (( $+commands[googler] )) && alias s="googler"
 

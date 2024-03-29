@@ -91,12 +91,15 @@ $(FONTS_DIR) \
 	$(ZSH_CUSTOM)/plugins/forgit \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
+	$(XDG_CACHE_HOME)/newsboat/articles \
+	$(XDG_CACHE_HOME)/newsboat/podcasts \
 	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CACHE_HOME)/zsh \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
+	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/lua \
@@ -169,6 +172,7 @@ links: \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/maven \
+	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/scripts \
@@ -1388,6 +1392,20 @@ endif
 calibre:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
+
+# Installation resources:
+#  - Needs pre-existing config directory to pick it up instead of HOME, see: 
+#    https://github.com/newsboat/newsboat/issues/2658#issuecomment-1886815612
+#  - TODO: consider installing latest version from source
+#  - TODO: link default `urls` config file once it supports private includes
+.PHONY: newsboat
+newsboat: $(XDG_CONFIG_HOME)/newsboat $(XDG_CACHE_HOME)/newsboat/articles $(XDG_CACHE_HOME)/newsboat/podcasts
+	@echo ">>> Installing $@: https://github.com/newsboat/newsboat"
+	sudo apt install -y $@
+	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
+	@touch $</urls && chmod u=rw,g=r,o= $</urls
+	@ln -svft $< $(CFG_DIR)/.config/$@/*
+	@echo ">>> Installed $$($@ -v | head -1)"
 
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh

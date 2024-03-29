@@ -1,0 +1,12 @@
+# https://newsboat.org/releases/2.35/docs/newsboat.html#_newsboat_configuration_commands
+
+auto-reload yes
+display-article-progress yes
+
+podcast-auto-enqueue yes
+delete-played-files yes
+# TODO: https://newsboat.org/releases/2.35/docs/newsboat.html#podboat-player
+
+download-path "~/.cache/newsboat/podcasts/%n"
+save-path "~/.cache/newsboat/articles"
+
