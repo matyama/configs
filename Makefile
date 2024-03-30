@@ -849,19 +849,19 @@ endif
 #  - tarpaulin: a code coverage tool for Rust projects
 #  - workspaces: a tool for managing cargo workspaces and their crates
 CARGO_EXTENSIONS := \
-										cargo-auditable \
-										cargo-bloat \
-										cargo-criterion \
-										cargo-deb \
-										cargo-expand \
-										cargo-hack \
-										cargo-llvm-lines \
-										cargo-modules \
-										cargo-msrv \
-										cargo-nextest \
-										cargo-readme \
-										cargo-tarpaulin \
-										cargo-workspaces
+	cargo-auditable \
+	cargo-bloat \
+	cargo-criterion \
+	cargo-deb \
+	cargo-expand \
+	cargo-hack \
+	cargo-llvm-lines \
+	cargo-modules \
+	cargo-msrv \
+	cargo-nextest \
+	cargo-readme \
+	cargo-tarpaulin \
+	cargo-workspaces
 
 # Cargo subcommands:
 #  - check-external-types: verify which types from other libraries are allowed
@@ -872,12 +872,12 @@ CARGO_EXTENSIONS := \
 #  - udeps: find unused dependencies in Cargo.toml
 #  - vet: supply-chain security for Rust
 CARGO_EXTENSIONS_LOCKED := \
-													 cargo-check-external-types \
-													 cargo-deny \
-													 cargo-outdated \
-													 cargo-semver-checks \
-													 cargo-udeps \
-													 cargo-vet
+	cargo-check-external-types \
+	cargo-deny \
+	cargo-outdated \
+	cargo-semver-checks \
+	cargo-udeps \
+	cargo-vet
 
 .PHONY: $(CARGO_EXTENSIONS)
 $(CARGO_EXTENSIONS):
