@@ -863,6 +863,8 @@ cargo-tools: rust
 	cargo install cargo-llvm-lines
 	@echo ">>> Installing cargo-check-external-types: https://github.com/awslabs/cargo-check-external-types"
 	cargo install --locked cargo-check-external-types
+	@echo ">>> Installing cargo-semver-checks: https://github.com/obi1kenobi/cargo-semver-checks"
+	cargo install --locked cargo-semver-checks
 	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
 	cargo install --locked cargo-outdated
 	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
