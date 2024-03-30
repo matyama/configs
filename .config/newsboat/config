@@ -6,6 +6,7 @@ display-article-progress yes
 podcast-auto-enqueue yes
 delete-played-files yes
 player "mpv --no-video"
+podlist-format "%4i [%5p %%] %-12S %F"
 
 download-path "~/.cache/newsboat/podcasts/%n"
 save-path "~/.cache/newsboat/articles"
