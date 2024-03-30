@@ -78,6 +78,9 @@ if (( $+commands[bat] )); then
 	alias bp="bat --plain"
 fi
 
+# chafa (https://github.com/hpjansson/chafa)
+(( $+commands[chafa] )) && alias imshow="chafa -c 256"
+
 # Docker
 if (( $+commands[docker] )); then
 	alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
