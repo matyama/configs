@@ -834,53 +834,75 @@ ifeq ($(shell which rustc 2> /dev/null),)
 endif
 	rustup show
 
-.PHONY: cargo-tools
-cargo-tools: rust
-	@echo ">>> Installing cargo-readme: https://crates.io/crates/cargo-readme"
-	cargo install cargo-readme
-	@echo ">>> Installing cargo-expand: https://crates.io/crates/cargo-expand"
-	cargo install cargo-expand
-	@echo ">>> Installing cargo-nextest: https://crates.io/crates/cargo-nextest"
-	cargo install cargo-nextest
-	@echo ">>> Installing criterion: https://crates.io/crates/cargo-criterion"
-	cargo install cargo-criterion
-	@echo ">>> Installing cargo-hack: https://crates.io/crates/cargo-hack"
-	cargo install cargo-hack
-	@echo ">>> Installing cargo-deny: https://crates.io/crates/cargo-deny"
-	cargo install --locked cargo-deny
-	@echo ">>> Installing cargo-auditable: https://github.com/rust-secure-code/cargo-auditable"
-	cargo install cargo-auditable
-	@echo ">>> Installing cargo-audit: https://crates.io/crates/cargo-audit"
-	cargo install cargo-audit --features=fix
-	@echo ">>> Installing cargo-vet: https://github.com/mozilla/cargo-vet"
-	cargo install --locked cargo-vet
-	@echo ">>> Installing cargo-tarpaulin: https://github.com/xd009642/tarpaulin"
-	cargo install cargo-tarpaulin
-	@echo ">>> Installing cargo-llvm-cov: https://github.com/taiki-e/cargo-llvm-cov"
-	cargo install cargo-llvm-cov --locked
-	rustup component add llvm-tools-preview --toolchain nightly
-	@echo ">>> Installing cargo-llvm-lines: https://github.com/dtolnay/cargo-llvm-lines"
-	cargo install cargo-llvm-lines
-	@echo ">>> Installing cargo-check-external-types: https://github.com/awslabs/cargo-check-external-types"
-	cargo install --locked cargo-check-external-types
-	@echo ">>> Installing cargo-semver-checks: https://github.com/obi1kenobi/cargo-semver-checks"
-	cargo install --locked cargo-semver-checks
-	@echo ">>> Installing cargo-outdated: https://github.com/kbknapp/cargo-outdated"
-	cargo install --locked cargo-outdated
-	@echo ">>> Installing cargo-udeps: https://github.com/est31/cargo-udeps"
-	cargo install --locked cargo-udeps
-	@echo ">>> Installing cargo-bloat: https://github.com/RazrFalcon/cargo-bloat"
-	cargo install cargo-bloat
-	make -C $(CFG_DIR) cargo-watch
-	@echo ">>> Installing cargo-deb: https://github.com/kornelski/cargo-deb"
-	cargo install cargo-deb
-	@echo ">>> Installing cargo-modules: https://github.com/regexident/cargo-modules"
-	cargo install cargo-modules
-	@echo ">>> Installing cargo-workspaces: https://github.com/pksunkara/cargo-workspaces"
-	cargo install cargo-workspaces
-	@echo ">>> Installing cargo-msrv: https://github.com/foresterre/cargo-msrv"
-	cargo install cargo-msrv
+# Cargo subcommands:
+#  - auditable: make production Rust binaries auditable
+#  - bloat: find out what takes most of the space in your executable
+#  - criterion: run Criterion.rs benchmarks and report the results
+#  - deb: generates Debian packages from information in Cargo.toml 
+#  - expand: shows the result of macro expansion and #[derive] expansion
+#  - hack: provides various options useful for testing & continuous integration
+#  - llvm-lines: count lines of LLVM IR per generic function
+#  - modules: visualize/analyze a Rust crate's internal structure 
+#  - msrv: find the minimum supported Rust version (MSRV)
+#  - nextest: a next-generation test runner for Rust
+#  - readme: generate README.md content from doc comments
+#  - tarpaulin: a code coverage tool for Rust projects
+#  - workspaces: a tool for managing cargo workspaces and their crates
+CARGO_EXTENSIONS := \
+										cargo-auditable \
+										cargo-bloat \
+										cargo-criterion \
+										cargo-deb \
+										cargo-expand \
+										cargo-hack \
+										cargo-llvm-lines \
+										cargo-modules \
+										cargo-msrv \
+										cargo-nextest \
+										cargo-readme \
+										cargo-tarpaulin \
+										cargo-workspaces
 
+# Cargo subcommands:
+#  - check-external-types: verify which types from other libraries are allowed
+#    to be are exposed in their public API
+#  - deny: lint dependencies
+#  - outdated: display when dependencies are out of date
+#  - semver-checks: scan crate for semver violations
+#  - udeps: find unused dependencies in Cargo.toml
+#  - vet: supply-chain security for Rust
+CARGO_EXTENSIONS_LOCKED := \
+													 cargo-check-external-types \
+													 cargo-deny \
+													 cargo-outdated \
+													 cargo-semver-checks \
+													 cargo-udeps \
+													 cargo-vet
+
+.PHONY: $(CARGO_EXTENSIONS)
+$(CARGO_EXTENSIONS):
+	@echo ">>> Installing $@: https://crates.io/crates/$@"
+	cargo install $@
+
+.PHONY: $(CARGO_EXTENSIONS_LOCKED)
+$(CARGO_EXTENSIONS_LOCKED):
+	@echo ">>> Installing $@: https://crates.io/crates/$@"
+	cargo install --locked $@
+
+# Audit Cargo.lock for crates with security vulnerabilities
+.PHONY: cargo-audit
+cargo-audit:
+	@echo ">>> Installing $@: https://crates.io/crates/$@"
+	cargo install $@ --features=fix
+
+# Cargo subcommand to easily use LLVM source-based code coverage.
+.PHONY: cargo-llvm-cov
+cargo-llvm-cov:
+	@echo ">>> Installing $@: https://crates.io/crates/$@"
+	cargo install --locked $@
+	rustup component add llvm-tools-preview --toolchain nightly
+
+# Watches over project's source for changes & runs commands when they occur
 .PHONY: cargo-watch
 cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
 cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
@@ -895,6 +917,15 @@ cargo-watch: $(ZSH_COMPLETIONS) $(MAN1_DIR) net-tools rust
 	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
+
+.PHONY: cargo-tools
+cargo-tools: \
+	rust \
+	cargo-audit \
+	cargo-llvm-cov \
+	cargo-watch \
+	$(CARGO_EXTENSIONS) \
+	$(CARGO_EXTENSIONS_LOCKED)
 
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
@@ -1404,7 +1435,11 @@ calibre mpv:
 #  - TODO: consider installing latest version from source
 #  - TODO: link default `urls` config file once it supports private includes
 .PHONY: newsboat
-newsboat: $(XDG_CONFIG_HOME)/newsboat $(XDG_CACHE_HOME)/newsboat/articles $(XDG_CACHE_HOME)/newsboat/podcasts mpv
+newsboat: \
+	$(XDG_CONFIG_HOME)/newsboat \
+	$(XDG_CACHE_HOME)/newsboat/articles \
+	$(XDG_CACHE_HOME)/newsboat/podcasts \
+	mpv
 	@echo ">>> Installing $@: https://github.com/newsboat/newsboat"
 	sudo apt install -y $@
 	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
