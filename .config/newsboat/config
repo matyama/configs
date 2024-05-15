@@ -3,7 +3,7 @@
 auto-reload yes
 display-article-progress yes
 
-podcast-auto-enqueue yes
+# podcast-auto-enqueue yes
 delete-played-files yes
 player "mpv --no-video"
 podlist-format "%4i [%5p %%] %-12S %F"
