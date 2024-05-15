@@ -10,6 +10,8 @@
 	autocrlf = input
 	safecrlf = true
 	pager = delta
+	# prevent CVE-2024-32002 (fixed in v2.39.4 and above)
+	symlinks = false
 [interactive]
 	diffFilter = delta --diff-so-fancy
 [delta]
