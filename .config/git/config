@@ -59,6 +59,8 @@
 	sa = "!f() { git stash apply stash^{/$*}; }; f"
 	sl = stash list
 	ah = "!f() { git stash && git pull --rebase && git stash pop; }; f"
+	# https://github.com/o2sh/onefetch/wiki/getting-started
+	summary = "!which onefetch >/dev/null && onefetch"
 [ui "color"]
 	ui = always
 [color]

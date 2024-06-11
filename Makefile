@@ -948,6 +948,8 @@ cargo-tools: \
 #    working on right now (https://github.com/cantino/mcfly)
 #  - mdbook: Build a book from Markdown files
 #    (https://github.com/rust-lang/mdBook)
+#  - onefetch: Command-line Git information tool
+#    (https://github.com/o2sh/onefetch)
 #  - procs: A modern replacement for ps written in Rust
 #    (https://github.com/dalance/procs)
 #  - proximity-search: Simple command-line utility for sorting inputs by
@@ -1010,6 +1012,10 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
 	cargo install mdbook
+	@echo ">>> Installing onefetch: https://github.com/o2sh/onefetch"
+	cargo install onefetch
+	@gzip -c $(CRATES_SRC)/$$(onefetch --version | sed 's| |-|g')/docs/onefetch.1 \
+		| sudo tee $(MAN1_DIR)/onefetch.1.gz > /dev/null
 	@echo ">>> Installing procs: https://github.com/dalance/procs"
 	cargo install procs
 	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
