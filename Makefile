@@ -711,6 +711,8 @@ python-tools: pipx
 #	pipx install wemake-python-styleguide --include-deps $(OPS)
 	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"
 	pipx install pycobertura
+	@echo ">>> Installing ruff: https://github.com/astral-sh/ruff"
+	pipx install ruff
 	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
 	pipx install sqlfluff
 	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"

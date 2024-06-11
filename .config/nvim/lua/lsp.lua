@@ -79,6 +79,11 @@ local on_attach = function(client, bufnr)
   -- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely/
   client.server_capabilities.semanticTokensProvider = nil
 
+  -- Disable hover for Ruff in favor of Pyright
+  if client.name == 'ruff' then
+    client.server_capabilities.hoverProvider = false
+  end
+
   -- Get signatures (and _only_ signatures) when in argument lists
   require("lsp_signature").on_attach({
     doc_lines = 0,
@@ -100,7 +105,26 @@ end
 lspconfig.bashls.setup {}
 
 -- Setup pyright (https://microsoft.github.io/pyright/#/settings)
-lspconfig.pyright.setup {}
+lspconfig.pyright.setup {
+  settings = {
+    pyright = {
+      -- Using Ruff's import organizer
+      disableOrganizeImports = true,
+    },
+    python = {
+      analysis = {
+        -- Ignore all files for analysis to exclusively use Ruff for linting
+        ignore = { '*' },
+      },
+    },
+  },
+}
+
+-- Setup ruff (Python liner & formatter)
+-- https://github.com/astral-sh/ruff/blob/main/crates/ruff_server/docs/setup/NEOVIM.md
+lspconfig.ruff.setup {
+  on_attach = on_attach,
+}
 
 -- TODO: consider haskell-tools.nvim instead of lspconfig
 -- TODO: switch to ormolu as the default formatter
