@@ -84,13 +84,18 @@ local on_attach = function(client, bufnr)
     client.server_capabilities.hoverProvider = false
   end
 
+  -- FIXME: lsp_signatur handler RPC[Error] code_name = ContentModified
+  -- message = "waiting for cargo metadata or cargo check"
+  -- https://github.com/ray-x/lsp_signature.nvim/issues/168
+  -- NOTE: seems to manifest only in projects with a lot of dependencies
+
   -- Get signatures (and _only_ signatures) when in argument lists
   require("lsp_signature").on_attach({
     doc_lines = 0,
     handler_opts = {
       border = "none"
     },
-  })
+  }, bufnr)
 
   -- Attach inlay hints
   if client.server_capabilities.inlayHintProvider then
@@ -158,15 +163,8 @@ lspconfig.rust_analyzer.setup {
   capabilities = capabilities,
 }
 
--- Setup crates.nvim
--- https://github.com/Saecki/crates.nvim
-require("crates").setup {
-    src = {
-        cmp = {
-            enabled = true,
-        },
-    },
-}
+-- Setup crates.nvim (https://github.com/Saecki/crates.nvim)
+require("crates").setup {}
 
 -- Enable auto-completion via crates.nvim in Cargo.toml
 vim.api.nvim_create_autocmd("BufRead", {
