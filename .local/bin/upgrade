@@ -305,5 +305,5 @@ fi
 
 if [[ -n "$EDITOR" ]] && [[ "$EDITOR" == *vim ]] && [[ $RUN_VIM -gt 0 ]]; then
 	echo "Upgrading ${EDITOR} plugins..."
-	"$EDITOR" --headless +PlugUpdate +qall &>/dev/null
+	"$EDITOR" --headless "+Lazy! sync" +qa &>/dev/null
 fi

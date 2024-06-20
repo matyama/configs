@@ -48,16 +48,6 @@ api.nvim_create_autocmd('BufRead', {
     command = 'set readonly',
 })
 
--- TODO: deprecate in favor of `conform.nvim` (use `format_on_save`)
--- Run a formatter on save (https://github.com/sbdchd/neoformat#basic-usage)
-local fmt = api.nvim_create_augroup('fmt', { clear = true })
-
-api.nvim_create_autocmd('BufWritePre', {
-    pattern = '*',
-    group = fmt,
-    command = 'undojoin | Neoformat',
-})
-
 -------------------------------------------------------------------------------
 -- Filetype: text
 -------------------------------------------------------------------------------
@@ -85,6 +75,7 @@ api.nvim_create_autocmd('Filetype', {
 -------------------------------------------------------------------------------
 
 -- XXX: deprecate completely (or keep just colorcolumn)
+-- XXX: move to rust.vim config
 api.nvim_create_autocmd('Filetype', {
     pattern = 'rust',
     command =
@@ -105,33 +96,3 @@ for _, pat in ipairs({'*.sbt', '*.sc'}) do
         command = 'set filetype=scala',
     })
 end
-
--------------------------------------------------------------------------------
--- Colors
--------------------------------------------------------------------------------
-
--- TODO: move to base16 plugin config
-api.nvim_create_autocmd('ColorScheme', {
-    pattern = '*',
-    callback = function(ev)
-        -- Make the background terminal color transparent for the Normal group
-        -- https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax
-        local normal = vim.api.nvim_get_hl(0, { name = 'Normal' })
-        normal.ctermbg = nil
-        api.nvim_set_hl(0, 'Normal', normal)
-
-        -- Make comments more prominent
-        local bools = vim.api.nvim_get_hl(0, { name = 'Boolean' })
-        api.nvim_set_hl(0, 'Comment', bools)
-
-        -- Highlight current arguments
-        local marked = vim.api.nvim_get_hl(0, { name = 'PMenu' })
-        api.nvim_set_hl(0, 'LspSignatureActiveParameter', {
-            fg = marked.fg,
-            bg = marked.bg,
-            ctermfg = marked.ctermfg,
-            ctermbg = marked.ctermbg,
-            bold = true
-        })
-    end
-})

@@ -20,42 +20,9 @@ map('n', 'zf', 'z=', { desc = "spell check hint/correction" })
 -- Reload nvim config
 -- nnoremap <leader>sv :source $VIMRC<CR>
 
--- TODO: move Files command to the config of fzf.vim (or better fzf-lua)
-
--- When using :Files, pass the file list through
---
---   https://github.com/jonhoo/proximity-sort
---
--- to prefer files closer to the current file.
---local function list_cmd()
---  local fn = vim.fn
---  local base = fn.fnamemodify(fn.expand('%'), ':h:.:S')
---  if base == '.' then
---    -- if there is no current file, proximity-sort can't do its thing
---    return 'fd --type file --follow --hidden'
---  else
---    return fn.printf(
---      'fd --type file --follow --hidden | proximity-sort %s',
---      fn.shellescape(fn.expand('%'))
---    )
---  end
---end
---
---local function files(arg)
---  local f = vim.fn['fzf#vim#files']
---  f(arg.qargs, { source = list_cmd(), options = '--tiebreak=index' }, arg.bang)
---end
---
---vim.api.nvim_create_user_command('Files', files, {
---  bang = true,
---  nargs = '?',
---  complete = "dir",
---})
-
---map('', '<C-p>', '<cmd>Files<cr>', { desc = "quick-open" })
-map('', '<C-p>', '<cmd>:FZF<cr>', { desc = "quick-open" })
+map('', '<C-p>', ':Files<CR>', { desc = "quick-open" })
 map('n', '<C-q>', ':confirm qall', { desc = "quick-quit" })
-map('n', '<leader>w', '<cmd>w<cr>', { desc = "quick-save" })
+map('n', '<leader>w', ':w<CR>', { desc = "quick-save" })
 
 map('n', '<leader>e', ':e <C-R>=expand("%:p:h") . "/" <cr>', {
     desc = "open new file located in the same directory as current file"
@@ -192,6 +159,3 @@ map('n', 'g*', 'g*zz', { silent = true })
 map('n', '?', '?\\v')
 map('n', '/', '/\\v')
 map('c', '%s/', '%sm/')
-
--- TODO: move to the config of fzf.vim (or better fzf-lua)
-map('', '<leader>s', ':Rg<space>', { desc = "ripgrep search" })

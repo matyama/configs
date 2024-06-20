@@ -10,14 +10,6 @@ local g = vim.g
 
 g.mapleader = " "
 
--- TODO: move these to the config of fzf.vim (or better fzf-lua)
-g.fzf_layout = { down = '~20%' }
-g.fzf_action = {
-  ['ctrl-t'] = 'tab split',
-  ['ctrl-h'] = 'split',
-  ['ctrl-v'] = 'vsplit',
-}
-
 -------------------------------------------------------------------------------
 -- Options
 -------------------------------------------------------------------------------
@@ -53,9 +45,6 @@ opt.shortmess:append("sI")
 
 -- Don't pass messages to |ins-completion-menu|
 --opt.shortmess:append("c")
-
--- Hide status
-o.showmode = false
 
 -- Stop line breaking (i.e., never show line breaks if they're not there)
 o.wrap = false
@@ -137,10 +126,6 @@ opt.diffopt:append("indent-heuristic")
 
 -- Show red vertical bar at column 80
 o.colorcolumn = "80"
-
--- TODO: move to autocmds.lua
---- except in Rust where the rule is 100 characters
---vim.api.nvim_create_autocmd('Filetype', { pattern = 'rust', command = 'set colorcolumn=100' })
 
 -- Show more hidden characters (and nicer tabs)
 opt.listchars = {

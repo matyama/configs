@@ -103,7 +103,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/lua \
-	$(XDG_CONFIG_HOME)/nvim/scripts \
+	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
@@ -175,7 +175,7 @@ links: \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvim/lua \
-	$(XDG_CONFIG_HOME)/nvim/scripts \
+	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
 	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \

@@ -103,6 +103,15 @@ local on_attach = function(client, bufnr)
   end
 end
 
+-- Lazily enable auto-completion via crates.nvim in Cargo.toml
+vim.api.nvim_create_autocmd("BufRead", {
+    group = vim.api.nvim_create_augroup("CmpSourceCargo", { clear = true }),
+    pattern = "Cargo.toml",
+    callback = function()
+        cmp.setup.buffer({ sources = { { name = "crates" } } })
+    end,
+})
+
 -- Server configurations
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
@@ -162,18 +171,6 @@ lspconfig.rust_analyzer.setup {
 
   capabilities = capabilities,
 }
-
--- Setup crates.nvim (https://github.com/Saecki/crates.nvim)
-require("crates").setup {}
-
--- Enable auto-completion via crates.nvim in Cargo.toml
-vim.api.nvim_create_autocmd("BufRead", {
-    group = vim.api.nvim_create_augroup("CmpSourceCargo", { clear = true }),
-    pattern = "Cargo.toml",
-    callback = function()
-        cmp.setup.buffer({ sources = { { name = "crates" } } })
-    end,
-})
 
 -- Display inlay hints on cursor hover
 vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
