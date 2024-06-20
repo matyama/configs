@@ -10,10 +10,6 @@ endif
 
 call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 
-	" Quickstart configs for Nvim LSP
-	" https://github.com/neovim/nvim-lspconfig
-	Plug 'neovim/nvim-lspconfig'
-
 	" Completion plugin coded in Lua, LSP client buffer, and path integration
 	" https://github.com/hrsh7th/nvim-cmp
 	"
@@ -24,13 +20,5 @@ call plug#begin("$XDG_CONFIG_HOME/nvim/autoload/plugged")
 	Plug 'hrsh7th/cmp-path', {'branch': 'main'}
 	Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
 	Plug 'hrsh7th/vim-vsnip'
-
-	" LSP signature hint as you type
-	" https://github.com/ray-x/lsp_signature.nvim
-	Plug 'ray-x/lsp_signature.nvim'
-
-	" Inlay hints for the built-in LSP
-	" https://github.com/lvimuser/lsp-inlayhints.nvim
-	Plug 'lvimuser/lsp-inlayhints.nvim'
 
 	call plug#end()

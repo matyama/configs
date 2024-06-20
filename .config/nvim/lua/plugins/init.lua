@@ -102,13 +102,6 @@ return {
         end,
   },
 
-  -- TODO: upgrade to some recent version
-  -- Standalone UI for nvim-lsp progress
-  {
-    'j-hui/fidget.nvim',
-    tag = 'legacy',
-  },
-
   -- TODO: Debugging
   -- Debug Adapter Protocol client implementation
   -- https://github.com/mfussenegger/nvim-dap
