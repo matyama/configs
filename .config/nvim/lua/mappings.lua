@@ -68,14 +68,13 @@ map('v', '<leader>d', '"+d', { desc = "move selection into clipboard" })
 map({'n', 'v'}, '<leader>p', '"+p', { desc = "paste clipboard after cursor" })
 map({'n', 'v'}, '<leader>P', '"+P', { desc = "paste clipboard before cursor" })
 
--- FIXME: moving multiple lines under v mode seems bugged
 -- move line around (https://vim.fandom.com/wiki/Moving_lines_up_or_down)
-map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "move line down" })
-map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "move line up" })
-map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "move line down" })
-map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "move line up" })
-map("v", "<A-j>", "<cmd>m '>+1<cr>gv=gv", { desc = "move line down" })
-map("v", "<A-k>", "<cmd>m '<-2<cr>gv=gv", { desc = "move line up" })
+map("n", "<A-j>", ":m .+1<CR>==", { desc = "move line down" })
+map("n", "<A-k>", ":m .-2<CR>==", { desc = "move line up" })
+map("i", "<A-j>", "<Esc>:m .+1<CR>==gi", { desc = "move line down" })
+map("i", "<A-k>", "<Esc>:m .-2<CR>==gi", { desc = "move line up" })
+map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "move line down" })
+map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "move line up" })
 
 -- Press 'v' to expand the visual selection and C-v to shrink it.
 -- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
