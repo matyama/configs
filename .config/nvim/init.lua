@@ -1,10 +1,9 @@
 -- Change <leader> from '/' to '<Space>'
+vim.g.mapleader = " "
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 
--- TODO: move options, mappings and autocmds under `lua/config/` (see LazyVim)
 require("options")
-
--- TODO: require("mappings")
+require("mappings")
 
 -- Setup plugin manager (https://github.com/folke/lazy.nvim)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

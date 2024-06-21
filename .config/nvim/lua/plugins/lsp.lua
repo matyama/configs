@@ -142,6 +142,15 @@ return {
 				end,
 			})
 
+			-- XXX: document or deprecate
+			vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+				vim.lsp.diagnostic.on_publish_diagnostics, {
+					virtual_text = true,
+					signs = true,
+					update_in_insert = true,
+				}
+			)
+
 		end,
 	},
 
@@ -183,6 +192,81 @@ return {
 				end,
 			})
 		end,
+	},
+
+	-- Completion plugin coded in Lua, LSP client buffer, and path integration
+	-- https://github.com/hrsh7th/nvim-cmp
+	{
+		'hrsh7th/nvim-cmp',
+
+		event = 'InsertEnter',
+
+		-- NOTE: dependencies are always lazy-loaded unless specified otherwise
+		dependencies = {
+			'neovim/nvim-lspconfig',
+			'hrsh7th/cmp-nvim-lsp',
+			'hrsh7th/cmp-buffer',
+			'hrsh7th/cmp-path',
+			-- TODO: check out https://github.com/saadparwaiz1/cmp_luasnip
+			-- NOTE: `*-vsip` inluded only because nvim-cmp requires snippets
+			'hrsh7th/cmp-vsnip',
+			'hrsh7th/vim-vsnip',
+		},
+
+		config = function()
+
+			local cmp = require('cmp')
+
+			cmp.setup({
+					snippet = {
+						-- NOTE: required by nvim-cmp, get rid of it once we can
+						expand = function(args)
+							vim.fn["vsnip#anonymous"](args.body)
+						end,
+					},
+
+					mapping = cmp.mapping.preset.insert({
+							['<C-b>'] = cmp.mapping.scroll_docs(-4),
+							['<C-f>'] = cmp.mapping.scroll_docs(4),
+							['<C-Space>'] = cmp.mapping.complete(),
+							['<C-e>'] = cmp.mapping.abort(),
+							-- Accept currently selected item
+							-- Set select to false to only confirm explicitly selected items
+							['<CR>'] = cmp.mapping.confirm({ select = true }),
+						}),
+
+					sources = cmp.config.sources({
+							-- stop prioritization of snippets from LSP
+							{ name = 'nvim_lsp' },
+					}, {
+							{ name = 'path' },
+							{ name = 'buffer' },
+					}),
+
+					experimental = {
+						ghost_text = true,
+					},
+			})
+
+			-- Enable completing paths in :
+			cmp.setup.cmdline(':', {
+					sources = cmp.config.sources({
+							{ name = 'path' },
+					})
+      })
+
+			local api = vim.api
+
+			-- Lazily enable auto-completion via crates.nvim in Cargo.toml
+			api.nvim_create_autocmd("BufRead", {
+					group = api.nvim_create_augroup("CmpSourceCargo", { clear = true }),
+					pattern = "Cargo.toml",
+					callback = function()
+							cmp.setup.buffer({ sources = { { name = "crates" } } })
+					end,
+			})
+
+    end,
 	},
 
 	-- TODO: upgrade to some recent version

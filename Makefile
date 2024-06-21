@@ -104,7 +104,6 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
-	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
@@ -176,7 +175,6 @@ links: \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
-	$(XDG_CONFIG_HOME)/nvim/vim-plug \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
