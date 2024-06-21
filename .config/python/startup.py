@@ -95,4 +95,3 @@ def enablerlcompleter():
 #  - https://github.com/python/cpython/blob/dc505f9e9a7a1c4863f0193156bdde9bcfdf8c36/Lib/site.py#L644
 if not sys.flags.no_site and not sys.flags.isolated:
     enablerlcompleter()
-

@@ -126,4 +126,3 @@ if (( $+commands[ghc] )); then
 	alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
 	alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
 fi
-

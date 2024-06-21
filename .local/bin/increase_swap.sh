@@ -2,15 +2,15 @@
 
 echo "WARNINIG: Run this in a 'Live CD', not the installed Ubuntu"
 read -p "Continue (yY/nN)? " choice
-case "$choice" in 
-  y|Y) 
+case "$choice" in
+  y|Y)
 		echo ">>> Running swap increase"
 		;;
-  n|N) 
+  n|N)
 		echo ">>> Stopping swap increase"
 		exit 0
 		;;
-  *) 
+  *)
 		echo ">>> Stopping swap increase"
 		exit 0
 		;;
@@ -18,7 +18,7 @@ esac
 
 # Change swap size which is only 1G after installation
 #  - [Unlock volume](https://bit.ly/3eyttxj)
-#  - [Shrink LVM root](https://bit.ly/2S33zKt) 
+#  - [Shrink LVM root](https://bit.ly/2S33zKt)
 #  - [Shrink LVM root volume](https://bit.ly/2S33zKt)
 #  - [Working with swap](https://bit.ly/3aICkLQ)
 
@@ -38,7 +38,7 @@ fi
 
 echo ">>> Unlocking LVM partition ${LVM_PARTITION}"
 # Alternatively one can unlock it manually in Disk app
-sudo udisksctl unlock -b "${LVM_PARTITION}" 
+sudo udisksctl unlock -b "${LVM_PARTITION}"
 
 # List logical volumes
 sudo lvs
@@ -68,4 +68,3 @@ sudo swapon /dev/vgubuntu/swap_1
 
 echo ">>> New swap size"
 free -th | grep -i swap
-

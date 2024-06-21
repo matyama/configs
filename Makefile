@@ -21,7 +21,7 @@ BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
-# TODO: currently tinted-theming hardcodes `$HOME/.config`, use 
+# TODO: currently tinted-theming hardcodes `$HOME/.config`, use
 # `XDG_CONFIG_HOME` once supported
 BASE16_SHELL_PATH ?= $(HOME)/.config/base16-shell
 
@@ -118,7 +118,7 @@ $(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
 
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.5.0/$(DIST_ARCH)/iso-cd
 $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
-	@echo ">>> Downloading Debian Bookworm net installer for $(DIST_ARCH)" 
+	@echo ">>> Downloading Debian Bookworm net installer for $(DIST_ARCH)"
 	@[ -f $@ ] || $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
 
 DOCKER_CMD := $(shell command -v docker 2> /dev/null)
@@ -320,7 +320,7 @@ neovim: $(XDG_STATE_HOME)/nvim/spell
 #  - heaptrack(-gui): A heap memory profiler for Linux
 #    (https://github.com/KDE/heaptrack)
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
-#  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/) 
+#  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/)
 #  - libecpg-dev: Postgres instegrations
 #  - libimage-exiftool-perl: library and program to read and write meta
 #    information in multimedia files (https://exiftool.org)
@@ -551,7 +551,7 @@ test-k8s: net-tools
 	}
 	kubectl get pods
 	@echo ">>> Exposing test service"
-	kubectl get services 
+	kubectl get services
 	minikube service list
 	kubectl expose deployment hello-minikube \
 		--type=LoadBalancer \
@@ -578,7 +578,7 @@ test-k8s: net-tools
 
 # Installation resources:
 #  - https://github.com/devops-works/binenv#linux-bashzsh
-# 
+#
 # TODO: Verify (gpg) the signature of the checksum file if binenv releases one.
 .PHONY: binenv
 binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download
@@ -670,7 +670,7 @@ cmake bash-language-server slack code:
 # XXX: deprecate googler (archived)
 #
 # Installation resources:
-#  - dbeaver-ce: universal database tool (https://dbeaver.io) 
+#  - dbeaver-ce: universal database tool (https://dbeaver.io)
 #  - gimp: GNU Image Manipulation Program (https://www.gimp.org)
 #  - googler: Google from the terminal (https://github.com/jarun/googler)
 #  - netron: visualizer for neural network, deep learning & ML models
@@ -839,11 +839,11 @@ endif
 #  - auditable: make production Rust binaries auditable
 #  - bloat: find out what takes most of the space in your executable
 #  - criterion: run Criterion.rs benchmarks and report the results
-#  - deb: generates Debian packages from information in Cargo.toml 
+#  - deb: generates Debian packages from information in Cargo.toml
 #  - expand: shows the result of macro expansion and #[derive] expansion
 #  - hack: provides various options useful for testing & continuous integration
 #  - llvm-lines: count lines of LLVM IR per generic function
-#  - modules: visualize/analyze a Rust crate's internal structure 
+#  - modules: visualize/analyze a Rust crate's internal structure
 #  - msrv: find the minimum supported Rust version (MSRV)
 #  - nextest: a next-generation test runner for Rust
 #  - readme: generate README.md content from doc comments
@@ -966,7 +966,7 @@ cargo-tools: \
 #  - tealdeer: A very fast implementation of tldr in Rust
 #    (https://github.com/dbrgn/tealdeer)
 #  - tokio-console: A debugger for async Rust
-#    (https://github.com/tokio-rs/console) 
+#    (https://github.com/tokio-rs/console)
 #  - xh: Friendly and fast tool for sending HTTP requests
 #    (https://github.com/ducaale/xh)
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
@@ -1166,7 +1166,7 @@ lua-language-server: $(XDG_DATA_HOME)/lua-language-server luajit
 
 # Install ruby using apt instead of snap
 #  - With ruby from snap, `gem install` does not respect cusom `$GEM_HOME` even
-#    with `--no-user-install`, see: https://stackoverflow.com/a/70101849 
+#    with `--no-user-install`, see: https://stackoverflow.com/a/70101849
 #  - https://www.ruby-lang.org/en/documentation/installation
 #  - TODO: try https://www.ruby-lang.org/en/documentation/installation/#rbenv
 .PHONY: ruby
@@ -1357,7 +1357,7 @@ aws-vault: binenv
 	@echo ">>> Installing $@: https://github.com/99designs/aws-vault"
 	@binenv update
 	binenv install $@
-	
+
 .PHONY: set-swappiness
 set-swappiness: SWAPPINESS := 10
 set-swappiness:
@@ -1453,7 +1453,7 @@ calibre luajit mpv:
 	sudo apt install -y $@
 
 # Installation resources:
-#  - Needs pre-existing config directory to pick it up instead of HOME, see: 
+#  - Needs pre-existing config directory to pick it up instead of HOME, see:
 #    https://github.com/newsboat/newsboat/issues/2658#issuecomment-1886815612
 #  - TODO: consider installing latest version from source
 #  - TODO: link default `urls` config file once it supports private includes
@@ -1493,4 +1493,3 @@ fix-ssh-perms:
 	chmod 700 "$(SSH_DIR)/config.d"
 	chmod 600 "$(SSH_DIR)/known_hosts*"
 	chmod 400 "$(SSH_DIR)/*.pem"
-

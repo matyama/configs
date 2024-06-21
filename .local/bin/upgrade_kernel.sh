@@ -93,7 +93,7 @@ wget -qO- "${DOWNLOAD_URL}" | \
 echo ">>> Installing kernel v${VERSION}"
 if [[ -d "${DOWNLOAD_DIR}" ]]; then
 	echo ">>> Found new kernel packages in '${DOWNLOAD_DIR}'"
-	
+
 	if [[ "${INSTALL_CONFIRMED}" -eq 0 ]]; then
 		# TODO: pass yes to dpkg (like `yes | dpkg -i ...`)
 		sudo dpkg ${INSTALL_OPS} -i -R "${DOWNLOAD_DIR}"
@@ -104,7 +104,7 @@ if [[ -d "${DOWNLOAD_DIR}" ]]; then
 			sudo dpkg ${INSTALL_OPS} -i -R "${DOWNLOAD_DIR}"
 		fi
 	fi
-		
+
 	echo ">>> Removing download directory '${DOWNLOAD_DIR}'"
 	rm -rf "${DOWNLOAD_DIR}"
 
@@ -112,4 +112,3 @@ if [[ -d "${DOWNLOAD_DIR}" ]]; then
 else
 	echo ">>> Directory '${DOWNLOAD_DIR}' does not exist, skipping installation"
 fi
-

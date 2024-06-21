@@ -13,8 +13,8 @@ SKIP: Skip selected tool(s), overrides RUN.
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
 	sdk          Skip sdk upgrade
-	omz          Skip omz update 
-	vim          Skip (neo)vim updates (vim-plug, coc) 
+	omz          Skip omz update
+	vim          Skip (neo)vim updates (vim-plug, coc)
 	extras       Skip all but apt upgrade
 
 RUN: Run only selected tool(s), can be overridden by SKIP.

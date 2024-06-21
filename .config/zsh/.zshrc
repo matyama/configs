@@ -36,7 +36,7 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 #  - Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(
   ansible                       # adds some useful aliases for ansible
-  aws                           # completion support for awscli & few utilities 
+  aws                           # completion support for awscli & few utilities
   base16-shell                  # provides support for Base16 Shell themes
   copybuffer                    # copy shell buffer to clipboard with ctrl-o
   direnv                        # creates the direnv hook
@@ -115,7 +115,7 @@ setopt hist_ignore_space
 # McFly history search
 #  - https://github.com/cantino/mcfly
 #  - NOTE: overrides Ctrl+R from the fzf plugin above
-if (( $+commands[mcfly] )); then 
+if (( $+commands[mcfly] )); then
   export MCFLY_KEY_SCHEME=vim
   export MCFLY_FUZZY=2
   export MCFLY_RESULTS=20
@@ -257,4 +257,3 @@ fi
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
   source "${SDKMAN_DIR}/bin/sdkman-init.sh"
-

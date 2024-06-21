@@ -1,3 +1,5 @@
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+
 # configs
 
 This repository contains various configuration files and scripts.
@@ -13,7 +15,7 @@ LVM VG vgubuntu, LV root as ext 4
 LVM VG vgubuntu, LV swap_1 as swap
 partition #1 of /dev/nvme0n1 as ESP
 ```
-The swap partition is by default only ~1G. In order to resize the root logical 
+The swap partition is by default only ~1G. In order to resize the root logical
 volume and increase swap do the following:
 1. Install Ubuntu with LVM and encryption
 1. Restart to 'Try Ubuntu', i.e. 'Live CD' so that root is not actively used
@@ -105,7 +107,7 @@ documentation, respect terminal's color palette (and hence Base16):
    select between 8 and 256 colors (empirically 256)
 
 Some settings used in `p10k configure` when `p10k.zsh` was originally
-created include: 
+created include:
  1. Prompt Style: *Rainbow* or *Lean*
  1. Character Set: Unicode
  1. Prompt Separators: Slanted (only relevant to *Rainbow*)
@@ -142,7 +144,7 @@ omz reload
 base16_gruvbox-dark-hard
 ```
 
-The default theme is set in `.zshenv` to 
+The default theme is set in `.zshenv` to
 `BASE16_THEME_DEFAULT=gruvbox-dark-hard`.
 
 One can also [test](https://github.com/tinted-theming/base16-shell#troubleshooting)
@@ -238,8 +240,8 @@ make nvidia-settings-rc-xdg-path
 ```
 
 ## Saving configurations
-Edits to any linked configurations is automatically propagated here 
-(via the symlink). Then simply commit and push the changes. 
+Edits to any linked configurations is automatically propagated here
+(via the symlink). Then simply commit and push the changes.
 
 ### `coc.nvim` configuration
 Although the `.config/coc/coc-settings.json` configuration file is
@@ -247,7 +249,7 @@ linked automatically, the server might not load it correctly. This issue
 is described in the *Thoubleshooting* section and can be fixed by
 rewriting the `:CocConfig` buffer.
 
-## Ubuntu Setup Notes 
+## Ubuntu Setup Notes
 
 ## KVM virtualization
 Resources:
@@ -256,12 +258,12 @@ Resources:
  * [Ubuntu wiki](https://ubuntu.com/server/docs/virtualization-virt-tools)
 
 ### System valiadtion for KVM
-Whether it's even possible to setup KVM on certain system or not can be checked 
+Whether it's even possible to setup KVM on certain system or not can be checked
 with
 ```bash
 kvm-ok
 ```
-If the CPU supports virtualization one can install all required packages and 
+If the CPU supports virtualization one can install all required packages and
 then run following validation check
 ```bash
 virt-host-validate
@@ -345,7 +347,7 @@ sudo ubuntu-drivers autoinstall
 Advised [here](https://askubuntu.com/a/1237598) and empirically might
 work even without restart.
 
-Other [option](https://askubuntu.com/a/602) which might work (although 
+Other [option](https://askubuntu.com/a/602) which might work (although
 one should be careful with this one) is to run dist upgrade:
 ```bash
 sudo apt dist-upgrade
@@ -356,9 +358,9 @@ The issue with "missing" drivers is that the driver packages are "kept
 back" (shown in the snippet below). This is due to an incompatibility
 between driver libs and the kernel which `apt` cannot resolve on its own.
 ```
-❯ sudo apt upgrade 
+❯ sudo apt upgrade
 Reading package lists... Done
-Building dependency tree       
+Building dependency tree
 Reading state information... Done
 Calculating upgrade... Done
 The following packages have been kept back:
@@ -496,4 +498,3 @@ following one:
 inherits = "release"
 debug = true
 ```
-

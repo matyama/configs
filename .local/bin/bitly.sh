@@ -14,7 +14,7 @@ USAGE:
 Environment:
  - BITLY_TOKEN       Bitly API token (required)
  - BITLY_ORG_NAME    name of the Bitly organization used to select 'group_guid'
-	                   (optional, default: any 'free' tier family, '--org' takes 
+	                   (optional, default: any 'free' tier family, '--org' takes
 										 precedence)
  - BITLY_GROUP_NAME  name of a group for which to select 'group_guid'
 	                   (optional, default: '$USER', '--group' takes precedence)
@@ -120,4 +120,3 @@ jq \
 			-d @- \
 			https://api-ssl.bitly.com/v4/shorten \
 	| jq -re '.link // empty'
-

@@ -26,7 +26,7 @@
 	hyperlinks = true
 [add.interactive]
 	# required for git 2.37.0
-	useBuiltin = false 
+	useBuiltin = false
 [merge]
 	tool = nvim -d
 	conflictStyle = diff3

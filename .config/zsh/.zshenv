@@ -88,7 +88,7 @@ export GOBIN=${GOPATH}/bin
 export SQLITE_HISTORY="${XDG_STATE_HOME}/sqlite3/sqlite_history"
 
 # ClickHouse Client
-#  - https://github.com/ClickHouse/ClickHouse/issues/10024 
+#  - https://github.com/ClickHouse/ClickHouse/issues/10024
 export CLICKHOUSE_HISTORY_FILE="${XDG_DATA_HOME}/clickhouse/client-history"
 
 # Ansible
