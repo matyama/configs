@@ -63,6 +63,36 @@ return {
 			-- https://github.com/astral-sh/ruff/blob/main/crates/ruff_server/docs/setup/NEOVIM.md
 			lspconfig.ruff.setup {}
 
+			-- Lua LSP (https://luals.github.io)
+			lspconfig.lua_ls.setup {
+				on_init = function(client)
+					local path = client.workspace_folders[1].name
+					if vim.loop.fs_stat(path..'/.luarc.json') or vim.loop.fs_stat(path..'/.luarc.jsonc') then
+						return
+					end
+
+					local settings = client.config.settings
+
+					settings.Lua = vim.tbl_deep_extend('force', settings.Lua, {
+							-- Tell the language server which version of Lua we're using
+							runtime = {
+								version = 'LuaJIT'
+							},
+							-- Make the server aware of Neovim runtime files
+							workspace = {
+								checkThirdParty = false,
+								library = {
+									vim.env.VIMRUNTIME,
+								}
+							}
+						})
+				end,
+
+				settings = {
+					Lua = {}
+				},
+			}
+
 			-- Bash LSP
 			local configs = require('lspconfig.configs')
 

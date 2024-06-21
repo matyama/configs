@@ -107,6 +107,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
+	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_STATE_HOME)/nvim/spell \
 	$(XDG_STATE_HOME)/sqlite3:
@@ -960,6 +961,8 @@ cargo-tools: \
 #    (https://github.com/mstange/samply)
 #  - sd: Intuitive find & replace CLI (sed alternative)
 #    (https://github.com/chmln/sd)
+#  - stylua: An opinionated Lua code formatter
+#    (https://github.com/JohnnyMorganz/StyLua)
 #  - tealdeer: A very fast implementation of tldr in Rust
 #    (https://github.com/dbrgn/tealdeer)
 #  - tokio-console: A debugger for async Rust
@@ -1034,6 +1037,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
 		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
+	@echo ">>> Installing stylua: https://github.com/JohnnyMorganz/StyLua"
+	cargo install stylua
 	make -C $(CFG_DIR) tldr
 	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
 	cargo install --locked tokio-console
@@ -1147,6 +1152,17 @@ else
 	@echo ">>> Installing $@: https://microsoft.github.io/pyright"
 	npm install -g $@
 endif
+
+.PHONY: lua-language-server
+lua-language-server: VERSION := 3.9.3
+lua-language-server: PLATFORM := linux-x64
+lua-language-server: REPO := https://github.com/LuaLS/lua-language-server
+lua-language-server: $(XDG_DATA_HOME)/lua-language-server luajit
+	@echo ">>> Installing $@: https://luals.github.io"
+	@curl -sSL \
+		"$(REPO)/releases/download/$(VERSION)/$@-$(VERSION)-$(PLATFORM).tar.gz" \
+		| tar -C $< -xzf -
+	@ln -svf $</bin/$@ $(XDG_BIN_HOME)/$@
 
 # Install ruby using apt instead of snap
 #  - With ruby from snap, `gem install` does not respect cusom `$GEM_HOME` even
@@ -1429,9 +1445,10 @@ endif
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
+#  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
 #  - mpv: command line video player (https://mpv.io)
-.PHONY: calibre mpv
-calibre mpv:
+.PHONY: calibre luajit mpv
+calibre luajit mpv:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
 
