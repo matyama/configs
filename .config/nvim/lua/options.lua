@@ -25,7 +25,7 @@ o.cmdheight = 2
 
 -- Better completion
 opt.completeopt = {
-  "menuone",  -- popup even when there's only one match
+  "menuone", -- popup even when there's only one match
   "noinsert", -- do not insert text until a selection is made
   "noselect", -- do not select, force user to select one from the menu
 }
@@ -104,9 +104,9 @@ opt.formatoptions = {
 --o.expandtab = false
 
 -- Make ripgrep the default grep program
-if vim.fn.executable('rg') == 1 then
-  o.grepprg = 'rg --no-heading --vimgrep'
-  o.grepformat = '%f:%l:%c:%m'
+if vim.fn.executable("rg") == 1 then
+  o.grepprg = "rg --no-heading --vimgrep"
+  o.grepformat = "%f:%l:%c:%m"
 end
 
 -- Show results while searching search
@@ -149,19 +149,19 @@ o.spelllang = "en_us"
 -- Color setup (inspired by https://github.com/jonhoo/configs)
 
 opt.guicursor = {
-  'n-v-c:block-Cursor/lCursor-blinkon0',
-  'i-ci:ver25-Cursor/lCursor',
-  'r-cr:hor20-Cursor/lCursor',
+  "n-v-c:block-Cursor/lCursor-blinkon0",
+  "i-ci:ver25-Cursor/lCursor",
+  "r-cr:hor20-Cursor/lCursor",
 }
 
-o.inccommand = 'nosplit'
+o.inccommand = "nosplit"
 
-if not vim.fn.has('gui_running') then
+if not vim.fn.has("gui_running") then
   o.t_Co = 256
 end
 
 -- TODO: deprecate with v0.10 (checked for support and enabled by default)
-if vim.env.TERM:match('-256color') and vim.env.TERM ~= 'screen-256color' then
+if vim.env.TERM:match("-256color") and vim.env.TERM ~= "screen-256color" then
   -- screen does not (yet) support truecolor
   o.termguicolors = true
 end

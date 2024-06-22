@@ -13,6 +13,17 @@ repos:
         args: ["--fix=lf"]
       - id: trailing-whitespace
 
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v0.20.0
+    hooks:
+      - id: stylua-system
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.7.3
+    hooks:
+      - id: editorconfig-checker
+        alias: ec
+
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.23.0
     hooks:
