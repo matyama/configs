@@ -1,6 +1,10 @@
 return {
   -- Auto pairs for '(' '[' '{'
-  "jiangmiao/auto-pairs",
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+  },
 
   -- Visually select increasingly larger regions of text
   -- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity

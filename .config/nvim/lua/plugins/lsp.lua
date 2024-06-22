@@ -237,6 +237,8 @@ return {
       -- NOTE: `*-vsip` inluded only because nvim-cmp requires snippets
       "hrsh7th/cmp-vsnip",
       "hrsh7th/vim-vsnip",
+      -- Enable parenthesis auto-pairing on confirmation
+      "windwp/nvim-autopairs",
     },
 
     config = function()
@@ -279,6 +281,10 @@ return {
           { name = "path" },
         }),
       })
+
+      -- Insert `(` after select function or method item
+      local autopairs = require("nvim-autopairs.completion.cmp")
+      cmp.event:on("confirm_done", autopairs.on_confirm_done())
 
       local api = vim.api
 
