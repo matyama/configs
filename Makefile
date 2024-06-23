@@ -104,12 +104,12 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
+	$(XDG_CONFIG_HOME)/nvim/spell \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/npm \
-	$(XDG_STATE_HOME)/nvim/spell \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
@@ -306,10 +306,10 @@ endif
 #  - PPA repository contains an quite old stable release compared to GitHub and
 #    Snap (Neovim team does not maintain the PPA packages)
 .PHONY: neovim
-neovim: $(XDG_STATE_HOME)/nvim/spell
+neovim: $(XDG_CONFIG_HOME)/nvim/spell
 	@echo ">>> Installing $@"
 	sudo snap install --beta nvim --classic
-	touch $(XDG_STATE_HOME)/nvim/spell/en-utf-8.add
+	touch $(XDG_CONFIG_HOME)/nvim/spell/en-utf-8.add
 
 # Installed tools:
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
