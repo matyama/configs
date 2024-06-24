@@ -19,6 +19,7 @@ BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
+SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
 # TODO: currently tinted-theming hardcodes `$HOME/.config`, use
@@ -249,6 +250,10 @@ python3.6 python3.7 python3.8: python
 	sudo apt update
 	sudo apt install -y $@-dev $@-venv
 
+# TODO: deprecate in favor of skim
+#  - tools that implicitly use fzf: forgit
+#  - possible workaround: `alias fzf='sk'` (API should be mostly compatible)
+#
 # fzf: a command-line fuzzy finder
 #  - https://github.com/junegunn/fzf
 #  - Note: installs latest version, apt pkg might be quite old
@@ -268,6 +273,30 @@ endif
 		sudo tee $(MAN1_DIR)/fzf.1.gz > /dev/null
 	@gzip -c $(FZF_BASE)/man/man1/fzf-tmux.1 | \
 		sudo tee $(MAN1_DIR)/fzf-tmux.1.gz > /dev/null
+
+# skim: Fuzzy Finder in rust!
+#  - https://github.com/lotabout/skim
+#  - Note: installs version given by SKIM_TAG
+#  - FIXME: setup base16 colors similarly to base16-fzf
+.PHONY: skim
+skim: SKIM_REPO := https://github.com/lotabout/skim.git
+skim: SKIM_TAG := v0.10.4
+skim: core-utils rust zsh $(XDG_BIN_HOME) $(ZSH_COMPLETIONS) $(MAN1_DIR)
+ifneq ($(shell which sk 2> /dev/null),)
+	@echo ">>> Updating $@"
+	git -C $(SKIM_BASE) pull
+else
+	@echo ">>> Installing $@ to '$(SKIM_BASE)'"
+	git clone --depth 1 --branch $(SKIM_TAG) $(SKIM_REPO) $(SKIM_BASE)
+endif
+	cd $(SKIM_BASE) && cargo build --release
+	@cp $(CARGO_TARGET_DIR)/release/sk $(XDG_BIN_HOME)
+	@cp $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
+	@cp $(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
+	@gzip -c $(SKIM_BASE)/man/man1/sk.1 | \
+		sudo tee $(MAN1_DIR)/sk.1.gz > /dev/null
+	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 | \
+		sudo tee $(MAN1_DIR)/sk-tmux.1.gz > /dev/null
 
 .PHONY: forgit
 forgit: FORGIT_REPO := https://github.com/wfxr/forgit.git

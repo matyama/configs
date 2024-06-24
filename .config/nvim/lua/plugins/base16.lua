@@ -11,13 +11,9 @@ return {
 
     vim.g.base16colorspace = 256
 
-    local theme = vim.env.BASE16_THEME
-
-    if theme then
-      vim.cmd(string.format("colorscheme base16-%s", theme))
-    else
-      vim.cmd("colorscheme base16-gruvbox-dark-hard")
-    end
+    -- FIXME: base16 colors for sk (fzf-lua)
+    local theme = vim.env.BASE16_THEME or "gruvbox-dark-hard"
+    vim.cmd(string.format("colorscheme base16-%s", theme))
 
     local api = vim.api
 

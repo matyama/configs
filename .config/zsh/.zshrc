@@ -71,7 +71,14 @@ plugins=(
 export FZF_BASE="$XDG_DATA_HOME/fzf"
 export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
 export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
-export FZF_DEFAULT_OPTS="--height 20% --layout=reverse --border"
+export FZF_DEFAULT_OPTS="--height 25% --layout=reverse --border"
+
+# skim
+#  - https://github.com/lotabout/skim
+#  - NOTE: SKIM_DEFAULT_OPTIONS reuse FZF_DEFAULT_OPTS with `--color` set below
+export SKIM_BASE="$XDG_DATA_HOME/skim"
+export SKIM_DEFAULT_COMMAND="fd --type file --follow --hidden"
+export SKIM_CTRL_T_COMMAND="fd --type file --follow --hidden"
 
 # forgit
 #  - https://github.com/wfxr/forgit#git
@@ -191,6 +198,9 @@ BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
 [[ ! -d "$BASE16_FZF_HOME" ]] || \
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
   source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"
+
+# skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
+export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"
 
 # Bat customization (https://github.com/sharkdp/bat#customization)
 #  - Do not add `BAT_THEME` to `.zshenv`/`.zprofile` or bat config file as it
