@@ -1,6 +1,6 @@
 # https://alacritty.org/config-alacritty.html
 
-import = ["~/.config/alacritty/base16-gruvbox-dark-hard.toml"]
+import = ["~/.config/alacritty/colors.toml"]
 
 live_config_reload = true
 

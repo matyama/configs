@@ -27,6 +27,8 @@ BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
 BASE16_SHELL_PATH ?= $(HOME)/.config/base16-shell
 
 ALACRITTY_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/alacritty
+TINTED_ALACRITTY_DIR ?= $(XDG_CONFIG_HOME)/tinted-alacritty
+
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
 FD_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/fd
@@ -1100,7 +1102,15 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
-alacritty: $(ALACRITTY_CONFIG_DIR) $(MAN1_DIR) $(PIXMAPS_DIR) $(ZSH_COMPLETIONS) net-tools rust
+alacritty: BASE16_THEME := gruvbox-dark-hard
+alacritty: \
+	$(ALACRITTY_CONFIG_DIR) \
+	$(MAN1_DIR) \
+	$(PIXMAPS_DIR) \
+	$(ZSH_COMPLETIONS) \
+	net-tools \
+	rust \
+	tinted-alacritty
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
 	@sudo apt install -y \
@@ -1132,8 +1142,25 @@ endif
 	@sudo mv "$(DOWNLOAD_DIR)/$@.1.gz" $(MAN1_DIR)
 	@echo ">>> Configuring $@ zsh completions"
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
+	@echo ">>> Configuring $@ colors theme"
+	@ln -svf \
+		"$(TINTED_ALACRITTY_DIR)/colors-256/base16-$(BASE16_THEME).toml" \
+		"$(ALACRITTY_CONFIG_DIR)/colors.toml"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
+
+# Base16 and Base24 themes for Alacritty
+# https://github.com/tinted-theming/tinted-alacritty
+.PHONY: tinted-alacritty
+tinted-alacritty: URL := https://github.com/tinted-theming/tinted-alacritty.git
+tinted-alacritty:
+ifeq ($(shell test -d $(TINTED_ALACRITTY_DIR) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(TINTED_ALACRITTY_DIR)'"
+	@git -C $(TINTED_ALACRITTY_DIR) pull
+else
+	@echo ">>> Cloning $@ repository to '$(TINTED_ALACRITTY_DIR)'"
+	@git clone $(URL) $(TINTED_ALACRITTY_DIR)
+endif
 
 # Notes:
 #  - Configures the toggle button to be F1
