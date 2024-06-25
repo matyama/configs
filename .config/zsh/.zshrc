@@ -77,8 +77,8 @@ export FZF_DEFAULT_OPTS="--height 25% --layout=reverse --border"
 #  - https://github.com/lotabout/skim
 #  - NOTE: SKIM_DEFAULT_OPTIONS reuse FZF_DEFAULT_OPTS with `--color` set below
 export SKIM_BASE="$XDG_DATA_HOME/skim"
-export SKIM_DEFAULT_COMMAND="fd --type file --follow --hidden"
-export SKIM_CTRL_T_COMMAND="fd --type file --follow --hidden"
+export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}"
+export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
 
 # forgit
 #  - https://github.com/wfxr/forgit#git

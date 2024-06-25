@@ -252,7 +252,8 @@ python3.6 python3.7 python3.8: python
 
 # TODO: deprecate in favor of skim
 #  - tools that implicitly use fzf: forgit
-#  - possible workaround: `alias fzf='sk'` (API should be mostly compatible)
+#  - possible workaround: `ln -s "$(which skim)" "$XDG_BIN_HOME/fzf"`
+#  - https://github.com/ajeetdsouza/zoxide/issues/228
 #
 # fzf: a command-line fuzzy finder
 #  - https://github.com/junegunn/fzf
@@ -277,7 +278,6 @@ endif
 # skim: Fuzzy Finder in rust!
 #  - https://github.com/lotabout/skim
 #  - Note: installs version given by SKIM_TAG
-#  - FIXME: setup base16 colors similarly to base16-fzf
 .PHONY: skim
 skim: SKIM_REPO := https://github.com/lotabout/skim.git
 skim: SKIM_TAG := v0.10.4
@@ -291,8 +291,10 @@ else
 endif
 	cd $(SKIM_BASE) && cargo build --release
 	@cp $(CARGO_TARGET_DIR)/release/sk $(XDG_BIN_HOME)
-	@cp $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
-	@cp $(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
+	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
+	@ln -svf \
+		$(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
+	@ln -svf $(SKIM_BASE)/bin/sk-tmux $(XDG_BIN_HOME)/sk-tmux
 	@gzip -c $(SKIM_BASE)/man/man1/sk.1 | \
 		sudo tee $(MAN1_DIR)/sk.1.gz > /dev/null
 	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 | \
