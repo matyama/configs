@@ -8,12 +8,10 @@ return {
     --  - https://github.com/tinted-theming/base16-shell#base16-vim-users
     --  - https://github.com/tinted-theming/base16-vim#256-colorspace
     --  - https://github.com/tinted-theming/base16-vim#installation
-
     vim.g.base16colorspace = 256
 
-    -- FIXME: base16 colors for sk (fzf-lua)
     local theme = vim.env.BASE16_THEME or "gruvbox-dark-hard"
-    vim.cmd(string.format("colorscheme base16-%s", theme))
+    vim.cmd("colorscheme base16-" .. theme)
 
     local api = vim.api
 

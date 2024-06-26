@@ -78,15 +78,13 @@ map("n", "K", show_documentation, {
 -- Buffers
 -------------------------------------------------------------------------------
 
-map("n", "<leader>;", "<cmd>Buffers<cr>", { desc = "search buffers" })
+map("n", "<leader>;", ":Buffers<CR>", { desc = "search buffers" })
 
 -- TODO: learn to use hjkl and drop the <leader> here
-map("n", "<leader><left>", ":bp<cr>", { desc = "switch to previous buffer" })
-map("n", "<leader><right>", ":bn<cr>", { desc = "switch to next buffer" })
+map("n", "<leader><left>", ":bp<CR>", { desc = "switch to previous buffer" })
+map("n", "<leader><right>", ":bn<CR>", { desc = "switch to next buffer" })
 
-map("n", "<leader><leader>", "<c-^>", {
-  desc = "toggle between buffers",
-})
+map("n", "<leader><leader>", "<C-^>", { desc = "toggle between buffers" })
 
 -------------------------------------------------------------------------------
 -- Splits

@@ -103,6 +103,14 @@ return {
       complete = "dir",
     })
 
+    vim.api.nvim_create_user_command("Buffers", function()
+      return require("fzf-lua").buffers()
+    end, {
+      bang = true,
+      nargs = "?",
+      complete = "dir",
+    })
+
     -- Enable insert-mode completion
     --vim.keymap.set({ "n", "v", "i" }, "<C-x><C-f>", function()
     --  require("fzf-lua").complete_path()
