@@ -2,18 +2,36 @@
 return {
   "ibhagwan/fzf-lua",
   dependencies = {
+    -- Command-line fuzzy finder (https://github.com/junegunn/fzf)
+    {
+      "junegunn/fzf",
+      dir = vim.env.FZF_BASE or "~/.local/share/fzf",
+      build = "./install --bin --no-update-rc",
+      cond = function()
+        return (vim.env.FZF or "fzf") == "fzf"
+      end,
+    },
     -- Vim support for skim (https://github.com/lotabout/skim.vim)
     {
       "lotabout/skim",
       tag = "v0.10.4",
       dir = vim.env.SKIM_BASE or "~/.local/share/skim",
       build = "./install",
+      cond = function()
+        return (vim.env.FZF or "fzf") == "sk"
+      end,
     },
   },
   config = function()
+    -- use native binary (fzf/sk), globally disable icons
+    local profile = { "max-perf" }
+
+    if (vim.env.FZF or "fzf") == "sk" then
+      profile[#profile + 1] = "skim"
+    end
+
     require("fzf-lua").setup({
-      -- use native binary (sk), globally disable icons
-      { "max-perf", "skim" },
+      profile,
       winopts = {
         height = 0.2, -- start small, use Alt-f to toggle fullscreen
         width = 1, -- full width

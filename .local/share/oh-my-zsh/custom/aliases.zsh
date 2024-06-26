@@ -33,12 +33,8 @@ alias vi="nvim"
 alias oldvim="\vim"
 alias vimdiff="nvim -d"
 
-# Search file with sk/fzf and open in with the editor
-if (( $+commands[sk] )); then
- alias ef='e $(sk --preview="bat --style=numbers --color=always {}")'
-elif (( $+commands[fzf] )); then
- alias ef='e $(fzf)'
-fi
+# Search file with a fuzzy finder (fzf|sk) and open it with the editor
+alias ef='e $("${FZF:-fzf}" --preview="bat --style=numbers --color=always {}")'
 
 # PDF
 

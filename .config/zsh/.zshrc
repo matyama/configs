@@ -80,6 +80,15 @@ export SKIM_BASE="$XDG_DATA_HOME/skim"
 export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}"
 export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
 
+# switch to given fuzzy finder (fzf | sk, default: fzf)
+function fzf_prog() {
+  export FZF="${1:-fzf}"
+}
+export fzf_prog
+
+# set default fuzzy finder
+fzf_prog fzf
+
 # forgit
 #  - https://github.com/wfxr/forgit#git
 path+="${FORGIT_INSTALL_DIR}/bin"
