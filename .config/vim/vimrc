@@ -1,0 +1,307 @@
+" Plain vimrc (no plugins, no external dependencies)
+
+" Necessary for lots of cool vim things
+"set nocompatible
+
+" Change <leader> from '/' to '<Space>'
+map <Space> <Leader>
+
+" =============================================================================
+" # Options
+" =============================================================================
+
+set encoding=utf-8
+
+filetype indent on
+
+set autoindent
+set autoread " Enable automatic file reload
+
+set hidden " TextEdit might fail if hidden is not set
+set nojoinspaces " Join lines without an extra space
+set nowrap " Stop line breaking (never show line breaks if they're not there)
+
+" Settings needed for .lvimrc
+set exrc
+set secure
+
+" TODO
+" set nofoldenable
+
+set showmode
+set showcmd
+
+set cmdheight=2 " Better display for messages
+
+" Better completion
+set completeopt=menuone,noinsert,noselect
+
+" You will have bad experience for diagnostic messages when it's default 4000
+set updatetime=300
+
+" http://stackoverflow.com/questions/2158516/delay-before-o-opens-a-new-line
+set timeoutlen=300
+
+set scrolloff=2 " Show some lines after cursor
+
+" Disable intro message and don't pass messages to ins-completion-menu
+set shortmess+=sI
+set shortmess+=c
+
+set background=dark
+
+" Show red vertical bar at column 80
+set colorcolumn=80
+
+" Always draw sign column. Prevent buffer moving when adding/deleting sign.
+" Recently vim can merge signcolumn and number column into one
+"set signcolumn=number
+set signcolumn=yes
+
+" Enable line relative and absolute numbers by default
+set relativenumber
+set number
+
+" Sane splits (keep current content top + left when splitting)
+set splitright
+set splitbelow
+
+set wildmenu
+set wildmode=list:longest,full
+set wildignore=.hg,.svn,*~,*.png,*.jpg,*.gif,*.min.js,*.swp,*.o,*.hi
+
+set formatoptions=tc " wrap text and comments using textwidth
+set formatoptions+=r " continue comments when pressing ENTER in I mode
+set formatoptions+=q " enable formatting of comments with gq
+set formatoptions+=n " detect lists for formatting
+set formatoptions+=b " auto-wrap in insert mode, and do not wrap old long lines
+
+set incsearch  " show results while searching search
+set ignorecase " do case-insensitive search/replace
+set smartcase  " unless there's an uppercase in search term
+
+" Prevent the terminal from ever beep
+set vb t_vb= "
+
+" Make diffing better: https://vimways.org/2018/the-power-of-diff
+set diffopt+=iwhite
+set diffopt+=algorithm:histogram
+set diffopt+=indent-heuristic
+
+" Show more hidden characters (and nicer tabs)
+set listchars=nbsp:¬,extends:»,precedes:«,trail:•
+
+" Enable spell check
+set spell
+set spelllang=en_us
+
+" Remove toolbar
+set guioptions-=T
+
+" Backspace over newlines
+set backspace=2
+
+" Scroll fast
+set ttyfast
+
+" https://github.com/vim/vim/issues/1735#issuecomment-383353563
+set lazyredraw
+set synmaxcol=500
+
+" Always display status line
+set laststatus=2
+
+" Enable mouse usage (all modes) in terminals
+set mouse=a
+
+" Enable syntax highlight
+"  - alternatively change to `syntax on`
+"syntax on
+
+" When using a color terminal, set the background terminal color to `NONE` for
+" the `Normal` group.
+"
+" https://alvinalexander.com/linux/vi-vim-editor-color-scheme-syntax
+hi Normal ctermbg=NONE
+
+" =============================================================================
+" # Mappings
+" =============================================================================
+
+" -----------------------------------------------------------------------------
+" ## Aliases
+" -----------------------------------------------------------------------------
+nnoremap ; :
+
+" Make Ctrl+j/k act as Esc
+nnoremap <C-j> <Esc>
+inoremap <C-j> <Esc>
+vnoremap <C-j> <Esc>
+snoremap <C-j> <Esc>
+xnoremap <C-j> <Esc>
+cnoremap <C-j> <C-c>
+onoremap <C-j> <Esc>
+lnoremap <C-j> <Esc>
+tnoremap <C-j> <Esc>
+
+nnoremap <C-k> <Esc>
+inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
+snoremap <C-k> <Esc>
+xnoremap <C-k> <Esc>
+cnoremap <C-k> <C-c>
+onoremap <C-k> <Esc>
+lnoremap <C-k> <Esc>
+tnoremap <C-k> <Esc>
+
+" Spell check hint/correction
+nmap zf z=
+
+" -----------------------------------------------------------------------------
+" ## Shortcuts
+" -----------------------------------------------------------------------------
+
+" TODO: Quick open
+"map <C-p> :Files<CR>
+
+" Quick quit
+noremap <C-q> :confirm qall<CR>
+" Quick save
+nnoremap <leader>w :w<CR>
+
+" Open new file located in the same directory as current file
+nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" clipboard copy/paste
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
+vnoremap <leader>y "+y
+vnoremap <leader>d "+d
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+vnoremap <leader>p "+p
+vnoremap <leader>P "+P
+
+" Move line around (https://vim.fandom.com/wiki/Moving_lines_up_or_down)
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" TODO: Press 'v' to expand the visual selection and C-v to shrink it.
+" https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
+
+" show/hide hidden characters
+nmap <leader>, :set invlist<CR>
+
+" -----------------------------------------------------------------------------
+" ## Buffers
+" -----------------------------------------------------------------------------
+
+" Search buffers
+nmap <leader>; :buffers<CR>
+
+" TODO: learn to use hjkl and drop the <leader> here
+" Switch to previous/next buffer
+nnoremap <leader><Left> :bp<CR>
+nnoremap <leader><Right> :bn<CR>
+
+" Toggle between buffers
+nnoremap <leader><leader> <c-^>
+
+" -----------------------------------------------------------------------------
+" ## Splits
+" -----------------------------------------------------------------------------
+
+" Open a new split or replicate current (vertically/horizontally)
+nnoremap <leader>o :vnew<CR>
+nnoremap <leader>op :vsp<CR>
+nnoremap <leader>v :vnew<CR>
+nnoremap <leader>vp :vsp<CR>
+nnoremap <leader>h :new<CR>
+nnoremap <leader>hp :sp<CR>
+
+" Close a split
+nnoremap <leader>x <C-w>c
+
+" Focus neighboring split (right/left/above/below)
+nnoremap <leader><Right> <C-W><Right>
+nnoremap <leader><Left> <C-W><Left>
+nnoremap <leader><Up> <C-W><Up>
+nnoremap <leader><Down> <C-W><Down>
+
+" -----------------------------------------------------------------------------
+" ## Tabs
+" -----------------------------------------------------------------------------
+
+" Open new or close current tab
+nnoremap <C-t> :tabnew<CR>
+nnoremap <C-w> :tabclose<CR>
+
+" Go to the next/previous tab
+nnoremap <C-Left> :tabprevious<CR>
+nnoremap <C-Right> :tabnext<CR>
+nnoremap <C-j> :tabprevious<CR>
+nnoremap <C-k> :tabnext<CR>
+
+" -----------------------------------------------------------------------------
+" ## Navigation
+" -----------------------------------------------------------------------------
+
+" Jump to start and end of line using the home row keys
+map H ^
+map L $
+
+" Move by visual line, not actual line, when text is soft-wrapped
+nnoremap j gj
+nnoremap k gk
+
+" -----------------------------------------------------------------------------
+" ## Search
+" -----------------------------------------------------------------------------
+
+" Stop searching
+vnoremap <C-h> :nohlsearch<cr>
+nnoremap <C-h> :nohlsearch<cr>
+
+" Always center search results
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+
+" 'very magic' (less escaping needed) regexes by default
+nnoremap ? ?\v
+nnoremap / /\v
+cnoremap %s/ %sm/
+
+" =============================================================================
+" # Autocommands
+" =============================================================================
+
+" Trigger autoread when changing buffers inside while inside vim
+au FocusGained,BufEnter * :checktime
+
+" Prevent accidental writes to buffers that shouldn't be edited
+au BufRead *.orig set readonly
+
+" Leave paste mode when leaving insert mode
+au InsertLeave * set nopaste
+
+" Follow Rust code style rules (because sometimes, spaces are mandated)
+au Filetype rust set colorcolumn=100 shiftwidth=4 softtabstop=4 tabstop=4 expandtab
+
+" Help filetype detection
+au BufRead *.plot set filetype=gnuplot
+au BufRead *.md set filetype=markdown
+au BufRead *.tex set filetype=tex
+au BufRead,BufNewFile *.sbt,*.sc set filetype=scala
+
+aug filetypedetect
+  au Filetype gitcommit setlocal spell tw=72 colorcolumn=73
+  au Filetype tex setlocal spell tw=80 colorcolumn=81
+  au Filetype text setlocal spell tw=72 colorcolumn=73
+  au Filetype markdown setlocal spell tw=72 colorcolumn=73
+aug END

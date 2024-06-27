@@ -111,6 +111,7 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
+	$(XDG_CONFIG_HOME)/vim \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_STATE_HOME)/sqlite3:
@@ -182,6 +183,7 @@ links: \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
+	$(XDG_CONFIG_HOME)/vim \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"

@@ -27,10 +27,7 @@ alias bwl="bw login --method 0 ${EMAIL}"
 # EDITOR
 alias e="nvim"
 alias ep="nvim -p"
-alias v="nvim"
-alias vim="nvim"
-alias vi="nvim"
-alias oldvim="\vim"
+alias vim="vi -u ${VIMRC}" # vi is actually vim, but use custom vimrc
 alias vimdiff="nvim -d"
 
 # Search file with a fuzzy finder (fzf|sk) and open it with the editor

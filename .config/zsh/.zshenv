@@ -36,7 +36,7 @@ export DIST_ARCH="$(dpkg --print-architecture)"
 # Editor setup
 export VISUAL=nvim
 export EDITOR=${VISUAL}
-export VIMRC=${XDG_CONFIG_HOME}/nvim/init.vim
+export VIMRC=${XDG_CONFIG_HOME}/vim/vimrc
 
 # Personal user info
 export NAME="Martin Matyášek"
