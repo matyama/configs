@@ -316,6 +316,18 @@ else
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 endif
 
+.PHONY: gitui
+gitui: rust
+	@echo ">>> Installing $@"
+	cargo install --locked $@
+
+# TODO: deprecate with gitui 1.0 (interactive rebase, branch structure)
+.PHONY: lazygit
+lazygit: TAG := latest
+lazygit: golang
+	@echo ">>> Installing $@: https://github.com/jesseduffield/lazygit"
+	go install "github.com/jesseduffield/$@@$(TAG)"
+
 # lesspipe.sh: display more with less (https://github.com/wofr06/lesspipe)
 #  - Note: lesspipe.sh is installed system-wide and thus requires sudo
 .PHONY: lesspipe

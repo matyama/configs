@@ -46,6 +46,8 @@ alias pdfextract='pdfext() { gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sPageLis
 
 # Git
 alias gah="git stash && git pull --rebase && git stash pop"
+(( $+commands[gitui] )) && alias gui="gitui --watcher"
+(( $+commands[lazygit] )) && alias lg="lazygit"
 
 # make
 alias m="make"
