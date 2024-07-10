@@ -1084,6 +1084,9 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
 		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
+	@echo ">>> Installing sqlx-cli: https://crates.io/crates/sqlx-cli"
+	cargo install sqlx-cli
+	@sqlx completions zsh > "$(ZSH_COMPLETIONS)/_sqlx"
 	@echo ">>> Installing stylua: https://github.com/JohnnyMorganz/StyLua"
 	cargo install stylua
 	make -C $(CFG_DIR) tldr
