@@ -708,9 +708,8 @@ endif
 #  - cmake: software build system for C/C++ (https://cmake.org)
 #  - bash-language-server: language server for Bash
 #    (https://github.com/bash-lsp/bash-language-server)
-#  - code: Visual Studio Code (https://github.com/microsoft/vscode)
-.PHONY: cmake bash-language-server slack code
-cmake bash-language-server slack code:
+.PHONY: cmake bash-language-server slack
+cmake bash-language-server slack:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install --classic $@
 
@@ -1517,6 +1516,15 @@ else
 	@echo ">>> Complete by running command 'run_keybase'"
 endif
 	rm -f $(KEYBASE_PKG)
+
+# Installation resources:
+#  - official web page: https://zed.dev/docs/linux
+#  - installed artifacts: `~/.local/zed.app/`, `~/.local/bin/zed`,
+#    `~/.local/share/applications/dev.zed.Zed.desktop`
+.PHONY: zed
+zed: net-tools
+	@echo ">>> Downloading & running $@ installer"
+	curl https://zed.dev/install.sh | sh
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
