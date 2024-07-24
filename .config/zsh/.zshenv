@@ -247,9 +247,6 @@ export PYTHONSTARTUP=${XDG_CONFIG_HOME}/python/startup.py
 #  - https://github.com/jupyter/jupyter_core/issues/185
 export JUPYTER_CONFIG_DIR=${XDG_CONFIG_HOME}/jupyter
 
-# Kaggle
-export KAGGLE_CONFIG_DIR=${XDG_CONFIG_HOME}/kaggle
-
 # scikit-learn datasets
 #  - https://scikit-learn.org/stable/modules/generated/sklearn.datasets.get_data_home.html
 #  - Note: There's a bug in the default dir name in the docs (check the code).

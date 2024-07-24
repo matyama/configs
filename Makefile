@@ -752,16 +752,12 @@ python-tools: pipx
 	@echo ">>> Installing pre-commit hooks globally"
 	pipx install pre-commit $(OPS)
 	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
-#	@echo ">>> Installing WPS: https://wemake-python-stylegui.de/"
-#	pipx install wemake-python-styleguide --include-deps $(OPS)
 	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"
 	pipx install pycobertura
 	@echo ">>> Installing ruff: https://github.com/astral-sh/ruff"
 	pipx install ruff
 	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
 	pipx install sqlfluff
-	@echo ">>> Installing Kaggle API: https://github.com/Kaggle/kaggle-api"
-	pipx install kaggle $(OPS)
 	@echo ">>> Installing gdbgui: https://www.gdbgui.com"
 	pipx install gdbgui
 	@echo ">>> Installing yamllint: https://github.com/adrienverge/yamllint"
