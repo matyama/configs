@@ -1031,6 +1031,11 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
 	cargo install fd-find
+	@cp \
+		$(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/contrib/completion/_fd \
+		$(ZSH_COMPLETIONS)
+	@gzip -c $(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/doc/fd.1 \
+		| sudo tee $(MAN1_DIR)/fd.1.gz > /dev/null
 	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
 	cargo install git-delta
 	@echo ">>> Installing gping: https://github.com/orf/gping"

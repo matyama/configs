@@ -42,7 +42,6 @@ plugins=(
   direnv                        # creates the direnv hook
   docker                        # adds auto-completion and aliases for docker
   docker-compose                # adds completion & some aliases
-  fd                            # adds completion for fd
   fzf                           # enables fuzzy auto-completion & key bindings
   git                           # adds many aliases & few useful functions
   forgit                        # interactive git+fzf & overrides git aliases
@@ -54,7 +53,6 @@ plugins=(
   nmap                          # adds some useful aliases for Nmap
   pip                           # adds completion & some aliases
   poetry                        # adds completion & keeps it up to date
-  ripgrep                       # adds completion for ripgrep
   rust                          # adds completion for rustc, rustup and cargo
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
