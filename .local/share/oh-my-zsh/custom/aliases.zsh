@@ -33,6 +33,9 @@ alias vimdiff="nvim -d"
 # Search file with a fuzzy finder (fzf|sk) and open it with the editor
 alias ef='e $("${FZF:-fzf}" --preview="bat --style=numbers --color=always {}")'
 
+# Remove colors from output (https://stackoverflow.com/a/18000433)
+alias decolorize='sed -r "s/\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"'
+
 # PDF
 
 # Concatenate pdf files passed as arguments and output final pdf to stdout
