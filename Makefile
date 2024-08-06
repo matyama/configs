@@ -882,6 +882,8 @@ endif
 #  - bloat: find out what takes most of the space in your executable
 #  - criterion: run Criterion.rs benchmarks and report the results
 #  - deb: generates Debian packages from information in Cargo.toml
+#  - depgraph: creates dependency graphs for cargo projects
+#  - duplicates: display duplicate dependencies
 #  - expand: shows the result of macro expansion and #[derive] expansion
 #  - hack: provides various options useful for testing & continuous integration
 #  - llvm-lines: count lines of LLVM IR per generic function
@@ -896,6 +898,8 @@ CARGO_EXTENSIONS := \
 	cargo-bloat \
 	cargo-criterion \
 	cargo-deb \
+	cargo-depgraph \
+	cargo-duplicates \
 	cargo-expand \
 	cargo-hack \
 	cargo-llvm-lines \
