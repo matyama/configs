@@ -74,11 +74,6 @@ return {
   },
 
   {
-    "cespare/vim-toml",
-    ft = { "toml" },
-  },
-
-  {
     "cuducos/yaml.nvim",
     ft = { "yaml" },
     dependencies = {

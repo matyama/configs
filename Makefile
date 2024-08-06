@@ -1107,6 +1107,12 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" | \
 		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
 
+# TOML linter, formatter, and LSP
+.PHONY: taplo
+taplo: rust
+	@echo ">>> Installing $@ CLI & LSP: https://github.com/tamasfe/taplo"
+	cargo install --features lsp --locked taplo-cli
+
 .PHONY: tldr
 tldr: DOWNLOAD_URL := https://github.com/dbrgn/tealdeer/releases/download
 tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
