@@ -241,6 +241,14 @@ wl-utils:
 	@echo ">>> Installing Wayland copy/paste utilities"
 	sudo apt install -y wl-clipboard
 
+# System performance tools for Linux
+sysstat:
+	@echo ">>> Installing $@: https://github.com/sysstat/sysstat"
+	sudo apt install -y $@
+	@echo ">>> Starting $@ data collection"
+	sudo systemctl start $@
+	sudo systemctl enable $@
+
 # NOTE: python-is-python3 makes python available as python3
 python:
 	@echo ">>> Installing standard Python libraries"
@@ -388,6 +396,7 @@ basic-tools: \
 	core-utils \
 	apt-utils \
 	wl-utils \
+	sysstat \
 	fzf \
 	neovim \
 	$(XDG_STATE_HOME)/sqlite3
