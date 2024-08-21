@@ -16,14 +16,18 @@
 	diffFilter = delta --diff-so-fancy
 [delta]
 	features = zebra-dark
+	# use terminal colors (i.e., use color scheme set by tinted-shell)
+	syntax-theme = "ansi"
 	line-numbers = true
 	#side-by-side = true
 	# use n and N to move between diff sections
 	navigate = true
-	# set to true if you're in a terminal w/ a light background color
-	light = false
 	# link GitHub/GitLab/Bitbucket in git blame
 	hyperlinks = true
+[include]
+	# Import theme for delta, it will set delta.light=(true|false)
+	# (note: make sure to export TINTED_SHELL_ENABLE_VARS=1)
+	path = ~/.config/tinted-theming/delta.gitconfig
 [add.interactive]
 	# required for git 2.37.0
 	useBuiltin = false

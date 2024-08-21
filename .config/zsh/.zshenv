@@ -181,12 +181,9 @@ export KSCRIPT_CACHE_DIR=${XDG_CACHE_HOME}/kscript
 export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
 export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
 
-# Base16
-export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/base16-fzf
-export BASE16_SHELL_PATH=${HOME}/.config/base16-shell
-# TODO: currently tinted-theming hardcodes `$HOME/.config`, use
-# `XDG_CONFIG_HOME` once supported
-#export BASE16_SHELL_PATH=${XDG_CONFIG_HOME}/base16-shell
+# Tinted Theming: Base16 and Base24 color shemes
+export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf
+export BASE16_SHELL_PATH=${XDG_CONFIG_HOME}/tinted-theming/tinted-shell
 export BASE16_THEME_DEFAULT=gruvbox-dark-hard
 
 # Bat

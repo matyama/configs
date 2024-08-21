@@ -130,14 +130,14 @@ instructed. The font download is part of `make fonts`.
 
 ### Base16 colors
 
-#### Base16 Shell
-[Base16 Shell](https://github.com/tinted-theming/base16-shell) can be
-installed with `make base16-shell`. One can then manually switch themes
+#### Tinted Shell
+[Tinted Shell](https://github.com/tinted-theming/tinted-shell) can be
+installed with `make tinted-shell`. One can then manually switch themes
 with `base16_<theme>` which creates/updates a link
 `$HOME/.config/tinted-theming/base16_shell_theme`.
 
 Note that the shell hook is already added to and liked the oh-my-zsh
-plugin `base16-shell`, so after installation with `make` one just needs
+plugin `tinted-shell`, so after installation with `make` one just needs
 to reload zsh and pick a theme:
 ```bash
 omz reload
@@ -147,13 +147,19 @@ base16_gruvbox-dark-hard
 The default theme is set in `.zshenv` to
 `BASE16_THEME_DEFAULT=gruvbox-dark-hard`.
 
-One can also [test](https://github.com/tinted-theming/base16-shell#troubleshooting)
+One can also [test](https://github.com/tinted-theming/tinted-shell#troubleshooting)
 the themes with included `colortest` tool.
 
 #### Alacritty terminal
-Note that when changing the [Base16 theme](https://github.com/tinted-theming/base16)
-one has to [manually update](https://github.com/aarowill/base16-alacritty#installation)
-`alacritty.yml` with appropriate colors from that color scheme.
+Note that `alacritty.yml` automatically imports set color schemes:
+```toml
+import = ["~/.config/alacritty/colors.toml"]
+```
+
+The `colors.toml` is a symlink created by `make alacritty` which points
+to a [tinted-alacritty](https://github.com/tinted-theming/tinted-alacritty)
+theme. Note that currently the theme is selected just once before the
+installation and further changes won't be automatically picked up.
 
 #### Bat
 [Bat](https://github.com/sharkdp/bat) supports `base16` color theme by

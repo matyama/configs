@@ -24,8 +24,8 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
 # Plugins
 #  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-#  - https://github.com/tinted-theming/base16-shell
 #  - https://github.com/wfxr/forgit
+#  - https://github.com/tinted-theming/tinted-shell
 #  - https://github.com/zsh-users/zsh-syntax-highlighting
 #  - https://github.com/zsh-users/zsh-history-substring-search
 #  - https://github.com/zsh-users/zsh-autosuggestions
@@ -37,7 +37,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 plugins=(
   ansible                       # adds some useful aliases for ansible
   aws                           # completion support for awscli & few utilities
-  base16-shell                  # provides support for Base16 Shell themes
   copybuffer                    # copy shell buffer to clipboard with ctrl-o
   direnv                        # creates the direnv hook
   docker                        # adds auto-completion and aliases for docker
@@ -56,6 +55,7 @@ plugins=(
   rust                          # adds completion for rustc, rustup and cargo
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
+  tinted-shell                  # provides support for Tinted Shell themes
   zsh-sdkman                    # adds aliases and completion scripts for sdk
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
@@ -200,11 +200,15 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 [[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
   source "${POWERLEVEL9K_CONFIG_FILE}"
 
-# Base16 fzf (https://github.com/tinted-theming/base16-fzf)
-BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/base16-fzf}"
+# Tinted Shell (https://github.com/tinted-theming/tinted-shell)
+export TINTED_SHELL_ENABLE_VARS=1
+export TINTED_SHELL_ENABLE_BASE16_VARS=1
+
+# Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
+BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
 [[ ! -d "$BASE16_FZF_HOME" ]] || \
   [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
-  source "$BASE16_FZF_HOME/bash/base16-$BASE16_THEME.config"
+  source "$BASE16_FZF_HOME/sh/base16-$BASE16_THEME.sh"
 
 # skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
 export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"

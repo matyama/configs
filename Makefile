@@ -21,13 +21,11 @@ BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
-BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/base16-fzf
-# TODO: currently tinted-theming hardcodes `$HOME/.config`, use
-# `XDG_CONFIG_HOME` once supported
-BASE16_SHELL_PATH ?= $(HOME)/.config/base16-shell
+BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-fzf
+BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
 
 ALACRITTY_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/alacritty
-TINTED_ALACRITTY_DIR ?= $(XDG_CONFIG_HOME)/tinted-alacritty
+TINTED_ALACRITTY_DIR ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
@@ -90,7 +88,7 @@ $(FONTS_DIR) \
 	$(ZDOTDIR) \
 	$(ZSH_COMPLETIONS) \
 	$(ZSH_CUSTOM) \
-	$(ZSH_CUSTOM)/plugins/base16-shell \
+	$(ZSH_CUSTOM)/plugins/tinted-shell \
 	$(ZSH_CUSTOM)/plugins/forgit \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(XDG_BIN_HOME) \
@@ -140,28 +138,40 @@ install-fonts: $(FONTS_DIR)
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 
 # Resources:
-#  - [Base16 Shell](https://github.com/tinted-theming/base16-shell)
-.PHONY: base16-shell
-base16-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/base16-shell.git
-base16-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
-base16-shell: BASE16_THEME := gruvbox-dark-hard
-base16-shell: zsh $(ZSH_CUSTOM)/plugins/base16-shell
-	@echo ">>> Cloning Base16 Shell repository to '$(BASE16_SHELL_PATH)'"
+#  - [Tinted Shell](https://github.com/tinted-theming/tinted-shell)
+#  - Note: The ZSH plugin symlink name must match the name specified in the
+#    plugins rc section (i.e., `tinted-shell.plugin.zsh`), contrary to the docs
+.PHONY: tintted-shell
+tinted-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/tinted-shell.git
+tinted-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
+tinted-shell: BASE16_THEME := gruvbox-dark-hard
+tinted-shell: zsh $(ZSH_CUSTOM)/plugins/tinted-shell
+ifeq ($(shell test -d $(BASE16_SHELL_PATH) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(BASE16_SHELL_PATH)'"
+	@git -C $(BASE16_SHELL_PATH) pull
+else
+	@echo ">>> Cloning $@ repository to '$(BASE16_SHELL_PATH)'"
 	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_PATH)
-	@echo ">>> Linking Base16 Shell OMZ plugin"
+endif
+	@echo ">>> Linking $@ OMZ plugin"
 	@ln -svf $(BASE16_SHELL_PATH)/base16-shell.plugin.zsh \
-		$(ZSH_CUSTOM)/plugins/base16-shell/base16-shell.plugin.zsh
-	@echo ">>> Testing default Base16 color scheme"
+		$(ZSH_CUSTOM)/plugins/tinted-shell/tinted-shell.plugin.zsh
+	@echo ">>> Testing default color scheme"
 	@$(BASE16_SHELL_PATH)/colortest
 	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
 
 # Resources:
-#  - [Base16 fzf](https://github.com/tinted-theming/base16-fzf)
-.PHONY: base16-fzf
-base16-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/base16-fzf.git
-base16-fzf:
-	@echo ">>> Cloning Base16 fzf repository to '$(BASE16_FZF_HOME)'"
+#  - [tinted-fzf](https://github.com/tinted-theming/tinted-fzf)
+.PHONY: tinted-fzf
+tinted-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/tinted-fzf.git
+tinted-fzf:
+ifeq ($(shell test -d $(BASE16_FZF_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(BASE16_FZF_HOME)'"
+	@git -C $(BASE16_FZF_HOME) pull
+else
+	@echo ">>> Cloning $@ repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
+endif
 
 .PHONY: links
 links: \
