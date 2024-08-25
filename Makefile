@@ -88,14 +88,15 @@ $(FONTS_DIR) \
 	$(ZDOTDIR) \
 	$(ZSH_COMPLETIONS) \
 	$(ZSH_CUSTOM) \
-	$(ZSH_CUSTOM)/plugins/tinted-shell \
 	$(ZSH_CUSTOM)/plugins/forgit \
 	$(ZSH_CUSTOM)/plugins/poetry \
+	$(ZSH_CUSTOM)/plugins/tinted-shell \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
 	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CACHE_HOME)/zsh \
+	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
@@ -182,6 +183,7 @@ links: \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
 	$(XDG_BIN_HOME) \
+	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
@@ -995,6 +997,8 @@ cargo-tools: \
 
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
+#  - bitcli:  Simple CLI tool for URL shortening via Bitly
+#    (https://github.com/matyama/bitcli)
 #  - click: Command Line Interactive Controller for Kubernetes
 #  - eza: A modern, maintained replacement for 'ls'
 #    (https://github.com/eza-community/eza)
@@ -1043,6 +1047,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
 		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
+	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
+	cargo install --locked --git https://github.com/matyama/bitcli
 	@echo ">>> Installing eza: https://eza.rocks"
 	cargo install eza
 	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"

@@ -1,0 +1,4 @@
+import = ["auth.toml"]
+
+# Default domain
+domain = "bit.ly"

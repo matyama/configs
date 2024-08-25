@@ -80,6 +80,12 @@ if (( $+commands[bat] )); then
 	alias bp="bat --plain"
 fi
 
+# bitcli (https://github.com/matyama/bitcli)
+if (( $+commands[bitcli] )); then
+	alias short="bitcli shorten"
+	alias shorto="bitcli --offline"
+fi
+
 # chafa (https://github.com/hpjansson/chafa)
 (( $+commands[chafa] )) && alias imshow="chafa -c 256"
 
