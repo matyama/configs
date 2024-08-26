@@ -820,8 +820,7 @@ jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 		set -e;\
 		source $(SDKMAN_DIR)/bin/sdkman-init.sh;\
 		echo ">>> Installing Java";\
-		sdk install java;\
-		sdk install java 8.0.292-zulu;\
+		sdk install java 22.0.1-open;\
 		echo ">>> Installing Maven";\
 		sdk install maven;\
 		echo ">>> Installing Gradle";\
