@@ -1042,7 +1042,8 @@ cargo-tools: \
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
 rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
-	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) cargo install --locked bat
+	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
+		cargo install --locked --force bat
 	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
 		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
@@ -1075,7 +1076,8 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		| gzip -c \
 		| sudo tee $(MAN1_DIR)/hexyl.1.gz > /dev/null
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
-	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) cargo install hyperfine
+	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) \
+		cargo install --locked --force hyperfine
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
 		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
