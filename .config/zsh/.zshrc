@@ -61,6 +61,7 @@ plugins=(
   zsh-history-substring-search  # provides fish-like history search feature
   zsh-autosuggestions           # provides fish-like autosuggestions
   zsh-interactive-cd            # provides fish-like interactive cd completion
+  zsh-virsh                     # provides custom virsh extensions
 )
 
 # fzf

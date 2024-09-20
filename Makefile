@@ -97,6 +97,7 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(ZSH_CUSTOM)/plugins/forgit \
 	$(ZSH_CUSTOM)/plugins/poetry \
 	$(ZSH_CUSTOM)/plugins/tinted-shell \
+	$(ZSH_CUSTOM)/plugins/zsh-virsh \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
@@ -216,7 +217,8 @@ links: \
 	$(XDG_CONFIG_HOME)/zed \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(ZDOTDIR) \
-	$(ZSH_CUSTOM)
+	$(ZSH_CUSTOM) \
+	$(ZSH_CUSTOM)/plugins/zsh-virsh
 	@echo "Linking configuration files:"
 	@{ \
 		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f); do \
@@ -735,7 +737,7 @@ else
 	sudo chsh -s $$(which $@)
 endif
 	@echo ">>> Setting up $@ plugins"
-	make -C $(CFG_DIR) $(ZSH_USERS_PLUGINS)
+	make -C $(CFG_DIR) $(ZSH_USERS_PLUGINS) $(ZSH_LINKED_PLUGINS)
 	@echo ">>> Setting up $@ themes"
 	make -C $(CFG_DIR) powerlevel10k
 
@@ -753,6 +755,17 @@ else
 	@echo ">>> Cloning $@ repository to '$(ZSH_PLUGINS)/$@'"
 	git clone "https://github.com/zsh-users/$@" "$(ZSH_PLUGINS)/$@"
 endif
+
+ZSH_LINKED_PLUGINS := \
+	zsh-virsh
+
+.PHONY: $(ZSH_LINKED_PLUGINS)
+$(ZSH_LINKED_PLUGINS):
+	@echo ">>> Linking $@ plugin to '$(ZSH_PLUGINS)/$@'"
+	@mkdir -p "$(ZSH_PLUGINS)/$@"
+	@ln -svft \
+		"$(ZSH_PLUGINS)/$@" \
+		"$(CFG_DIR)/.local/share/oh-my-zsh/custom/plugins/$@"/*.zsh
 
 .PHONY: powerlevel10k
 powerlevel10k: core-utils
