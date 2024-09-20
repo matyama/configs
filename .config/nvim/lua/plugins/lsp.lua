@@ -37,10 +37,15 @@ return {
       })
 
       -- TODO: consider haskell-tools.nvim instead of lspconfig
-      -- TODO: switch to ormolu as the default formatter
       -- Haskell: https://haskell-language-server.readthedocs.io/en/latest/configuration.html
+      -- fourmolu: https://github.com/fourmolu/fourmolu
       lspconfig.hls.setup({
         filetypes = { "haskell", "lhaskell", "cabal" },
+        settings = {
+          haskell = {
+            formattingProvider = "fourmolu",
+          },
+        },
       })
 
       -- Setup pyright (https://microsoft.github.io/pyright/#/settings)

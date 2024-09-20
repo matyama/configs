@@ -245,6 +245,48 @@ target:
 make nvidia-settings-rc-xdg-path
 ```
 
+### Unclutter `$HOME` by conforming to XDG specification
+
+#### `~/.bash_history`
+Since the shell in use is `zsh`, `bash` configs are not commited in this
+repo. So to change the location of the `~/.bash_history` file one can
+manually run the following:
+
+```bash
+mkdir -p "$XDG_STATE_HOME"/bash && \
+mv ~/.bash_history $XDG_STATE_HOME/bash/history
+```
+
+and add this line to `~/.bashrc`:
+```bash
+export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}"/bash/history
+```
+
+#### `~/.pki/nssdb`
+NSS data in `~/.pki` should be safe to move to XDG directories, see:
+[bugzilla issue](https://bugzilla.mozilla.org/show_bug.cgi?id=818686).
+
+Migration commands:
+```bash
+mkdir -p $XDG_CONFIG_HOME/pki/nssdb $XDG_DATA_HOME/pki/nssdb && \
+  mv $HOME/.pki/nssdb/pkcs11.txt $XDG_CONFIG_HOME/pki/nssdb && \
+  mv $HOME/.pki/nssdb/*.db $XDG_DATA_HOME/pki/nssdb && \
+  rm -r $HOME/.pki
+```
+
+Note that `~/.pki` might be created by other tools:
+ - Visual Studio Code
+ - Google Chrome (should support the XDG_CONFIG_HOME path if it exists)
+
+#### `~/.ipython`
+[`ipython >= 8.x` supports XDG][ipython]. So it should be sufficient to
+just run (it's not quite clear which XDG directories one should use):
+```bash
+mv ~/.ipython $XDG_CONFIG_HOME/ipython
+```
+
+[ipython]: https://ipython.readthedocs.io/en/stable/whatsnew/version8.html#re-added-support-for-xdg-config-directories
+
 ## Saving configurations
 Edits to any linked configurations is automatically propagated here
 (via the symlink). Then simply commit and push the changes.

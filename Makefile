@@ -4,6 +4,7 @@
 CFG_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Make sure XDG is set: https://wiki.archlinux.org/title/XDG_Base_Directory
+XDG_CACHE_HOME ?= $(HOME)/.cache
 XDG_CONFIG_HOME ?= $(HOME)/.config
 XDG_BIN_HOME ?= $(HOME)/.local/bin
 XDG_DATA_HOME ?= $(HOME)/.local/share
@@ -14,6 +15,8 @@ GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
 ZSH ?= $(XDG_DATA_HOME)/oh-my-zsh
 ZSH_CUSTOM ?= $(ZSH)/custom
+ZSH_PLUGINS ?= $(ZSH_CUSTOM)/plugins
+ZSH_THEMES ?= $(ZSH_CUSTOM)/themes
 
 BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
@@ -46,6 +49,8 @@ GEM_SPEC_CACHE ?= $(XDG_CACHE_HOME)/gem
 TRAVIS_CONFIG_PATH ?= $(XDG_CONFIG_HOME)/travis
 
 GHCUP_USE_XDG_DIRS ?= 1
+CABAL_DIR ?= $(XDG_CONFIG_HOME)/cabal
+CABAL_CONFIG ?= $(CABAL_DIR)/config
 STACK_ROOT ?= $(XDG_DATA_HOME)/stack
 
 SDKMAN_DIR ?= $(XDG_DATA_HOME)/sdkman
@@ -63,7 +68,7 @@ DIST_ARCH ?= $(shell dpkg --print-architecture)
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
 
-DEBIAN_ISO := debian-12.5.0-$(DIST_ARCH)-netinst.iso
+DEBIAN_ISO := debian-12.7.0-$(DIST_ARCH)-netinst.iso
 
 LIBVIRT_DEFAULT_URI ?= ""
 
@@ -75,15 +80,16 @@ PIXMAPS_DIR := /usr/share/pixmaps
 ZSH_COMPLETIONS := $(ZSH)/completions
 
 # Ensure necessary paths exist
-$(FONTS_DIR) \
-	$(ALACRITTY_CONFIG_DIR) \
+$(ALACRITTY_CONFIG_DIR) \
 	$(BAT_CONFIG_DIR)/themes \
 	$(BYOBU_CONFIG_DIR) \
 	$(CARGO_HOME) \
 	$(CARGO_ARTIFACTS_DIR) \
 	$(FD_CONFIG_HOME) \
+	$(FONTS_DIR) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
+	$(CABAL_DIR) \
 	$(STACK_ROOT) \
 	$(ZDOTDIR) \
 	$(ZSH_COMPLETIONS) \
@@ -94,7 +100,6 @@ $(FONTS_DIR) \
 	$(XDG_BIN_HOME) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
-	$(XDG_CACHE_HOME)/vm \
 	$(XDG_CACHE_HOME)/zsh \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
@@ -111,7 +116,10 @@ $(FONTS_DIR) \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/vim \
+	$(XDG_CONFIG_HOME)/zed \
+	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
+	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
@@ -119,10 +127,16 @@ $(FONTS_DIR) \
 $(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
 	sudo mkdir -p $@
 
-$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.5.0/$(DIST_ARCH)/iso-cd
-$(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO): $(XDG_CACHE_HOME)/vm net-tools
+$(CABAL_CONFIG):
+	@mkdir -p $$(dirname $@)
+	@touch $@
+
+/var/lib/libvirt/images/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.7.0/$(DIST_ARCH)/iso-cd
+/var/lib/libvirt/images/$(DEBIAN_ISO): net-tools
 	@echo ">>> Downloading Debian Bookworm net installer for $(DIST_ARCH)"
-	@[ -f $@ ] || $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
+	@[ -f $@ ] || sudo $(WGET) -O $@ $(ISO_URL)/$(DEBIAN_ISO)
+	sudo chown libvirt-qemu:kvm $@
+	sudo chmod 660 $@
 
 DOCKER_CMD := $(shell command -v docker 2> /dev/null)
 
@@ -134,7 +148,7 @@ NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(FONTS_DIR)
 	@echo ">>> Downloading Meslo Nerd Font for Powerlevel10k"
-	curl "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
+	curl -sSL "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 
@@ -174,6 +188,9 @@ else
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
 endif
 
+# Notes:
+#  - git-core/templates added because the linked git config references it and
+#    issues a warning if it's not created (by pre-commit)
 .PHONY: links
 links: \
 	$(ALACRITTY_CONFIG_DIR) \
@@ -196,6 +213,8 @@ links: \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/vim \
+	$(XDG_CONFIG_HOME)/zed \
+	$(XDG_DATA_HOME)/git-core/templates \
 	$(ZDOTDIR) \
 	$(ZSH_CUSTOM)
 	@echo "Linking configuration files:"
@@ -234,12 +253,14 @@ net-tools:
 	sudo apt install -y curl jq net-tools ncat nmap wget libssl-dev pssh
 
 # Installed tools:
+#  - cpu-checker: tools to help evaluate certain CPU (or BIOS) features
+#    (e.g., kvm-ok)
 #  - libfuse2: Filesystem in Userspace
 #    [AppImage - FUSE](https://github.com/AppImage/AppImageKit/wiki/FUSE)
 .PHONY: core-tools
 core-utils:
 	@echo ">>> Installing core utilities"
-	sudo apt install -y git lsb-core moreutils libfuse2
+	sudo apt install -y cpu-checker git moreutils libfuse2
 
 .PHONY: apt-utils
 apt-utils:
@@ -267,8 +288,8 @@ python:
 	sudo apt install -y python3-pip python3-venv python-is-python3
 
 # TODO: Possibly better option could be https://github.com/pyenv/pyenv
-.PHONY: python3.6 python3.7 python3.8
-python3.6 python3.7 python3.8: python
+.PHONY: python3.6 python3.7 python3.8 python3.9 python3.10 python3.11
+python3.6 python3.7 python3.8 python3.9 python3.10 python3.11: python
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:deadsnakes/ppa
 	sudo apt update
@@ -467,11 +488,12 @@ else
 kvm: CPU_MODEL := amd
 endif
 kvm: GRUB_CMDLINE_LINUX_DEFAULT := "quiet splash $(CPU_MODEL)_iommu=on systemd.unified_cgroup_hierarchy=0"
+kvm: ARCH_FAMILY := $(shell arch | cut -d_ -f1)
 kvm: core-utils
 	@[ "$$(kvm-ok | grep exists)" ] || (kvm-ok && return 1)
 	@echo ">>> Installing KVM virtualization"
 	sudo apt install -y \
-		qemu-kvm \
+		qemu-system-$(ARCH_FAMILY) \
 		libvirt-daemon-system \
 		libvirt-clients \
 		bridge-utils \
@@ -507,8 +529,12 @@ kvm: core-utils
 #    network, LIBVIRT_DEFAULT_URI should be set to 'qemu:///system'
 #  - Groups will be visible after login or [newgrp](https://superuser.com/a/345051) hack
 #  - Default storage pool will show up AFTER reboot.
+#  - Downloads the DEBIAN_ISO to /var/lib/libvirt/images, in general it must be
+#    accessible by `libvirt-qemu:kvm` user:group (required by virt-install).
 .PHONY: test-kvm
-test-kvm: $(XDG_CACHE_HOME)/vm/$(DEBIAN_ISO)
+test-kvm: CDROM := /var/lib/libvirt/images/$(DEBIAN_ISO)
+test-kvm: IMAGE := debian_bookworm.qcow2
+test-kvm: $(CDROM)
 	@echo ">>> User groups should contain 'kvm' and 'libvirt*'"
 	id -nG | egrep -ow 'kvm|libvirt|libvirt-\w+'
 ifneq ($(LIBVIRT_DEFAULT_URI),qemu:///system)
@@ -527,8 +553,10 @@ endif
 		--ram 8192 \
 		--vcpus=4 \
 		--hvm \
-		--cdrom $< \
-		--disk path=$(<D)/debian_bookworm.img,bus=virtio,size=40 \
+		--cdrom $(CDROM) \
+		--install no_install=yes \
+		--osinfo detect=on,name=debianbookworm \
+		--disk path=$(<D)/$(IMAGE),bus=virtio,size=40 \
 		--network network=default,model=virtio \
 		--graphics vnc,listen=0.0.0.0 \
 		--video=vmvga \
@@ -543,10 +571,13 @@ endif
 	virsh undefine debian_bookworm
 	@echo ">>> Cleaning up the VM storage pool"
 	virsh pool-list --details
-	virsh pool-autostart vm --disable
-	virsh pool-destroy vm
-	sudo rm -f $(<D)/debian_bookworm.img
-	virsh pool-undefine vm
+	virsh pool-autostart images --disable
+	virsh pool-autostart dirpool --disable
+	virsh pool-destroy images
+	virsh pool-destroy dirpool
+	sudo rm -f "$(<D)/$(IMAGE)"
+	virsh pool-undefine images
+	virsh pool-undefine dirpool
 	virsh pool-list --details
 	@echo ">>> KVM test was successful!"
 
@@ -692,37 +723,45 @@ binenv-tools: binenv $(MAN1_DIR)
 #  - https://github.com/ohmyzsh/ohmyzsh#custom-directory
 #  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
-# Themes:
-#  - https://github.com/romkatv/powerlevel10k
-# Plugins:
-#  - https://github.com/zsh-users/zsh-syntax-highlighting
-#  - https://github.com/zsh-users/zsh-history-substring-search
-#  - https://github.com/zsh-users/zsh-autosuggestions
 .PHONY: zsh
 zsh: $(XDG_CACHE_HOME)/zsh core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
-	@echo ">>> zsh already installed"
+	@echo ">>> $@ already installed"
 else
 	@echo ">>> Installing zsh and oh-my-zsh"
-	sudo apt install -y $@
+	sudo apt install -y $@ fonts-powerline
 	$@ --version
 	sh -c "$$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 	sudo chsh -s $$(which $@)
-	@echo ">>> Setting up powerlevel10k theme"
-	git clone \
-		https://github.com/romkatv/powerlevel10k.git \
-		$(ZSH_CUSTOM)/themes/powerlevel10k
-	sudo apt install -y fonts-powerline
-	@echo ">>> Installing zsh plugins"
-	git clone \
-		https://github.com/zsh-users/zsh-syntax-highlighting.git \
-		$(ZSH_CUSTOM)/plugins/zsh-syntax-highlighting
-	git clone \
-		https://github.com/zsh-users/zsh-history-substring-search \
-		$(ZSH_CUSTOM)/plugins/zsh-history-substring-search
-	git clone \
-		https://github.com/zsh-users/zsh-autosuggestions \
-		$(ZSH_CUSTOM)/plugins/zsh-autosuggestions
+endif
+	@echo ">>> Setting up $@ plugins"
+	make -C $(CFG_DIR) $(ZSH_USERS_PLUGINS)
+	@echo ">>> Setting up $@ themes"
+	make -C $(CFG_DIR) powerlevel10k
+
+ZSH_USERS_PLUGINS := \
+	zsh-syntax-highlighting \
+	zsh-history-substring-search \
+	zsh-autosuggestions
+
+.PHONY: $(ZSH_USERS_PLUGINS)
+$(ZSH_USERS_PLUGINS): core-utils
+ifeq ($(shell test -d $(ZSH_PLUGINS)/$@ && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(ZSH_PLUGINS)/$@'"
+	@git -C "$(ZSH_PLUGINS)/$@" pull
+else
+	@echo ">>> Cloning $@ repository to '$(ZSH_PLUGINS)/$@'"
+	git clone "https://github.com/zsh-users/$@" "$(ZSH_PLUGINS)/$@"
+endif
+
+.PHONY: powerlevel10k
+powerlevel10k: core-utils
+ifeq ($(shell test -d $(ZSH_THEMES)/$@ && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(ZSH_THEMES)/$@'"
+	@git -C "$(ZSH_THEMES)/$@" pull
+else
+	@echo ">>> Cloning $@ repository to '$(ZSH_THEMES)/$@'"
+	@git clone https://github.com/romkatv/powerlevel10k "$(ZSH_THEMES)/$@"
 endif
 
 # Installation resources:
@@ -734,31 +773,26 @@ cmake bash-language-server slack:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install --classic $@
 
-# XXX: deprecate googler (archived)
-#
 # Installation resources:
 #  - dbeaver-ce: universal database tool (https://dbeaver.io)
 #  - gimp: GNU Image Manipulation Program (https://www.gimp.org)
-#  - googler: Google from the terminal (https://github.com/jarun/googler)
 #  - netron: visualizer for neural network, deep learning & ML models
 #    (https://github.com/lutzroeder/netron)
 #  - postman: API platform for building & using APIs (https://www.postman.com)
 .PHONY: dbeaver-ce gimp googler netron postman skype spotify zoom-client
-dbeaver-ce gimp googler netron postman skype spotify zoom-client:
+dbeaver-ce gimp netron postman skype spotify zoom-client:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install $@
 
 .PHONY: pipx
 pipx: python
 ifneq ($(shell which pipx 2> /dev/null),)
-	@echo ">>> $@ already installed, upgrading to the latest version"
-	python3 -m pip install --user $@ --upgrade
-	python3 -m $@ ensurepath
-	@echo ">>> Using $@ $$($@ --version)"
+	@echo ">>> $@ already installed (v$$($@ --version))"
 else
 	@echo ">>> Installing $@"
-	python3 -m pip install --user $@
-	python3 -m $@ ensurepath
+	sudo apt update
+	sudo apt -y install $@
+	$@ ensurepath
 endif
 
 .PHONY: python-tools
@@ -788,15 +822,17 @@ python-tools: pipx
 #  - https://python-poetry.org/docs/#installation
 #  - https://python-poetry.org/docs/#enable-tab-completion-for-bash-fish-or-zsh
 .PHONY: poetry
-poetry: python zsh $(ZSH_CUSTOM)/plugins/poetry
+poetry: pipx zsh $(ZSH_PLUGINS)/poetry
 ifneq ($(shell which poetry 2> /dev/null),)
-	@echo ">>> $$($@ --version) already installed"
+	@echo ">>> $$($@ --version) already installed, upgrading instead..."
+	pipx upgrade poetry
+	@echo ">>> Using $$($@ --version)"
 else
 	@echo ">>> Installing Poetry: https://python-poetry.org/docs/"
-	curl -sSL https://install.python-poetry.org | python3 -
-	$@ self update
-	$@ completions zsh > $(ZSH_CUSTOM)/plugins/poetry/_poetry
+	pipx install $@
 endif
+	@echo ">>> Updating shell completions for $@"
+	$@ completions zsh > $(ZSH_PLUGINS)/$@/_$@
 
 # Installation resources:
 #  - https://sdkman.io/install
@@ -815,12 +851,13 @@ sdk: net-tools zsh
 
 .PHONY: jvm-tools
 jvm-tools: SHELL := /bin/bash
+jvm-tools: JAVA_VERSION := 22.0.1-open
 jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
 	@{ \
 		set -e;\
-		source $(SDKMAN_DIR)/bin/sdkman-init.sh;\
+		source $<;\
 		echo ">>> Installing Java";\
-		sdk install java 22.0.1-open;\
+		sdk install java $(JAVA_VERSION);\
 		echo ">>> Installing Maven";\
 		sdk install maven;\
 		echo ">>> Installing Gradle";\
@@ -849,16 +886,14 @@ ghcup-deps: net-tools
 		build-essential \
 		curl \
 		libffi-dev \
-		libffi7 \
+		libffi8ubuntu1 \
 		libgmp-dev \
 		libgmp10 \
-		libncurses-dev \
-		libncurses5 \
-		libtinfo5
+		libncurses-dev
 
 .PHONY: ghcup
 ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
-ghcup: $(ZSH_COMPLETIONS) ghcup-deps
+ghcup: $(ZSH_COMPLETIONS) $(CABAL_CONFIG) ghcup-deps
 ifneq ($(shell which ghcup 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
@@ -871,14 +906,13 @@ else
 endif
 
 # Installed tools:
-#  - brittany: Haskell source code formatter
+#  - fourmolu: Haskell source code formatter
 #  - hlint: Haskell source code suggestions
 #  - apply-refact: Refactor Haskell source files
-#  - data-tree-print: Installed as a brittany dependency
 .PHONY: haskell-tools
 haskell-tools: haskell
-	@echo ">>> Installing brittany: https://github.com/lspitzner/brittany/"
-	stack install data-tree-print brittany
+	@echo ">>> Installing fourmolu: https://github.com/fourmolu/fourmolu"
+	stack install fourmolu
 	@echo ">>> Installing hlint: https://github.com/ndmitchell/hlint"
 	stack install hlint apply-refact
 
@@ -887,7 +921,7 @@ rust: net-tools
 ifeq ($(shell which rustc 2> /dev/null),)
 	@echo ">>> Installing Rust toolchain"
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-	. $(HOME)/.cargo/env
+	. $(XDG_DATA_HOME)/cargo/env
 	@echo ">>> Installing Rust nightly toolchain"
 	rustup install nightly
 	@echo ">>> Installing rust-src"
@@ -910,6 +944,8 @@ endif
 #  - modules: visualize/analyze a Rust crate's internal structure
 #  - msrv: find the minimum supported Rust version (MSRV)
 #  - nextest: a next-generation test runner for Rust
+#  - outdated: display when dependencies are out of date
+#    (FIXME: use --locked https://github.com/kbknapp/cargo-outdated/pull/398)
 #  - readme: generate README.md content from doc comments
 #  - tarpaulin: a code coverage tool for Rust projects
 #  - workspaces: a tool for managing cargo workspaces and their crates
@@ -926,6 +962,7 @@ CARGO_EXTENSIONS := \
 	cargo-modules \
 	cargo-msrv \
 	cargo-nextest \
+	cargo-outdated \
 	cargo-readme \
 	cargo-tarpaulin \
 	cargo-workspaces
@@ -934,14 +971,12 @@ CARGO_EXTENSIONS := \
 #  - check-external-types: verify which types from other libraries are allowed
 #    to be are exposed in their public API
 #  - deny: lint dependencies
-#  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
 #  - udeps: find unused dependencies in Cargo.toml
 #  - vet: supply-chain security for Rust
 CARGO_EXTENSIONS_LOCKED := \
 	cargo-check-external-types \
 	cargo-deny \
-	cargo-outdated \
 	cargo-semver-checks \
 	cargo-udeps \
 	cargo-vet
@@ -1108,7 +1143,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
 	@rg --generate man | gzip -c | sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
-	cargo install samply
+	cargo install --locked samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
 	cargo install sd
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
@@ -1152,6 +1187,8 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 
 # Resources:
 #  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
+# TODO: run alacritty on GPU (e.g., using `switcherooctl launch <CMD>`)
+#  - https://github.com/alacritty/alacritty/issues/3587
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
@@ -1229,7 +1266,13 @@ alacritty-toggle: EXT_HOME := $(XDG_DATA_HOME)/gnome-shell/extensions/$(EXT_NAME
 alacritty-toggle: EXT_SCHEMA := org.gnome.shell.extensions.toggle-alacritty
 alacritty-toggle:
 	@echo ">>> Configuring $@: $(EXT_REPO)"
-	@git clone $(EXT_REPO) $(EXT_HOME) 2>/dev/null || true
+ifeq ($(shell test -d $(EXT_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(EXT_HOME)'"
+	@git -C $(EXT_HOME) pull
+else
+	@echo ">>> Cloning $@ repository to '$(EXT_HOME)'"
+	@git clone $(EXT_REPO) $(EXT_HOME)
+endif
 	@echo ">>> Validating the integrity of compiled $@ schemas"
 	@glib-compile-schemas $(EXT_HOME)/schemas && \
 		git -C $(EXT_HOME) status --porcelain --untracked-files=no
@@ -1334,7 +1377,8 @@ grpcurl: golang
 
 # Installtion resources:
 #  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
-#  - [Official post-instegration](https://docs.docker.com/engine/install/linux-postinstall/)
+#  - [Official post-installation](https://docs.docker.com/engine/install/linux-postinstall/)
+#  - Note: `docker-compose` is now a sub-command `docker compose`
 .PHONY: docker
 docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
 docker: DOCKER_GPG := $(KEYRINGS_DIR)/docker-archive-keyring.gpg
@@ -1357,16 +1401,6 @@ docker: core-utils apt-utils $(KEYRINGS_DIR)
 	sudo service $@ restart
 	newgrp $@
 
-# NOTE: This target installs docker-compose using pipx for easier version handling.
-.PHONY: docker-compose
-docker-compose:
-ifneq ($(shell which docker-compose 2> /dev/null),)
-	@echo ">>> Already installed $$($@ --version)"
-else
-	@echo ">>> Installing $@: https://docs.docker.com/compose/install/"
-	pipx install $@
-endif
-
 .PHONY: test-docker
 test-docker:
 ifndef DOCKER_CMD
@@ -1377,6 +1411,9 @@ else
 	docker rmi -f hello-world:latest
 endif
 
+# FIXME: Unable to locate package nvidia-docker2
+#  - possibly follow
+#    https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 # Installation resources:
 #  - [Official documentation](https://bit.ly/3tcye5b)
 #  - [Package info](https://bit.ly/3nISlqx)
@@ -1499,6 +1536,20 @@ disable-sudo-admin-file:
 	@echo ">>> Creating or rewriting file '$(OUT_FILE)'"
 	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
 
+# Disable crash reporting service altogether to increase privacy & security
+#  - Note that it also prevents the service from polluting HOME with the
+#    ~/.apport-ignore.xml file
+#  - https://askubuntu.com/a/93467
+#  - XXX: `sudo apt purge -y apport apport-gtk apport-retrace apport-symptoms`
+.PHONY: disable-apport-service
+disable-apport-service:
+	@echo ">>> Disabling apport service"
+	sudo systemctl disable apport.service
+	@echo ">>> Preventing apport service from starting after boot"
+	@sudo sed -ri 's|^enabled\=(.+)$$|enabled\=0|g' /etc/default/apport
+	@echo ">>> Purging configuration files"
+	@rm -f ~/.apport-ignore.xml
+
 # Notes:
 #  - Modifies /etc/ubuntu-advantage/uaclient.conf
 .PHONY: disable-ubuntu-news
@@ -1556,12 +1607,19 @@ endif
 
 # Installation resources:
 #  - official web page: https://zed.dev/docs/linux
+#  - config docs: https://zed.dev/docs/configuring-zed
 #  - installed artifacts: `~/.local/zed.app/`, `~/.local/bin/zed`,
 #    `~/.local/share/applications/dev.zed.Zed.desktop`
+#  - linked configs: `~/.config/zed/{keymap,settings}.json`
 .PHONY: zed
-zed: net-tools
+zed: $(XDG_CONFIG_HOME)/zed net-tools
+ifeq ($(shell which newsboat 2> /dev/null),)
 	@echo ">>> Downloading & running $@ installer"
 	curl https://zed.dev/install.sh | sh
+endif
+	@echo "Configuring $@ $$($@ -v | cut -d' ' -f2)"
+	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_DIR)/.config/$@/keymap.json
+	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_DIR)/.config/$@/settings.json
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
@@ -1575,31 +1633,59 @@ calibre luajit mpv:
 # Installation resources:
 #  - Needs pre-existing config directory to pick it up instead of HOME, see:
 #    https://github.com/newsboat/newsboat/issues/2658#issuecomment-1886815612
-#  - TODO: consider installing latest version from source
+#  - FIXME: snap install does not work, so this is a hacky workaround that
+#    installs newsboat directly from an older (22.04) deb package
+#  - TODO: consider installing latest version from source or fix snap install
 #  - TODO: link default `urls` config file once it supports private includes
 .PHONY: newsboat
+newsboat: DEB_PKG := newsboat_2.21-1_$(DIST_ARCH).deb
+newsboat: DOWNLOAD_URL := https://cz.archive.ubuntu.com/ubuntu/pool/universe/n
+newsboat: DOWNLOAD_DIR := $(shell mktemp -d)
 newsboat: \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
+	$(XDG_DATA_HOME)/newsboat \
 	mpv
-	@echo ">>> Installing $@: https://github.com/newsboat/newsboat"
-	sudo apt install -y $@
+ifeq ($(shell which newsboat 2> /dev/null),)
+	@echo ">>> Installing $@ dependencies"
+	sudo apt install -y libstfl0
+	@echo ">>> Downloading $@"
+	$(WGET) -q -P $(DOWNLOAD_DIR) "$(DOWNLOAD_URL)/$@/$(DEB_PKG)"
+	@echo ">>> Verifying dowloaded $@ file integrity"
+	@(echo -n \
+		"8522128a78c6ef705b825cabd712e06a28616d216a2788f653c2bec821f4673c $(DOWNLOAD_DIR)/$(DEB_PKG)" \
+		| sha256sum -c --strict --status --ignore-missing -) || \
+		(echo ">>> Failed to verify checksum" && rm -rf $(DOWNLOAD_DIR) && exit 1)
+	@echo ">>> Installing $@"
+	sudo dpkg -i "$(DOWNLOAD_DIR)/$(DEB_PKG)" \
+		|| (rm -rf $(DOWNLOAD_DIR) && exit 1)
+endif
 	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
 	@touch $</urls && chmod u=rw,g=r,o= $</urls
 	@ln -svft $< $(CFG_DIR)/.config/$@/*
 	@echo ">>> Installed $$($@ -v | head -1)"
 
-# Remove unused applications from the distribution
+# Remove unused applications from the distribution and cleanup HOME
 .PHONY: cleanup
 cleanup: thunderbird
-	sudo apt autoremove -y
+	sudo apt autoremove --purge -y
 	sudo apt autoclean
+	@echo ">>> Purging dot files that are disallowed in HOME's root"
+	@rm -f $(BANNED_HOME_DOT_FILES)
 
 .PHONY: thunderbird
 thunderbird:
 	@echo ">>> Uninstalling $@"
-	sudo apt purge -y $@
+	sudo snap remove $@
+
+# Don't pollute HOME with dot files: applications should either respect XDG
+# specification or be configured to do so.
+BANNED_HOME_DOT_FILES := \
+	$(HOME)/.apport-ignore.xml \
+	$(HOME)/.bash_history \
+	$(HOME)/.lesshst \
+	$(HOME)/.zsh_history
 
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh

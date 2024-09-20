@@ -15,6 +15,12 @@ alias rmclip="wl-copy -c"
 #  - Based on a comment under this answer: https://askubuntu.com/a/5637
 alias why="apt-cache rdepends --no-{suggests,conflicts,breaks,replaces,enhances} --installed --recurse"
 
+# List GPUs or launch a command on a GPU
+if (( $+commands[switcherooctl] )); then
+	alias lsgpu="switcherooctl list"
+	alias gpuexec="switcherooctl launch -g 1"
+fi
+
 # Bitwarden
 #  - https://bitwarden.com/help/cli/#log-in
 #  - NOTE: currently using two-step login via an authenticator app
@@ -32,6 +38,9 @@ alias vimdiff="nvim -d"
 
 # Search file with a fuzzy finder (fzf|sk) and open it with the editor
 alias ef='e $("${FZF:-fzf}" --preview="bat --style=numbers --color=always {}")'
+
+# Search installed packages with a fuzzy finder (fzf|sk)
+alias fpkg="dpkg -l | rg -N '^ii\s(.*)\$' -or '\$1' | ${FZF:-fzf}"
 
 # Remove colors from output (https://stackoverflow.com/a/18000433)
 alias decolorize='sed -r "s/\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"'
@@ -119,9 +128,6 @@ if (( $+commands[newsboat] )); then
 	alias news="newsboat -q"
 	alias podcasts="podboat -a"
 fi
-
-# googler (https://github.com/jarun/googler)
-(( $+commands[googler] )) && alias s="googler"
 
 # Python
 alias py="python3"
