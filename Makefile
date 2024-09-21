@@ -1603,10 +1603,14 @@ else
 	@echo ">>> Finish bw completion setup by reloading zsh with 'omz reload'"
 endif
 
+# Installation resources:
+#  - apt-key is mostly deprecated, hence the manual GPG key management
+#  - https://github.com/keybase/client/issues/24856
 .PHONY: keybase
 keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_$(DIST_ARCH).deb
 keybase: KEYBASE_PKG := $(shell mktemp)
-keybase: net-tools
+keybase: KEYBASE_GPG := $(KEYRINGS_DIR)/keybase-keyring.gpg
+keybase: net-tools $(KEYRINGS_DIR)
 ifneq ($(shell which keybase 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
@@ -1614,6 +1618,13 @@ else
 	curl -o $(KEYBASE_PKG) --remote-name $(KEYBASE_URI)
 	sudo dpkg -i $(KEYBASE_PKG) || true
 	sudo apt install -y -f
+	@curl -fsSL https://keybase.io/docs/server_security/code_signing_key.asc \
+		| sudo gpg --dearmor -o "$(KEYBASE_GPG)"
+	#@sudo gpg --keyserver keyserver.ubuntu.com --recv-key 656D16C7
+	#@sudo gpg --armor --export 656D16C7 | sudo gpg --dearmour -o "$(KEYBASE_GPG)"
+	@sed -i \
+		's|deb http://|deb [arch=$(DIST_ARCH) signed-by=$(KEYBASE_GPG)] https://|g' \
+		/etc/apt/sources.list.d/$@.list
 	@echo ">>> Complete by running command 'run_keybase'"
 endif
 	rm -f $(KEYBASE_PKG)
