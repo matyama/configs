@@ -1,0 +1,38 @@
+# bashrc: executed by bash(1) for non-login shells.
+
+# Indicate that this script has been executed to prevent sourcing it again from
+# system-wide scripts (inspired by https://unix.stackexchange.com/a/425759)
+USER_BASHRC_RUN=yes
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# Be nice to sysadmins
+if [ -f /etc/bashrc ]; then
+	source /etc/bashrc
+elif [ -f /etc/bash.bashrc ]; then
+	source /etc/bash.bashrc
+fi
+
+# History management
+HISTCONTROL=ignoreboth
+HISTSIZE=5000
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
+HISTFILESIZE=10000
+HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
+
+# Append to the history file, don't overwrite it
+shopt -s histappend
+
+# Make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# Source alias definitions
+if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bash_aliases" ]; then
+	. "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bash_aliases"
+fi
+
+# Source Cargo environment if present
+if [ -s "${CARGO_HOME:-$HOME/.local/share/cargo}/env" ]; then
+	. "${CARGO_HOME:-$HOME/.local/share/cargo}/env"
+fi

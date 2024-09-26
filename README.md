@@ -247,6 +247,14 @@ make nvidia-settings-rc-xdg-path
 
 ### Unclutter `$HOME` by conforming to XDG specification
 
+#### `~/.bashrc`, `~/.bash_logout`
+The default user script location (under `$HOME`) is compiled with the
+shell, so the only option how to change it is modifying the system-wide
+configs `/etc/bash.bashrc` (resp. `/etc/bash.bash.logout`).
+
+There is a handy `make bash` target which does so automatically and
+links custom files from this repository.
+
 #### `~/.bash_history`
 Since the shell in use is `zsh`, `bash` configs are not commited in this
 repo. So to change the location of the `~/.bash_history` file one can
@@ -257,7 +265,7 @@ mkdir -p "$XDG_STATE_HOME"/bash && \
 mv ~/.bash_history $XDG_STATE_HOME/bash/history
 ```
 
-and add this line to `~/.bashrc`:
+and make sure this line is in the linked bashrc:
 ```bash
 export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}"/bash/history
 ```

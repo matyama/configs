@@ -102,6 +102,7 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
 	$(XDG_CACHE_HOME)/zsh \
+	$(XDG_CONFIG_HOME)/bash \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
@@ -201,6 +202,7 @@ links: \
 	$(RIPGREP_CONFIG_HOME) \
 	$(STACK_ROOT) \
 	$(XDG_BIN_HOME) \
+	$(XDG_CONFIG_HOME)/bash \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
@@ -1529,6 +1531,64 @@ else
 	@echo ">>> Manually change value of 'vm.swappiness' in '/etc/sysctl.conf'"
 endif
 
+
+# Code snippet added to /etc/bash.bashrc by bash target
+define RUN_USER_BASHRC
+# Load bashrc from user's custom location instead of ~/.bashrc
+if [ -s "$${XDG_CONFIG_HOME:-$$HOME/.config}/bash/bashrc" ] && [ "$${USER_BASHRC_RUN:-no}" != yes ]; then
+	. "$${XDG_CONFIG_HOME:-$$HOME/.config}/bash/bashrc"
+fi
+endef
+
+export RUN_USER_BASHRC
+
+# Code snippet added to /etc/bash.bash.logout by bash target
+define RUN_USER_BASH_LOGOUT
+# Load bash_logout from user's custom location instead of ~/.bash_logout
+if [ -s "$${XDG_CONFIG_HOME:-$$HOME/.config}/bash/bash_logout" ]; then
+	. "$${XDG_CONFIG_HOME:-$$HOME/.config}/bash/bash_logout"
+fi
+endef
+
+export RUN_USER_BASH_LOGOUT
+
+BASH_CONFIGS := bashrc bash_aliases bash_logout
+
+.PHONY: $(BASH_CONFIGS)
+$(BASH_CONFIGS): $(XDG_CONFIG_HOME)/bash
+	@echo ">>> Linking custom $@ script"
+	@ln -svft $< $(CFG_DIR)/.config/bash/$@
+
+# Notes:
+#  - The default location (HOME) for user's files is compiled in, so the only
+#    option how to change it is this hack using system-wide configs
+#  - Check man bash for supported files (SYSTEM_BASHRC, SYSTEM_BASH_LOGOUT)
+#
+# TODO: figure out a way how to avoid explicit line ranges when (un)commenting
+.PHONY: bash
+bash: SYSTEM_BASHRC := /etc/bash.bashrc
+bash: SYSTEM_BASH_LOGOUT := /etc/bash.bash.logout
+bash: $(BASH_CONFIGS)
+	@echo ">>> Enabling bash completion in interactive shells system-wide"
+	@{ \
+		LINE=$$(grep -in "enable bash completion" $(SYSTEM_BASHRC) | cut -d: -f1);\
+		sudo sed -i "$$((LINE + 1)),$$((LINE + 7))"' s|^#||' "$(SYSTEM_BASHRC)";\
+	}
+	@echo ">>> Disabling sudo hint system-wide"
+	@{ \
+		LINE=$$(grep -in "sudo hint" $(SYSTEM_BASHRC) | cut -d: -f1);\
+		sudo sed -i "$$((LINE + 1)),$$((LINE + 11))"' s|^#*|#|' "$(SYSTEM_BASHRC)";\
+	}
+ifeq ($(shell grep USER_BASHRC_RUN /etc/bash.bashrc),)
+	@echo ">>> Adding custom bashrc loading to '$(SYSTEM_BASHRC)'"
+	@echo "$$RUN_USER_BASHRC" | sudo tee -a "$(SYSTEM_BASHRC)" > /dev/null
+endif
+ifeq ($(shell grep -i "load bash_logout" /etc/bash.bash.logout),)
+	@echo ">>> Adding custom bash_logout loading to '$(SYSTEM_BASH_LOGOUT)'"
+	@echo "$$RUN_USER_BASH_LOGOUT" \
+		| sudo tee -a "$(SYSTEM_BASH_LOGOUT)" > /dev/null
+endif
+
 define DISABLE_ADMIN_FILE_IN_HOME
 # Disable ~/.sudo_as_admin_successful file
 Defaults !admin_flag
@@ -1707,7 +1767,9 @@ thunderbird:
 # specification or be configured to do so.
 BANNED_HOME_DOT_FILES := \
 	$(HOME)/.apport-ignore.xml \
+	$(HOME)/.bashrc \
 	$(HOME)/.bash_history \
+	$(HOME)/.bash_logout \
 	$(HOME)/.lesshst \
 	$(HOME)/.zsh_history
 
