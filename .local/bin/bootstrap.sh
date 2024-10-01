@@ -9,4 +9,4 @@ echo ">>> Installing basic tools..."
 sudo apt install -y make git
 
 echo ">>> Creating custom directories..."
-mkdir -p ~/dev ~/tmp
+mkdir -p ~/.local/dev ~/.cache/tmp
