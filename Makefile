@@ -10,10 +10,17 @@ XDG_BIN_HOME ?= $(HOME)/.local/bin
 XDG_DATA_HOME ?= $(HOME)/.local/share
 XDG_STATE_HOME ?= $(HOME)/.local/state
 
+# Extended XDG Base Directory Specification
+XDG_DEV_HOME ?= $(HOME)/.local/dev
+XDG_FONTS_HOME := $(XDG_DATA_HOME)/fonts
+XDG_MAN_HOME := $(XDG_DATA_HOME)/man
+XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
+
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
 ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
 ZSH ?= $(XDG_DATA_HOME)/oh-my-zsh
+ZSH_COMPLETIONS := $(ZSH)/completions
 ZSH_CUSTOM ?= $(ZSH)/custom
 ZSH_PLUGINS ?= $(ZSH_CUSTOM)/plugins
 ZSH_THEMES ?= $(ZSH_CUSTOM)/themes
@@ -73,12 +80,8 @@ DEBIAN_ISO := debian-12.7.0-$(DIST_ARCH)-netinst.iso
 LIBVIRT_DEFAULT_URI ?= ""
 
 APT_KEYRINGS := /etc/apt/keyrings
-FONTS_DIR := $(XDG_DATA_HOME)/fonts
 KEYRINGS_DIR := /usr/share/keyrings
 PIXMAPS_DIR := /usr/share/pixmaps
-XDG_MAN1_DIR := $(XDG_DATA_HOME)/man/man1
-XDG_MAN5_DIR := $(XDG_DATA_HOME)/man/man5
-ZSH_COMPLETIONS := $(ZSH)/completions
 
 # Ensure necessary paths exist
 $(ALACRITTY_CONFIG_DIR) \
@@ -87,7 +90,6 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(CARGO_HOME) \
 	$(CARGO_ARTIFACTS_DIR) \
 	$(FD_CONFIG_HOME) \
-	$(FONTS_DIR) \
 	$(GOPATH) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(CABAL_DIR) \
@@ -108,6 +110,7 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/git \
+	$(XDG_CONFIG_HOME)/gtk-3.0 \
 	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
@@ -124,8 +127,11 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
-	$(XDG_MAN1_DIR) \
-	$(XDG_MAN5_DIR) \
+	$(XDG_DEV_HOME) \
+	$(XDG_FONTS_HOME) \
+	$(XDG_MAN_HOME)/man1 \
+	$(XDG_MAN_HOME)/man5 \
+	$(XDG_TMP_HOME) \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
@@ -151,7 +157,7 @@ NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
 
 .PHONY: install-fonts
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
-install-fonts: $(FONTS_DIR)
+install-fonts: $(XDG_FONTS_HOME)
 	@echo ">>> Downloading Meslo Nerd Font for Powerlevel10k"
 	curl -sSL "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
@@ -313,7 +319,7 @@ python3.6 python3.7 python3.8 python3.9 python3.10 python3.11: python
 #  - Note: `zoxide`'s interactive mode requires fzf at least v0.21.0
 .PHONY: fzf
 fzf: FZF_REPO := https://github.com/junegunn/fzf.git
-fzf: core-utils $(XDG_BIN_HOME) $(XDG_MAN1_DIR)
+fzf: core-utils $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1
 ifneq ($(shell which fzf 2> /dev/null),)
 	@echo ">>> Updating $@"
 	git -C $(FZF_BASE) pull
@@ -322,8 +328,8 @@ else
 	git clone --depth 1 $(FZF_REPO) $(FZF_BASE)
 endif
 	$(FZF_BASE)/install --bin --no-update-rc
-	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN1_DIR)/$@.1.gz
-	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN1_DIR)/$@-tmux.1.gz
+	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
+	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN_HOME)/man1/$@-tmux.1.gz
 
 # skim: Fuzzy Finder in rust!
 #  - https://github.com/lotabout/skim
@@ -331,7 +337,7 @@ endif
 .PHONY: skim
 skim: SKIM_REPO := https://github.com/lotabout/skim.git
 skim: SKIM_TAG := v0.10.4
-skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN1_DIR) $(ZSH_COMPLETIONS)
+skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1 $(ZSH_COMPLETIONS)
 ifneq ($(shell which sk 2> /dev/null),)
 	@echo ">>> Updating $@"
 	git -C $(SKIM_BASE) pull
@@ -345,8 +351,8 @@ endif
 	@ln -svf \
 		$(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
 	@ln -svf $(SKIM_BASE)/bin/sk-tmux $(XDG_BIN_HOME)/sk-tmux
-	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN1_DIR)/sk.1.gz
-	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN1_DIR)/sk-tmux.1.gz
+	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN_HOME)/man1/sk.1.gz
+	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN_HOME)/man1/sk-tmux.1.gz
 
 .PHONY: forgit
 forgit: FORGIT_REPO := https://github.com/wfxr/forgit.git
@@ -718,12 +724,12 @@ endif
 #    (https://github.com/muesli/duf)
 .PHONY: binenv-tools
 binenv-tools: DUF_URL := https://github.com/muesli/duf/archive/refs/tags
-binenv-tools: binenv $(XDG_MAN1_DIR)
+binenv-tools: binenv $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing duf: https://github.com/muesli/duf"
 	binenv install duf
 	@curl -sSL "$(DUF_URL)/v$$(duf -version | cut -d ' ' -f2).tar.gz" \
 		| tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip \
-		> $(XDG_MAN1_DIR)/duf.1.gz
+		> $(XDG_MAN_HOME)/man1/duf.1.gz
 
 # Installation resources:
 #  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
@@ -1027,13 +1033,13 @@ cargo-llvm-cov:
 cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
 cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
 cargo-watch: TARBALL := $(ARCH)-unknown-linux-gnu.tar.xz
-cargo-watch: $(ZSH_COMPLETIONS) $(XDG_MAN1_DIR) net-tools rust
+cargo-watch: $(ZSH_COMPLETIONS) $(XDG_MAN_HOME)/man1 net-tools rust
 	@echo ">>> Installing $@: https://github.com/watchexec/cargo-watch"
 	cargo install $@
 	@echo ">>> Downloading man pages and zsh completions for $$($@ -V)"
 	@curl -sSL "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$$($@ -V | sed 's| |-v|')-$(TARBALL)" | \
 		tar -C $(DOWNLOAD_DIR) -xJf - --strip-components=1 --wildcards */$@.1 */completions/zsh
-	@gzip -c $(DOWNLOAD_DIR)/$@.1 > $(XDG_MAN1_DIR)/$@.1.gz
+	@gzip -c $(DOWNLOAD_DIR)/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
 	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
@@ -1093,12 +1099,12 @@ cargo-tools: \
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
-rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
+rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
 		cargo install --locked --force bat
 	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
-		> $(XDG_MAN1_DIR)/bat.1.gz
+		> $(XDG_MAN_HOME)/man1/bat.1.gz
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
 	cargo install --locked --git https://github.com/matyama/bitcli
@@ -1107,7 +1113,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
 	@pandoc  -s -t man \
 		$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/eza.1.md \
-		| gzip -c > $(XDG_MAN1_DIR)/eza.1.gz
+		| gzip -c > $(XDG_MAN_HOME)/man1/eza.1.gz
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
@@ -1116,7 +1122,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 		$(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/contrib/completion/_fd \
 		$(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/doc/fd.1 \
-		> $(XDG_MAN1_DIR)/fd.1.gz
+		> $(XDG_MAN_HOME)/man1/fd.1.gz
 	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
 	cargo install git-delta
 	@echo ">>> Installing gping: https://github.com/orf/gping"
@@ -1125,19 +1131,19 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	cargo install hexyl
 	@pandoc  -s -f markdown -t man \
 		$(CRATES_SRC)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
-		| gzip -c > $(XDG_MAN1_DIR)/hexyl.1.gz
+		| gzip -c > $(XDG_MAN_HOME)/man1/hexyl.1.gz
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) \
 		cargo install --locked --force hyperfine
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
-		> $(XDG_MAN1_DIR)/hyperfine.1.gz
+		> $(XDG_MAN_HOME)/man1/hyperfine.1.gz
 	@echo ">>> Installing junitify: https://gitlab.com/Kores/junitify"
 	cargo install junitify
 	@echo ">>> Installing just: https://github.com/casey/just"
 	cargo install --locked just
 	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
-	@just --man | gzip -c > $(XDG_MAN1_DIR)/just.1.gz
+	@just --man | gzip -c > $(XDG_MAN_HOME)/man1/just.1.gz
 	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
 	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
@@ -1145,7 +1151,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	@echo ">>> Installing onefetch: https://github.com/o2sh/onefetch"
 	cargo install onefetch
 	@gzip -c $(CRATES_SRC)/$$(onefetch --version | sed 's| |-|g')/docs/onefetch.1 \
-		> $(XDG_MAN1_DIR)/onefetch.1.gz
+		> $(XDG_MAN_HOME)/man1/onefetch.1.gz
 	@echo ">>> Installing procs: https://github.com/dalance/procs"
 	cargo install procs
 	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
@@ -1156,14 +1162,14 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
 	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
-	@rg --generate man | gzip -c > $(XDG_MAN1_DIR)/rg.1.gz
+	@rg --generate man | gzip -c > $(XDG_MAN_HOME)/man1/rg.1.gz
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
 	cargo install --locked samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
 	cargo install sd
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
-		> $(XDG_MAN1_DIR)/sd.1.gz
+		> $(XDG_MAN_HOME)/man1/sd.1.gz
 	@echo ">>> Installing sqlx-cli: https://crates.io/crates/sqlx-cli"
 	cargo install sqlx-cli
 	@sqlx completions zsh > "$(ZSH_COMPLETIONS)/_sqlx"
@@ -1177,11 +1183,11 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	cargo install xh
 	@cp "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" \
-		> $(XDG_MAN1_DIR)/xh.1.gz
+		> $(XDG_MAN_HOME)/man1/xh.1.gz
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
 	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" \
-		> $(XDG_MAN1_DIR)/zoxide.1.gz
+		> $(XDG_MAN_HOME)/man1/zoxide.1.gz
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
@@ -1213,8 +1219,8 @@ alacritty: BASE16_THEME := gruvbox-dark-hard
 alacritty: \
 	$(ALACRITTY_CONFIG_DIR) \
 	$(PIXMAPS_DIR) \
-	$(XDG_MAN1_DIR) \
-	$(XDG_MAN5_DIR) \
+	$(XDG_MAN_HOME)/man1 \
+	$(XDG_MAN_HOME)/man5 \
 	$(ZSH_COMPLETIONS) \
 	net-tools \
 	rust \
@@ -1247,8 +1253,8 @@ endif
 	@sudo desktop-file-install "$(DOWNLOAD_DIR)/Alacritty.desktop"
 	@sudo update-desktop-database
 	@echo ">>> Configuring $@ man pages"
-	@mv "$(DOWNLOAD_DIR)/$@.1.gz" $(XDG_MAN1_DIR)
-	@mv "$(DOWNLOAD_DIR)/$@.5.gz" $(XDG_MAN5_DIR)
+	@mv "$(DOWNLOAD_DIR)/$@.1.gz" $(XDG_MAN_HOME)/man1
+	@mv "$(DOWNLOAD_DIR)/$@.5.gz" $(XDG_MAN_HOME)/man5
 	@echo ">>> Configuring $@ zsh completions"
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Configuring $@ colors theme"
@@ -1358,12 +1364,12 @@ golang: $(GOPATH)
 shfmt: SHFMT_MOD := mvdan.cc/sh
 shfmt: SHFMT_API := v3
 shfmt: SHFMT_TAG := latest
-shfmt: golang $(XDG_MAN1_DIR)
+shfmt: golang $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing $@: https://github.com/mvdan/sh"
 	go install "$(SHFMT_MOD)/$(SHFMT_API)/cmd/$@@$(SHFMT_TAG)"
 	@pandoc -s -t man \
 		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" \
-		| gzip -c > $(XDG_MAN1_DIR)/$@.1.gz
+		| gzip -c > $(XDG_MAN_HOME)/man1/$@.1.gz
 
 # Makefile linter
 #
@@ -1371,12 +1377,12 @@ shfmt: golang $(XDG_MAN1_DIR)
 .PHONY: checkmake
 checkmake: CHECKMAKE_TAG := 0.2.2
 checkmake: DOWNLOAD_URL := https://github.com/mrtazz/checkmake/releases/download
-checkmake: golang $(XDG_MAN1_DIR)
+checkmake: golang $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing $@: https://github.com/mrtazz/checkmake"
 	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
 	@echo ">>> Downloading man pages for $@ $(CHECKMAKE_TAG)"
 	@curl -sSL "$(DOWNLOAD_URL)/$(CHECKMAKE_TAG)/$@.1" \
-		| gzip -c > $(XDG_MAN1_DIR)/$@.1.gz
+		| gzip -c > $(XDG_MAN_HOME)/man1/$@.1.gz
 
 # Fast cross-platform HTTP benchmarking tool
 .PHONY: bombardier
@@ -1649,6 +1655,113 @@ else
 		$(NVIDIA_SETTINGS_DESKTOP)
 	@sudo update-desktop-database
 endif
+
+GNOME_APPS := \
+	evince \
+	nautilus
+
+# Configuration for various GNOME applications
+# https://wiki.archlinux.org/title/GNOME
+.PHONY: gnome
+gnome: $(GNOME_APPS)
+	@echo ">>> Configuring update notifier"
+	@gsettings set com.ubuntu.update-notifier hide-reboot-notification true
+	@gsettings set com.ubuntu.update-notifier show-apport-crashes false
+	@echo ">>> Configuring $@ calculator"
+	@gsettings set org.gnome.calculator accuracy 9
+	@gsettings set org.gnome.calculator angle-units 'radians'
+	@gsettings set org.gnome.calculator base 10
+	@gsettings set org.gnome.calculator button-mode 'advanced'
+	@gsettings set org.gnome.calculator number-format 'automatic'
+	@echo ">>> Configuring $@ calendar"
+	@gsettings set org.gnome.calendar active-view 'week'
+	@gsettings set org.gnome.calendar weather-settings \
+		"(false, false, '', @mv nothing)"
+	@gsettings set org.gnome.calendar week-view-zoom-level 1.0
+	@gsettings set org.gnome.calendar window-maximized true
+	@echo ">>> Configuring $@ desktop interface"
+	@gsettings set org.gnome.desktop.interface clock-format '24h'
+	@gsettings set org.gnome.desktop.interface clock-show-date true
+	@gsettings set org.gnome.desktop.interface clock-show-seconds true
+	@gsettings set org.gnome.desktop.interface clock-show-weekday true
+	@gsettings set org.gnome.desktop.interface show-battery-percentage true
+	@echo ">>> Configuring $@ desktop notifications"
+	@gsettings set org.gnome.desktop.notifications show-in-lock-screen false
+	@echo ">>> Configuring $@ desktop privacy"
+	@gsettings set org.gnome.desktop.privacy old-files-age 2
+	@gsettings set org.gnome.desktop.privacy remove-old-temp-files true
+	@gsettings set org.gnome.desktop.privacy remove-old-trash-files true
+	@gsettings set org.gnome.desktop.privacy report-technical-problems false
+	@gsettings set org.gnome.desktop.privacy send-software-usage-stats false
+	@echo ">>> Configuring $@ shell"
+	@gsettings set org.gnome.shell.ubuntu color-scheme 'default'
+	@echo ">>> Configuring $@ system"
+	@gsettings set org.gnome.system.locale region 'en_GB.UTF-8'
+	@gsettings set org.gnome.system.location enabled false
+
+# XXX: set metadata:envince:xyz on pdf files
+#  — https://unix.stackexchange.com/a/398111
+#
+# Resources:
+#  - List current settings `gsettings list-recursively org.gnome.Evince`
+.PHONY: evince
+evince:
+	@echo ">>> Configuring $@"
+	@gsettings set org.gnome.Evince.Default continuous true
+	@gsettings set org.gnome.Evince.Default dual-page false
+	@gsettings set org.gnome.Evince.Default dual-page-odd-left false
+	@gsettings set org.gnome.Evince.Default inverted-colors false
+	@gsettings set org.gnome.Evince.Default show-sidebar true
+	@gsettings set org.gnome.Evince.Default sidebar-page 'links'
+	@gsettings set org.gnome.Evince.Default sidebar-size 216
+	@gsettings set org.gnome.Evince.Default sizing-mode 'automatic'
+	@gsettings set org.gnome.Evince.Default window-ratio "(2.0, 1.0)"
+	@gsettings set org.gnome.Evince.Default zoom 1.0
+
+# XXX: load in bulk from an .ini file (persisted in this repo)
+# - dconf dump /org/gnome/nautilus/ > nautilus.ini
+# - dconf load /org/gnome/nautilus/ < nautilus.ini
+# - possible issue: dconf ignores schema, so it's blind to defaults
+#
+# TODO: custom script to add metadata:evince to .pdf files
+#  - https://wiki.archlinux.org/title/GNOME/Files
+#
+# Resources:
+#  - https://wiki.archlinux.org/title/GNOME/Files
+#  - List current settings: `gsettings list-recursively org.gnome.nautilus`
+PHONY: nautilus
+nautilus: $(XDG_CONFIG_HOME)/gtk-3.0/bookmarks
+	@echo ">>> Configuring $@"
+	@gsettings set org.gnome.nautilus.compression \
+		default-compression-format 'zip'
+	@gsettings set org.gnome.nautilus.icon-view default-zoom-level 'small'
+	@gsettings set org.gnome.nautilus.list-view default-visible-columns \
+		"['name', 'size', 'type', 'owner', 'permissions', 'date_modified']"
+	@gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
+	@gsettings set org.gnome.nautilus.list-view use-tree-view false
+	@gsettings set org.gnome.nautilus.preferences click-policy 'double'
+	@gsettings set org.gnome.nautilus.preferences date-time-format 'simple'
+	@gsettings set org.gnome.nautilus.preferences \
+		default-folder-viewer 'list-view'
+	@gsettings set org.gnome.nautilus.preferences \
+		default-sort-in-reverse-order false
+	@gsettings set org.gnome.nautilus.preferences default-sort-order 'name'
+	@gsettings set org.gnome.nautilus.preferences recursive-search 'local-only'
+	@gsettings set org.gnome.nautilus.preferences \
+		search-filter-time-type 'last_modified'
+	@gsettings set org.gnome.nautilus.preferences show-delete-permanently false
+	@gsettings set org.gnome.nautilus.preferences \
+		show-directory-item-counts 'local-only'
+	@gsettings set org.gnome.nautilus.preferences show-image-thumbnails 'never'
+
+.PHONY: $(XDG_CONFIG_HOME)/gtk-3.0/bookmarks
+$(XDG_CONFIG_HOME)/gtk-3.0/bookmarks: \
+	$(XDG_CONFIG_HOME)/gtk-3.0 $(XDG_DEV_HOME) $(XDG_TMP_HOME)
+	@echo ">>> Configuring '$@'"
+	@grep -qxF "file://$(XDG_DEV_HOME)" $@ \
+		|| echo "file://$(XDG_DEV_HOME)" >> $@
+	@grep -qxF "file://$(XDG_TMP_HOME)" $@ \
+		|| echo "file://$(XDG_TMP_HOME)" >> $@
 
 # Resources:
 #  - https://bitwarden.com/download/
