@@ -418,6 +418,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - lldb-15: High-performance debugger (https://lldb.llvm.org)
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
+#  - tesseract-ocr: Tesseract Open Source OCR Engine
+#    (https://github.com/tesseract-ocr/tesseract)
 #  - tshark: Terminal version of wireshark
 #  - musl-tools: tools for cross-compilation to musl target
 #  - capnproto, libcapnp-dev: Cap'N Proto compiler tools (https://capnproto.org)
@@ -457,6 +459,8 @@ basic-tools: \
 		tlp \
 		dos2unix \
 		pandoc \
+		tesseract-ocr \
+		tesseract-ocr-eng \
 		direnv \
 		graphviz \
 		libzstd-dev \
