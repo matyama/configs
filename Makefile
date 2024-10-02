@@ -75,8 +75,9 @@ LIBVIRT_DEFAULT_URI ?= ""
 APT_KEYRINGS := /etc/apt/keyrings
 FONTS_DIR := $(XDG_DATA_HOME)/fonts
 KEYRINGS_DIR := /usr/share/keyrings
-MAN1_DIR := /usr/local/share/man/man1
 PIXMAPS_DIR := /usr/share/pixmaps
+XDG_MAN1_DIR := $(XDG_DATA_HOME)/man/man1
+XDG_MAN5_DIR := $(XDG_DATA_HOME)/man/man5
 ZSH_COMPLETIONS := $(ZSH)/completions
 
 # Ensure necessary paths exist
@@ -123,10 +124,12 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
+	$(XDG_MAN1_DIR) \
+	$(XDG_MAN5_DIR) \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
-$(APT_KEYRINGS) $(KEYRINGS_DIR) $(MAN1_DIR) $(PIXMAPS_DIR):
+$(APT_KEYRINGS) $(KEYRINGS_DIR) $(PIXMAPS_DIR):
 	sudo mkdir -p $@
 
 $(CABAL_CONFIG):
@@ -310,7 +313,7 @@ python3.6 python3.7 python3.8 python3.9 python3.10 python3.11: python
 #  - Note: `zoxide`'s interactive mode requires fzf at least v0.21.0
 .PHONY: fzf
 fzf: FZF_REPO := https://github.com/junegunn/fzf.git
-fzf: core-utils $(XDG_BIN_HOME) $(MAN1_DIR)
+fzf: core-utils $(XDG_BIN_HOME) $(XDG_MAN1_DIR)
 ifneq ($(shell which fzf 2> /dev/null),)
 	@echo ">>> Updating $@"
 	git -C $(FZF_BASE) pull
@@ -319,10 +322,8 @@ else
 	git clone --depth 1 $(FZF_REPO) $(FZF_BASE)
 endif
 	$(FZF_BASE)/install --bin --no-update-rc
-	@gzip -c $(FZF_BASE)/man/man1/fzf.1 | \
-		sudo tee $(MAN1_DIR)/fzf.1.gz > /dev/null
-	@gzip -c $(FZF_BASE)/man/man1/fzf-tmux.1 | \
-		sudo tee $(MAN1_DIR)/fzf-tmux.1.gz > /dev/null
+	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN1_DIR)/$@.1.gz
+	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN1_DIR)/$@-tmux.1.gz
 
 # skim: Fuzzy Finder in rust!
 #  - https://github.com/lotabout/skim
@@ -330,7 +331,7 @@ endif
 .PHONY: skim
 skim: SKIM_REPO := https://github.com/lotabout/skim.git
 skim: SKIM_TAG := v0.10.4
-skim: core-utils rust zsh $(XDG_BIN_HOME) $(ZSH_COMPLETIONS) $(MAN1_DIR)
+skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN1_DIR) $(ZSH_COMPLETIONS)
 ifneq ($(shell which sk 2> /dev/null),)
 	@echo ">>> Updating $@"
 	git -C $(SKIM_BASE) pull
@@ -338,16 +339,14 @@ else
 	@echo ">>> Installing $@ to '$(SKIM_BASE)'"
 	git clone --depth 1 --branch $(SKIM_TAG) $(SKIM_REPO) $(SKIM_BASE)
 endif
-	cd $(SKIM_BASE) && cargo build --release
+	cargo build --release --locked --manifest-path "$(SKIM_BASE)/Cargo.toml"
 	@cp $(CARGO_TARGET_DIR)/release/sk $(XDG_BIN_HOME)
 	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
 	@ln -svf \
 		$(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
 	@ln -svf $(SKIM_BASE)/bin/sk-tmux $(XDG_BIN_HOME)/sk-tmux
-	@gzip -c $(SKIM_BASE)/man/man1/sk.1 | \
-		sudo tee $(MAN1_DIR)/sk.1.gz > /dev/null
-	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 | \
-		sudo tee $(MAN1_DIR)/sk-tmux.1.gz > /dev/null
+	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN1_DIR)/sk.1.gz
+	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN1_DIR)/sk-tmux.1.gz
 
 .PHONY: forgit
 forgit: FORGIT_REPO := https://github.com/wfxr/forgit.git
@@ -715,12 +714,12 @@ endif
 #    (https://github.com/muesli/duf)
 .PHONY: binenv-tools
 binenv-tools: DUF_URL := https://github.com/muesli/duf/archive/refs/tags
-binenv-tools: binenv $(MAN1_DIR)
+binenv-tools: binenv $(XDG_MAN1_DIR)
 	@echo ">>> Installing duf: https://github.com/muesli/duf"
 	binenv install duf
-	@curl -sSL "$(DUF_URL)/v$$(duf -version | cut -d ' ' -f2).tar.gz" | \
-		tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip | \
-		sudo tee $(MAN1_DIR)/duf.1.gz > /dev/null
+	@curl -sSL "$(DUF_URL)/v$$(duf -version | cut -d ' ' -f2).tar.gz" \
+		| tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip \
+		> $(XDG_MAN1_DIR)/duf.1.gz
 
 # Installation resources:
 #  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
@@ -1024,13 +1023,13 @@ cargo-llvm-cov:
 cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
 cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
 cargo-watch: TARBALL := $(ARCH)-unknown-linux-gnu.tar.xz
-cargo-watch: $(ZSH_COMPLETIONS) $(MAN1_DIR) net-tools rust
+cargo-watch: $(ZSH_COMPLETIONS) $(XDG_MAN1_DIR) net-tools rust
 	@echo ">>> Installing $@: https://github.com/watchexec/cargo-watch"
 	cargo install $@
 	@echo ">>> Downloading man pages and zsh completions for $$($@ -V)"
 	@curl -sSL "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$$($@ -V | sed 's| |-v|')-$(TARBALL)" | \
 		tar -C $(DOWNLOAD_DIR) -xJf - --strip-components=1 --wildcards */$@.1 */completions/zsh
-	@gzip -c $(DOWNLOAD_DIR)/$@.1 | sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
+	@gzip -c $(DOWNLOAD_DIR)/$@.1 > $(XDG_MAN1_DIR)/$@.1.gz
 	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
@@ -1090,12 +1089,12 @@ cargo-tools: \
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
-rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
+rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN1_DIR)
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
 		cargo install --locked --force bat
 	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
-		| sudo tee $(MAN1_DIR)/bat.1.gz > /dev/null
+		> $(XDG_MAN1_DIR)/bat.1.gz
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
 	cargo install --locked --git https://github.com/matyama/bitcli
@@ -1104,8 +1103,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
 	@pandoc  -s -t man \
 		$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/eza.1.md \
-		| gzip -c \
-		| sudo tee $(MAN1_DIR)/eza.1.gz > /dev/null
+		| gzip -c > $(XDG_MAN1_DIR)/eza.1.gz
 	@echo ">>> Installing dust: https://github.com/bootandy/dust"
 	cargo install du-dust
 	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
@@ -1114,7 +1112,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 		$(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/contrib/completion/_fd \
 		$(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/doc/fd.1 \
-		| sudo tee $(MAN1_DIR)/fd.1.gz > /dev/null
+		> $(XDG_MAN1_DIR)/fd.1.gz
 	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
 	cargo install git-delta
 	@echo ">>> Installing gping: https://github.com/orf/gping"
@@ -1123,21 +1121,19 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	cargo install hexyl
 	@pandoc  -s -f markdown -t man \
 		$(CRATES_SRC)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
-		| gzip -c \
-		| sudo tee $(MAN1_DIR)/hexyl.1.gz > /dev/null
+		| gzip -c > $(XDG_MAN1_DIR)/hexyl.1.gz
 	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
 	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) \
 		cargo install --locked --force hyperfine
 	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
 	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
-		| sudo tee $(MAN1_DIR)/hyperfine.1.gz > /dev/null
+		> $(XDG_MAN1_DIR)/hyperfine.1.gz
 	@echo ">>> Installing junitify: https://gitlab.com/Kores/junitify"
 	cargo install junitify
 	@echo ">>> Installing just: https://github.com/casey/just"
-	cargo install just
+	cargo install --locked just
 	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
-	@gzip -c "$(CRATES_SRC)/$$(just --version | sed 's| |-|g')/man/just.1" | \
-		sudo tee $(MAN1_DIR)/just.1.gz > /dev/null
+	@just --man | gzip -c > $(XDG_MAN1_DIR)/just.1.gz
 	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
 	cargo install mcfly
 	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
@@ -1145,7 +1141,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing onefetch: https://github.com/o2sh/onefetch"
 	cargo install onefetch
 	@gzip -c $(CRATES_SRC)/$$(onefetch --version | sed 's| |-|g')/docs/onefetch.1 \
-		| sudo tee $(MAN1_DIR)/onefetch.1.gz > /dev/null
+		> $(XDG_MAN1_DIR)/onefetch.1.gz
 	@echo ">>> Installing procs: https://github.com/dalance/procs"
 	cargo install procs
 	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
@@ -1156,14 +1152,14 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
 	cargo install ripgrep
 	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
-	@rg --generate man | gzip -c | sudo tee $(MAN1_DIR)/rg.1.gz > /dev/null
+	@rg --generate man | gzip -c > $(XDG_MAN1_DIR)/rg.1.gz
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
 	cargo install --locked samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
 	cargo install sd
 	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
-		| sudo tee $(MAN1_DIR)/sd.1.gz > /dev/null
+		> $(XDG_MAN1_DIR)/sd.1.gz
 	@echo ">>> Installing sqlx-cli: https://crates.io/crates/sqlx-cli"
 	cargo install sqlx-cli
 	@sqlx completions zsh > "$(ZSH_COMPLETIONS)/_sqlx"
@@ -1176,12 +1172,12 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(MAN1_DIR)
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
 	cargo install xh
 	@cp "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" | \
-		sudo tee $(MAN1_DIR)/xh.1.gz > /dev/null
+	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" \
+		> $(XDG_MAN1_DIR)/xh.1.gz
 	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
 	cargo install zoxide --locked
-	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" | \
-		sudo tee $(MAN1_DIR)/zoxide.1.gz > /dev/null
+	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" \
+		> $(XDG_MAN1_DIR)/zoxide.1.gz
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
@@ -1204,14 +1200,17 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 #  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
 # TODO: run alacritty on GPU (e.g., using `switcherooctl launch <CMD>`)
 #  - https://github.com/alacritty/alacritty/issues/3587
+# FIXME: install icons locally instead of using /usr/pixmaps
+#  - https://unix.stackexchange.com/q/404955
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
 alacritty: BASE16_THEME := gruvbox-dark-hard
 alacritty: \
 	$(ALACRITTY_CONFIG_DIR) \
-	$(MAN1_DIR) \
 	$(PIXMAPS_DIR) \
+	$(XDG_MAN1_DIR) \
+	$(XDG_MAN5_DIR) \
 	$(ZSH_COMPLETIONS) \
 	net-tools \
 	rust \
@@ -1236,7 +1235,7 @@ endif
 	@cargo install $@
 	@echo ">>> Fetching release assets for $$($@ -V)"
 	@curl -sLO --output-dir $(DOWNLOAD_DIR) \
-		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
+		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,$@.5.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
 	@echo ">>> Configuring $@ terminfo"
 	@sudo tic -xe $@,$@-direct "$(DOWNLOAD_DIR)/$@.info"
 	@echo ">>> Configuring $@ desktop entry"
@@ -1244,7 +1243,8 @@ endif
 	@sudo desktop-file-install "$(DOWNLOAD_DIR)/Alacritty.desktop"
 	@sudo update-desktop-database
 	@echo ">>> Configuring $@ man pages"
-	@sudo mv "$(DOWNLOAD_DIR)/$@.1.gz" $(MAN1_DIR)
+	@mv "$(DOWNLOAD_DIR)/$@.1.gz" $(XDG_MAN1_DIR)
+	@mv "$(DOWNLOAD_DIR)/$@.5.gz" $(XDG_MAN5_DIR)
 	@echo ">>> Configuring $@ zsh completions"
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Configuring $@ colors theme"
@@ -1354,13 +1354,12 @@ golang: $(GOPATH)
 shfmt: SHFMT_MOD := mvdan.cc/sh
 shfmt: SHFMT_API := v3
 shfmt: SHFMT_TAG := latest
-shfmt: golang $(MAN1_DIR)
+shfmt: golang $(XDG_MAN1_DIR)
 	@echo ">>> Installing $@: https://github.com/mvdan/sh"
 	go install "$(SHFMT_MOD)/$(SHFMT_API)/cmd/$@@$(SHFMT_TAG)"
 	@pandoc -s -t man \
-		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" | \
-		gzip -c | \
-		sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
+		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" \
+		| gzip -c > $(XDG_MAN1_DIR)/$@.1.gz
 
 # Makefile linter
 #
@@ -1368,13 +1367,12 @@ shfmt: golang $(MAN1_DIR)
 .PHONY: checkmake
 checkmake: CHECKMAKE_TAG := 0.2.2
 checkmake: DOWNLOAD_URL := https://github.com/mrtazz/checkmake/releases/download
-checkmake: golang $(MAN1_DIR)
+checkmake: golang $(XDG_MAN1_DIR)
 	@echo ">>> Installing $@: https://github.com/mrtazz/checkmake"
 	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
 	@echo ">>> Downloading man pages for $@ $(CHECKMAKE_TAG)"
 	@curl -sSL "$(DOWNLOAD_URL)/$(CHECKMAKE_TAG)/$@.1" \
-		| gzip -c \
-		| sudo tee $(MAN1_DIR)/$@.1.gz > /dev/null
+		| gzip -c > $(XDG_MAN1_DIR)/$@.1.gz
 
 # Fast cross-platform HTTP benchmarking tool
 .PHONY: bombardier
