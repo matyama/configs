@@ -11,8 +11,10 @@ XDG_DATA_HOME ?= $(HOME)/.local/share
 XDG_STATE_HOME ?= $(HOME)/.local/state
 
 # Extended XDG Base Directory Specification
+XDG_APPS_HOME := $(XDG_DATA_HOME)/applications
 XDG_DEV_HOME ?= $(HOME)/.local/dev
 XDG_FONTS_HOME := $(XDG_DATA_HOME)/fonts
+XDG_ICONS_HOME := $(XDG_DATA_HOME)/icons
 XDG_MAN_HOME := $(XDG_DATA_HOME)/man
 XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
 
@@ -80,8 +82,7 @@ DEBIAN_ISO := debian-12.7.0-$(DIST_ARCH)-netinst.iso
 LIBVIRT_DEFAULT_URI ?= ""
 
 APT_KEYRINGS := /etc/apt/keyrings
-KEYRINGS_DIR := /usr/share/keyrings
-PIXMAPS_DIR := /usr/share/pixmaps
+USR_KEYRINGS := /usr/share/keyrings
 
 # Ensure necessary paths exist
 $(ALACRITTY_CONFIG_DIR) \
@@ -127,15 +128,17 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
+	$(XDG_APPS_HOME) \
 	$(XDG_DEV_HOME) \
 	$(XDG_FONTS_HOME) \
+	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
 	$(XDG_TMP_HOME) \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
-$(APT_KEYRINGS) $(KEYRINGS_DIR) $(PIXMAPS_DIR):
+$(APT_KEYRINGS) $(USR_KEYRINGS):
 	sudo mkdir -p $@
 
 $(CABAL_CONFIG):
@@ -1207,18 +1210,17 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
 
 # Resources:
-#  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md#dependencies
+#  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md
 # TODO: run alacritty on GPU (e.g., using `switcherooctl launch <CMD>`)
 #  - https://github.com/alacritty/alacritty/issues/3587
-# FIXME: install icons locally instead of using /usr/pixmaps
-#  - https://unix.stackexchange.com/q/404955
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
 alacritty: BASE16_THEME := gruvbox-dark-hard
 alacritty: \
 	$(ALACRITTY_CONFIG_DIR) \
-	$(PIXMAPS_DIR) \
+	$(XDG_APPS_HOME) \
+	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
 	$(ZSH_COMPLETIONS) \
@@ -1245,16 +1247,16 @@ endif
 	@cargo install $@
 	@echo ">>> Fetching release assets for $$($@ -V)"
 	@curl -sLO --output-dir $(DOWNLOAD_DIR) \
-		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,$@.5.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
+		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,$@-msg.1.gz,$@.5.gz,$@-bindings.5.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
 	@echo ">>> Configuring $@ terminfo"
 	@sudo tic -xe $@,$@-direct "$(DOWNLOAD_DIR)/$@.info"
 	@echo ">>> Configuring $@ desktop entry"
-	@sudo mv "$(DOWNLOAD_DIR)/Alacritty.svg" $(PIXMAPS_DIR)
-	@sudo desktop-file-install "$(DOWNLOAD_DIR)/Alacritty.desktop"
-	@sudo update-desktop-database
+	@mv "$(DOWNLOAD_DIR)/Alacritty.svg" $(XDG_ICONS_HOME)/hicolor/scalable/apps
+	@desktop-file-install --dir $(XDG_APPS_HOME) --rebuild-mime-info-cache \
+		"$(DOWNLOAD_DIR)/Alacritty.desktop"
 	@echo ">>> Configuring $@ man pages"
-	@mv "$(DOWNLOAD_DIR)/$@.1.gz" $(XDG_MAN_HOME)/man1
-	@mv "$(DOWNLOAD_DIR)/$@.5.gz" $(XDG_MAN_HOME)/man5
+	@mv "$(DOWNLOAD_DIR)/$@"*.1.gz $(XDG_MAN_HOME)/man1
+	@mv "$(DOWNLOAD_DIR)/$@"*.5.gz $(XDG_MAN_HOME)/man5
 	@echo ">>> Configuring $@ zsh completions"
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Configuring $@ colors theme"
@@ -1404,8 +1406,8 @@ grpcurl: golang
 #  - Note: `docker-compose` is now a sub-command `docker compose`
 .PHONY: docker
 docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
-docker: DOCKER_GPG := $(KEYRINGS_DIR)/docker-archive-keyring.gpg
-docker: core-utils apt-utils $(KEYRINGS_DIR)
+docker: DOCKER_GPG := $(USR_KEYRINGS)/docker-archive-keyring.gpg
+docker: core-utils apt-utils $(USR_KEYRINGS)
 	@echo ">>> Installing Docker: https://docs.docker.com/engine/install/ubuntu/"
 	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' and configuring apt sources"
 	curl -fsSL $(DOCKER_URL)/gpg | gpg --dearmor | sudo tee $(DOCKER_GPG) > /dev/null
@@ -1447,9 +1449,9 @@ endif
 .PHONY: nvidia-docker
 nvidia-docker: NVIDIA_DOCKER_PKG := nvidia-docker2
 nvidia-docker: NVIDIA_DOCKER_URL := https://nvidia.github.io/nvidia-docker
-nvidia-docker: NVIDIA_DOCKER_GPG := $(KEYRINGS_DIR)/nvidia-docker-archive-keyring.gpg
+nvidia-docker: NVIDIA_DOCKER_GPG := $(USR_KEYRINGS)/nvidia-docker-archive-keyring.gpg
 nvidia-docker: DOCKERD_CFG := /etc/docker/daemon.json
-nvidia-docker: core-utils net-tools apt-utils $(KEYRINGS_DIR)
+nvidia-docker: core-utils net-tools apt-utils $(USR_KEYRINGS)
 ifdef NVIDIA_CTRL
 	@echo ">>> Installing NVIDIA Docker"
 	@echo ">>> Downloading GPG key as '$(NVIDIA_DOCKER_GPG)' and configuring apt sources"
@@ -1502,8 +1504,8 @@ endif
 #  - https://github.com/cli/cli/blob/trunk/docs/install_linux.md
 .PHONY: gh
 gh: GH_URL := https://cli.github.com/packages
-gh: GH_GPG := $(KEYRINGS_DIR)/githubcli-archive-keyring.gpg
-gh: zsh $(KEYRINGS_DIR)
+gh: GH_GPG := $(USR_KEYRINGS)/githubcli-archive-keyring.gpg
+gh: zsh $(USR_KEYRINGS)
 ifneq ($(shell which gh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
@@ -1784,8 +1786,8 @@ endif
 .PHONY: keybase
 keybase: KEYBASE_URI := https://prerelease.keybase.io/keybase_$(DIST_ARCH).deb
 keybase: KEYBASE_PKG := $(shell mktemp)
-keybase: KEYBASE_GPG := $(KEYRINGS_DIR)/keybase-keyring.gpg
-keybase: net-tools $(KEYRINGS_DIR)
+keybase: KEYBASE_GPG := $(USR_KEYRINGS)/keybase-keyring.gpg
+keybase: net-tools $(USR_KEYRINGS)
 ifneq ($(shell which keybase 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed"
 else
