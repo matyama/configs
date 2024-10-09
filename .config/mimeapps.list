@@ -1,0 +1,32 @@
+[Default Applications]
+audio/x-vorbis+ogg=org.gnome.Rhythmbox3.desktop
+audio/vorbis=org.gnome.Rhythmbox3.desktop
+audio/x-vorbis=org.gnome.Rhythmbox3.desktop
+audio/x-scpls=org.gnome.Rhythmbox3.desktop
+audio/x-mp3=org.gnome.Rhythmbox3.desktop
+audio/x-mpeg=org.gnome.Rhythmbox3.desktop
+audio/mpeg=org.gnome.Rhythmbox3.desktop
+audio/x-mpegurl=org.gnome.Rhythmbox3.desktop
+audio/x-flac=org.gnome.Rhythmbox3.desktop
+audio/mp4=org.gnome.Rhythmbox3.desktop
+audio/x-it=org.gnome.Rhythmbox3.desktop
+audio/x-mod=org.gnome.Rhythmbox3.desktop
+audio/x-s3m=org.gnome.Rhythmbox3.desktop
+audio/x-stm=org.gnome.Rhythmbox3.desktop
+audio/x-xm=org.gnome.Rhythmbox3.desktop
+
+[Added Associations]
+audio/vorbis=org.gnome.Rhythmbox3.desktop;
+audio/x-vorbis=org.gnome.Rhythmbox3.desktop;
+audio/x-scpls=org.gnome.Rhythmbox3.desktop;
+audio/x-mp3=org.gnome.Rhythmbox3.desktop;
+audio/x-mpeg=org.gnome.Rhythmbox3.desktop;
+audio/mpeg=org.gnome.Rhythmbox3.desktop;
+audio/x-mpegurl=org.gnome.Rhythmbox3.desktop;
+audio/x-flac=org.gnome.Rhythmbox3.desktop;
+audio/mp4=org.gnome.Rhythmbox3.desktop;
+audio/x-it=org.gnome.Rhythmbox3.desktop;
+audio/x-mod=org.gnome.Rhythmbox3.desktop;
+audio/x-s3m=org.gnome.Rhythmbox3.desktop;
+audio/x-stm=org.gnome.Rhythmbox3.desktop;
+audio/x-xm=org.gnome.Rhythmbox3.desktop;
