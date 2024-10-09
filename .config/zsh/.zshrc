@@ -107,13 +107,14 @@ fi
 
 # History management
 #  - https://stackoverflow.com/a/38549502
+#  - https://stackoverflow.com/a/19454838
 #  - https://unix.stackexchange.com/a/273863
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 export HISTCONTROL=ignoreboth
 export HISTSIZE=5000
-export SAVEHIST="${HISTSIZE}"
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
-export HISTFILESIZE=10000
+export HISTFILE="${XDG_STATE_HOME}/zsh/history"
+export HISTFILESIZE=50000
+export SAVEHIST="${HISTFILESIZE}"
 export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
 export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
 
