@@ -1183,7 +1183,7 @@ rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	cargo install --locked tokio-console
 	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
 	@echo ">>> Installing xh: https://github.com/ducaale/xh"
-	cargo install xh
+	cargo install --locked xh
 	@cp "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
 	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" \
 		> $(XDG_MAN_HOME)/man1/xh.1.gz
