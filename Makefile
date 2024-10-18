@@ -1,7 +1,14 @@
+.DEFAULT_GOAL := all
+
 # Absolute path to the directory containing this Makefile
 #  - This path remains the same even when invoked with 'make -f ...'
 #  - [source](https://stackoverflow.com/a/23324703)
 CFG_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# Local analogues to XDG directories
+CFG_CONFIG_HOME ?= $(CFG_DIR)/.config
+CFG_BIN_HOME ?= $(CFG_DIR)/.local/bin
+CFG_DATA_HOME ?= $(CFG_DIR)/.local/share
 
 # Make sure XDG is set: https://wiki.archlinux.org/title/XDG_Base_Directory
 XDG_CACHE_HOME ?= $(HOME)/.cache
@@ -35,13 +42,10 @@ SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-fzf
 BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
-
-ALACRITTY_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/alacritty
-TINTED_ALACRITTY_DIR ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
+BASE16_ALACRITTY_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
-FD_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/fd
 RIPGREP_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/rg
 
 CARGO_HOME ?= $(XDG_DATA_HOME)/cargo
@@ -84,32 +88,58 @@ LIBVIRT_DEFAULT_URI ?= ""
 APT_KEYRINGS := /etc/apt/keyrings
 USR_KEYRINGS := /usr/share/keyrings
 
-# Ensure necessary paths exist
-$(ALACRITTY_CONFIG_DIR) \
-	$(BAT_CONFIG_DIR)/themes \
-	$(BYOBU_CONFIG_DIR) \
-	$(CARGO_HOME) \
-	$(CARGO_ARTIFACTS_DIR) \
-	$(FD_CONFIG_HOME) \
-	$(GOPATH) \
-	$(RIPGREP_CONFIG_HOME) \
+# TODO: run initial installation or ensure the upgrade script can do so
+.PHONY: all
+all:
+ifeq ($(shell test -x $(XDG_BIN_HOME)/upgrade && echo -n yes 2> /dev/null),yes)
+	$(XDG_BIN_HOME)/upgrade
+else
+	$(CFG_BIN_HOME)/upgrade
+endif
+
+# Remove unused applications from the distribution and cleanup HOME
+.PHONY: clean
+clean: thunderbird
+	sudo apt autoremove --purge -y
+	sudo apt autoclean
+	@echo ">>> Purging dot files that are disallowed in HOME's root"
+	@rm -f $(BANNED_HOME_DOT_FILES)
+
+.PHONY: thunderbird
+thunderbird:
+	@echo ">>> Uninstalling $@"
+	sudo snap remove $@
+
+# Don't pollute HOME with dot files: applications should either respect XDG
+# specification or be configured to do so.
+BANNED_HOME_DOT_FILES := \
+	$(HOME)/.apport-ignore.xml \
+	$(HOME)/.bashrc \
+	$(HOME)/.bash_history \
+	$(HOME)/.bash_logout \
+	$(HOME)/.lesshst \
+	$(HOME)/.zsh_history
+
+# TODO: add other tests
+.PHONY: test
+test: test-docker
+
+CACHE_DIRS := \
 	$(CABAL_DIR) \
-	$(STACK_ROOT) \
-	$(ZDOTDIR) \
-	$(ZSH_COMPLETIONS) \
-	$(ZSH_CUSTOM) \
-	$(ZSH_CUSTOM)/plugins/forgit \
-	$(ZSH_CUSTOM)/plugins/poetry \
-	$(ZSH_CUSTOM)/plugins/tinted-shell \
-	$(ZSH_CUSTOM)/plugins/zsh-virsh \
-	$(XDG_BIN_HOME) \
+	$(CARGO_ARTIFACTS_DIR) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts \
-	$(XDG_CACHE_HOME)/zsh \
+	$(XDG_CACHE_HOME)/zsh
+
+CONFIG_DIRS := \
+	$(BYOBU_CONFIG_DIR) \
+	$(RIPGREP_CONFIG_HOME) \
+	$(XDG_CONFIG_HOME)/alacritty \
 	$(XDG_CONFIG_HOME)/bash \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
+	$(XDG_CONFIG_HOME)/fd \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/gtk-3.0 \
 	$(XDG_CONFIG_HOME)/maven \
@@ -124,10 +154,24 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/vim \
 	$(XDG_CONFIG_HOME)/zed \
+	$(ZDOTDIR)
+
+DATA_DIRS := \
+	$(CARGO_HOME) \
+	$(STACK_ROOT) \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
+	$(ZSH_CUSTOM)/plugins/forgit \
+	$(ZSH_CUSTOM)/plugins/poetry \
+	$(ZSH_CUSTOM)/plugins/tinted-shell \
+	$(ZSH_CUSTOM)/plugins/zsh-virsh
+
+# Ensure necessary paths exist
+$(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
+	$(GOPATH) \
+	$(XDG_BIN_HOME) \
 	$(XDG_APPS_HOME) \
 	$(XDG_DEV_HOME) \
 	$(XDG_FONTS_HOME) \
@@ -135,7 +179,8 @@ $(ALACRITTY_CONFIG_DIR) \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
 	$(XDG_TMP_HOME) \
-	$(XDG_STATE_HOME)/sqlite3:
+	$(XDG_STATE_HOME)/sqlite3 \
+	$(ZSH_COMPLETIONS):
 	mkdir -p $@
 
 $(APT_KEYRINGS) $(USR_KEYRINGS):
@@ -207,48 +252,34 @@ endif
 #    issues a warning if it's not created (by pre-commit)
 .PHONY: links
 links: \
-	$(ALACRITTY_CONFIG_DIR) \
-	$(BYOBU_CONFIG_DIR) \
-	$(CARGO_HOME) \
-	$(FD_CONFIG_HOME) \
-	$(RIPGREP_CONFIG_HOME) \
-	$(STACK_ROOT) \
+	$(CONFIG_DIRS) \
+	$(DATA_DIRS) \
 	$(XDG_BIN_HOME) \
-	$(XDG_CONFIG_HOME)/bash \
-	$(XDG_CONFIG_HOME)/bitcli \
-	$(XDG_CONFIG_HOME)/direnv \
-	$(XDG_CONFIG_HOME)/environment.d \
-	$(XDG_CONFIG_HOME)/git \
-	$(XDG_CONFIG_HOME)/maven \
-	$(XDG_CONFIG_HOME)/newsboat \
-	$(XDG_CONFIG_HOME)/npm \
-	$(XDG_CONFIG_HOME)/nvim/lua \
-	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
-	$(XDG_CONFIG_HOME)/pypoetry \
-	$(XDG_CONFIG_HOME)/python \
-	$(XDG_CONFIG_HOME)/tealdeer \
-	$(XDG_CONFIG_HOME)/vim \
-	$(XDG_CONFIG_HOME)/zed \
-	$(XDG_DATA_HOME)/git-core/templates \
-	$(ZDOTDIR) \
-	$(ZSH_CUSTOM) \
-	$(ZSH_CUSTOM)/plugins/zsh-virsh
-	@echo "Linking configuration files:"
+	/usr/local/bin/resolvconf \
+	/usr/bin/musl-g++ \
+	/usr/bin/lldb-vscode
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.config $(CFG_DIR)/.local/share -type f); do \
+		for cfg in $$(find $(CFG_CONFIG_HOME) $(CFG_DATA_HOME) -type f); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
-	@ln -svft $(XDG_BIN_HOME) $(CFG_DIR)/.local/bin/*
+	@ln -svft $(XDG_BIN_HOME) $(CFG_BIN_HOME)/*
 	@echo "Refreshing systemd user environment (note: requires session restart)"
 	@systemctl daemon-reload --user
-	@echo "Making 'resolvectl' act as 'resolvconf': https://superuser.com/a/1544697"
-	@sudo ln -svf /usr/bin/resolvectl /usr/local/bin/resolvconf
-	@echo "Making 'g++' act as 'musl-g++': https://github.com/rust-lang/cargo/issues/3359"
-	@sudo ln -svf /usr/bin/g++ /usr/bin/musl-g++
-	@echo "Making 'lldb-vscode' point to 'lldb-vscode-15'"
-	@sudo ln -svf /usr/bin/lldb-vscode-15 /usr/bin/lldb-vscode
-	@echo "Finish Poetry setup by manually configuring auth tokens: https://bit.ly/3fdpMNR"
+
+# https://superuser.com/a/1544697
+.PHONY: /usr/local/bin/resolvconf
+/usr/local/bin/resolvconf:
+	@sudo ln -svf /usr/bin/resolvectl $@
+
+# https://github.com/rust-lang/cargo/issues/3359
+.PHONY: /usr/bin/musl-g++
+/usr/bin/musl-g++:
+	@sudo ln -svf /usr/bin/g++ $@
+
+.PHONY: /usr/bin/lldb-vscode
+/usr/bin/lldb-vscode:
+	@sudo ln -svf /usr/bin/lldb-vscode-15 $@
 
 # Kernel version locked tools (such as `perf` and `x86_energy_perf_policy`)
 .PHONY: linux-tools
@@ -498,15 +529,22 @@ basic-tools: \
 #  - cgroup GRUB fix: https://unix.stackexchange.com/a/727328
 #  - The other WARN should be fine: https://stackoverflow.com/q/65207563
 .PHONY: kvm
-ifdef INTEL_CPU
-kvm: CPU_MODEL := intel
-else
-kvm: CPU_MODEL := amd
-endif
-kvm: GRUB_CMDLINE_LINUX_DEFAULT := "quiet splash $(CPU_MODEL)_iommu=on systemd.unified_cgroup_hierarchy=0"
-kvm: ARCH_FAMILY := $(shell arch | cut -d_ -f1)
 kvm: core-utils
 	@[ "$$(kvm-ok | grep exists)" ] || (kvm-ok && return 1)
+	@make -C $(CFG_DIR) kvm-pkgs kvm-group
+	sudo systemctl enable libvirtd
+	sudo systemctl restart libvirtd
+	@echo ">>> Finish by system reboot for the changes to take effect"
+
+.PHONY: kvm-pkgs
+ifdef INTEL_CPU
+kvm-pkgs: CPU_MODEL := intel
+else
+kvm-pkgs: CPU_MODEL := amd
+endif
+kvm-pkgs: GRUB_CMDLINE_LINUX_DEFAULT := "quiet splash $(CPU_MODEL)_iommu=on systemd.unified_cgroup_hierarchy=0"
+kvm-pkgs: ARCH_FAMILY := $(shell arch | cut -d_ -f1)
+kvm-pkgs:
 	@echo ">>> Installing KVM virtualization"
 	sudo apt install -y \
 		qemu-system-$(ARCH_FAMILY) \
@@ -522,6 +560,9 @@ kvm: core-utils
 		/etc/default/grub
 	sudo update-grub
 	@echo ">>> Reboot for the GRUB changes to take effect!"
+
+.PHONY: kvm-group
+kvm-group:
 	@echo ">>> Adding user '$(USER)' to 'libvirt' and 'kvm' groups"
 	@echo ">>> Original primary group: $$(id -ng)"
 	cat /etc/group | grep libvirt | awk -F':' {'print $$1'} | xargs -n1 sudo adduser $(USER)
@@ -535,9 +576,6 @@ kvm: core-utils
 		-e 's|^#\?group = .*\\$$|group = "libvirt"|' \
 		-e 's|^#\?dynamic_ownership = .*\\$$|dynamic_ownership = 1|' \
 		/etc/libvirt/qemu.conf
-	sudo systemctl enable libvirtd
-	sudo systemctl restart libvirtd
-	@echo ">>> Finish by system reboot for the changes to take effect"
 
 # This test is based on https://bit.ly/339BtPT
 # Notes:
@@ -779,7 +817,7 @@ $(ZSH_LINKED_PLUGINS):
 	@mkdir -p "$(ZSH_PLUGINS)/$@"
 	@ln -svft \
 		"$(ZSH_PLUGINS)/$@" \
-		"$(CFG_DIR)/.local/share/oh-my-zsh/custom/plugins/$@"/*.zsh
+		"$(CFG_DATA_HOME)/oh-my-zsh/custom/plugins/$@"/*.zsh
 
 .PHONY: powerlevel10k
 powerlevel10k: core-utils
@@ -1215,7 +1253,7 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 	@echo ">>> Installing $@: https://github.com/dbrgn/tealdeer"
 	cargo install tealdeer
 	@echo ">>> Configuring $$($@ -v)"
-	@ln -svft $(XDG_CONFIG_HOME)/tealdeer $(CFG_DIR)/.config/tealdeer/*
+	@ln -svft $(XDG_CONFIG_HOME)/tealdeer $(CFG_CONFIG_HOME)/tealdeer/*
 	@echo ">>> Downloading zsh completions for $$($@ -v)"
 	@curl -sSL -o $</_$@ \
 		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
@@ -1229,8 +1267,8 @@ alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/downl
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
 alacritty: BASE16_THEME := gruvbox-dark-hard
 alacritty: \
-	$(ALACRITTY_CONFIG_DIR) \
 	$(XDG_APPS_HOME) \
+	$(XDG_CONFIG_HOME)/alacritty \
 	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
@@ -1272,8 +1310,8 @@ endif
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Configuring $@ colors theme"
 	@ln -svf \
-		"$(TINTED_ALACRITTY_DIR)/colors-256/base16-$(BASE16_THEME).toml" \
-		"$(ALACRITTY_CONFIG_DIR)/colors.toml"
+		"$(BASE16_ALACRITTY_HOME)/colors-256/base16-$(BASE16_THEME).toml" \
+		"$(XDG_CONFIG_HOME)/$@/colors.toml"
 	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
 	@rm -rf $(DOWNLOAD_DIR)
 
@@ -1399,27 +1437,25 @@ grpcurl: golang
 	go install "github.com/fullstorydev/grpcurl/cmd/grpcurl@$(GRPCURL_TAG)"
 
 # Installtion resources:
-#  - [Official documentation](https://docs.docker.com/engine/install/ubuntu/)
-#  - [Official post-installation](https://docs.docker.com/engine/install/linux-postinstall/)
+#  - [Official documentation](https://docs.docker.com/engine/install/ubuntu)
+#  - [Official post-installation](https://docs.docker.com/engine/install/linux-postinstall)
 #  - Note: `docker-compose` is now a sub-command `docker compose`
 .PHONY: docker
 docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
 docker: DOCKER_GPG := $(USR_KEYRINGS)/docker-archive-keyring.gpg
 docker: core-utils apt-utils $(USR_KEYRINGS)
-	@echo ">>> Installing Docker: https://docs.docker.com/engine/install/ubuntu/"
-	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' and configuring apt sources"
-	curl -fsSL $(DOCKER_URL)/gpg | gpg --dearmor | sudo tee $(DOCKER_GPG) > /dev/null
+	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' & configuring apt sources"
+	curl -fsSL $(DOCKER_URL)/gpg | sudo gpg --dearmor -o "$(DOCKER_GPG)"
 	echo "deb [arch=$(DIST_ARCH) signed-by=$(DOCKER_GPG)] $(DOCKER_URL) $$(lsb_release -cs) stable" \
 		| sudo tee /etc/apt/sources.list.d/$@.list > /dev/null
-	sudo apt-get update
-	sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+	@echo ">>> Installing $@: https://docs.docker.com/engine/install/ubuntu"
+	sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
 	@echo ">>> Setting up '$@' user group with current user '$(USER)'"
 	sudo groupadd -f $@
 	sudo gpasswd -a $(USER) $@
 	sudo usermod -aG $@ $(USER)
 	@echo ">>> Configuring Docker to start on boot"
-	sudo systemctl enable $@.service
-	sudo systemctl enable containerd.service
+	sudo systemctl enable $@.service containerd.service
 	@echo ">>> Finishing Docker installation"
 	sudo service $@ restart
 	newgrp $@
@@ -1453,7 +1489,8 @@ nvidia-docker: core-utils net-tools apt-utils $(USR_KEYRINGS)
 ifdef NVIDIA_CTRL
 	@echo ">>> Installing NVIDIA Docker"
 	@echo ">>> Downloading GPG key as '$(NVIDIA_DOCKER_GPG)' and configuring apt sources"
-	curl -fsSL "$(NVIDIA_DOCKER_URL)/gpgkey" | gpg --dearmor | sudo tee $(NVIDIA_DOCKER_GPG) > /dev/null
+	curl -fsSL "$(NVIDIA_DOCKER_URL)/gpgkey" \
+		| sudo gpg --dearmor -o "$(NVIDIA_DOCKER_GPG)"
 	@{ \
 		DISTRIBUTION=$$(lsb_release -sir | tr -d '\n' | tr '[:upper:]' '[:lower:]');\
 		curl -sL "$(NVIDIA_DOCKER_URL)/$$DISTRIBUTION/nvidia-docker.list" \
@@ -1475,12 +1512,10 @@ endif
 .PHONY: hadolint
 hadolint: REPO_URL := https://github.com/hadolint/hadolint
 hadolint: VERSION := 2.12.0
-hadolint: net-tools
+hadolint: $(XDG_BIN_HOME) net-tools
 	@echo ">>> Downloading $@ from $(REPO_URL)"
-	$(WGET) -q \
-		-O $(XDG_BIN_HOME)/$@ \
-		$(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
-	@chmod +x $(XDG_BIN_HOME)/$@
+	$(WGET) -qO $</$@ $(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
+	@chmod +x $</$@
 	@echo ">>> Installed: $$($@ -v)"
 
 # ClickHouse
@@ -1565,7 +1600,7 @@ BASH_CONFIGS := bashrc bash_aliases bash_logout
 .PHONY: $(BASH_CONFIGS)
 $(BASH_CONFIGS): $(XDG_CONFIG_HOME)/bash
 	@echo ">>> Linking custom $@ script"
-	@ln -svft $< $(CFG_DIR)/.config/bash/$@
+	@ln -svft $< $(CFG_CONFIG_HOME)/bash/$@
 
 # Notes:
 #  - The default location (HOME) for user's files is compiled in, so the only
@@ -1656,48 +1691,77 @@ else
 	@sudo update-desktop-database
 endif
 
-GNOME_APPS := \
-	evince \
-	nautilus
-
 # Configuration for various GNOME applications
 # https://wiki.archlinux.org/title/GNOME
 .PHONY: gnome
-gnome: $(GNOME_APPS)
-	@echo ">>> Configuring update notifier"
-	@gsettings set com.ubuntu.update-notifier hide-reboot-notification true
-	@gsettings set com.ubuntu.update-notifier show-apport-crashes false
-	@echo ">>> Configuring $@ calculator"
-	@gsettings set org.gnome.calculator accuracy 9
-	@gsettings set org.gnome.calculator angle-units 'radians'
-	@gsettings set org.gnome.calculator base 10
-	@gsettings set org.gnome.calculator button-mode 'advanced'
-	@gsettings set org.gnome.calculator number-format 'automatic'
-	@echo ">>> Configuring $@ calendar"
-	@gsettings set org.gnome.calendar active-view 'week'
-	@gsettings set org.gnome.calendar weather-settings \
-		"(false, false, '', @mv nothing)"
-	@gsettings set org.gnome.calendar week-view-zoom-level 1.0
-	@gsettings set org.gnome.calendar window-maximized true
-	@echo ">>> Configuring $@ desktop interface"
-	@gsettings set org.gnome.desktop.interface clock-format '24h'
-	@gsettings set org.gnome.desktop.interface clock-show-date true
-	@gsettings set org.gnome.desktop.interface clock-show-seconds true
-	@gsettings set org.gnome.desktop.interface clock-show-weekday true
-	@gsettings set org.gnome.desktop.interface show-battery-percentage true
-	@echo ">>> Configuring $@ desktop notifications"
-	@gsettings set org.gnome.desktop.notifications show-in-lock-screen false
-	@echo ">>> Configuring $@ desktop privacy"
-	@gsettings set org.gnome.desktop.privacy old-files-age 2
-	@gsettings set org.gnome.desktop.privacy remove-old-temp-files true
-	@gsettings set org.gnome.desktop.privacy remove-old-trash-files true
-	@gsettings set org.gnome.desktop.privacy report-technical-problems false
-	@gsettings set org.gnome.desktop.privacy send-software-usage-stats false
-	@echo ">>> Configuring $@ shell"
-	@gsettings set org.gnome.shell.ubuntu color-scheme 'default'
-	@echo ">>> Configuring $@ system"
-	@gsettings set org.gnome.system.locale region 'en_GB.UTF-8'
-	@gsettings set org.gnome.system.location enabled false
+gnome: \
+	evince \
+	nautilus \
+	com.ubuntu.update-notifier \
+	org.gnome.calculator \
+	org.gnome.calendar \
+	org.gnome.desktop.interface \
+	org.gnome.desktop.notifications \
+	org.gnome.desktop.privacy \
+	org.gnome.shell.ubuntu \
+	org.gnome.system
+
+.PHONY: com.ubuntu.update-notifier
+com.ubuntu.update-notifier:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ hide-reboot-notification true
+	@gsettings set $@ show-apport-crashes false
+
+.PHONY: org.gnome.calculator
+org.gnome.calculator:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ accuracy 9
+	@gsettings set $@ angle-units 'radians'
+	@gsettings set $@ base 10
+	@gsettings set $@ button-mode 'advanced'
+	@gsettings set $@ number-format 'automatic'
+
+.PHONY: org.gnome.calendar
+org.gnome.calendar:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ active-view 'week'
+	@gsettings set $@ weather-settings "(false, false, '', @mv nothing)"
+	@gsettings set $@ week-view-zoom-level 1.0
+	@gsettings set $@ window-maximized true
+
+.PHONY: org.gnome.desktop.interface
+org.gnome.desktop.interface:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ clock-format '24h'
+	@gsettings set $@ clock-show-date true
+	@gsettings set $@ clock-show-seconds true
+	@gsettings set $@ clock-show-weekday true
+	@gsettings set $@ show-battery-percentage true
+
+.PHONY: org.gnome.desktop.notifications
+org.gnome.desktop.notifications:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ show-in-lock-screen false
+
+.PHONY: org.gnome.desktop.privacy
+org.gnome.desktop.privacy:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ old-files-age 2
+	@gsettings set $@ remove-old-temp-files true
+	@gsettings set $@ remove-old-trash-files true
+	@gsettings set $@ report-technical-problems false
+	@gsettings set $@ send-software-usage-stats false
+
+.PHONY: org.gnome.shell.ubuntu
+org.gnome.shell.ubuntu:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ color-scheme 'default'
+
+.PHONY: org.gnome.system
+org.gnome.system:
+	@echo ">>> Configuring $@"
+	@gsettings set $@.locale region 'en_GB.UTF-8'
+	@gsettings set $@.location enabled false
 
 # XXX: set metadata:envince:xyz on pdf files
 #  — https://unix.stackexchange.com/a/398111
@@ -1705,18 +1769,21 @@ gnome: $(GNOME_APPS)
 # Resources:
 #  - List current settings `gsettings list-recursively org.gnome.Evince`
 .PHONY: evince
-evince:
+evince: org.gnome.Evince.Default
+
+.PHONY: org.gnome.Evince.Default
+org.gnome.Evince.Default:
 	@echo ">>> Configuring $@"
-	@gsettings set org.gnome.Evince.Default continuous true
-	@gsettings set org.gnome.Evince.Default dual-page false
-	@gsettings set org.gnome.Evince.Default dual-page-odd-left false
-	@gsettings set org.gnome.Evince.Default inverted-colors false
-	@gsettings set org.gnome.Evince.Default show-sidebar true
-	@gsettings set org.gnome.Evince.Default sidebar-page 'links'
-	@gsettings set org.gnome.Evince.Default sidebar-size 216
-	@gsettings set org.gnome.Evince.Default sizing-mode 'automatic'
-	@gsettings set org.gnome.Evince.Default window-ratio "(2.0, 1.0)"
-	@gsettings set org.gnome.Evince.Default zoom 1.0
+	@gsettings set $@ continuous true
+	@gsettings set $@ dual-page false
+	@gsettings set $@ dual-page-odd-left false
+	@gsettings set $@ inverted-colors false
+	@gsettings set $@ show-sidebar true
+	@gsettings set $@ sidebar-page 'links'
+	@gsettings set $@ sidebar-size 216
+	@gsettings set $@ sizing-mode 'automatic'
+	@gsettings set $@ window-ratio "(2.0, 1.0)"
+	@gsettings set $@ zoom 1.0
 
 # XXX: load in bulk from an .ini file (persisted in this repo)
 # - dconf dump /org/gnome/nautilus/ > nautilus.ini
@@ -1729,30 +1796,45 @@ evince:
 # Resources:
 #  - https://wiki.archlinux.org/title/GNOME/Files
 #  - List current settings: `gsettings list-recursively org.gnome.nautilus`
-PHONY: nautilus
-nautilus: $(XDG_CONFIG_HOME)/gtk-3.0/bookmarks
+.PHONY: nautilus
+nautilus: \
+	$(XDG_CONFIG_HOME)/gtk-3.0/bookmarks \
+	org.gnome.nautilus.compression \
+	org.gnome.nautilus.icon-view \
+	org.gnome.nautilus.list-view \
+	org.gnome.nautilus.preferences
+
+.PHONY: org.gnome.nautilus.compression
+org.gnome.nautilus.compression:
 	@echo ">>> Configuring $@"
-	@gsettings set org.gnome.nautilus.compression \
-		default-compression-format 'zip'
-	@gsettings set org.gnome.nautilus.icon-view default-zoom-level 'small'
-	@gsettings set org.gnome.nautilus.list-view default-visible-columns \
+	@gsettings set $@ default-compression-format 'zip'
+
+.PHONY: org.gnome.nautilus.icon-view
+org.gnome.nautilus.icon-view:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ default-zoom-level 'small'
+
+.PHONY: org.gnome.nautilus.list-view
+org.gnome.nautilus.list-view:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ default-visible-columns \
 		"['name', 'size', 'type', 'owner', 'permissions', 'date_modified']"
-	@gsettings set org.gnome.nautilus.list-view default-zoom-level 'small'
-	@gsettings set org.gnome.nautilus.list-view use-tree-view false
-	@gsettings set org.gnome.nautilus.preferences click-policy 'double'
-	@gsettings set org.gnome.nautilus.preferences date-time-format 'simple'
-	@gsettings set org.gnome.nautilus.preferences \
-		default-folder-viewer 'list-view'
-	@gsettings set org.gnome.nautilus.preferences \
-		default-sort-in-reverse-order false
-	@gsettings set org.gnome.nautilus.preferences default-sort-order 'name'
-	@gsettings set org.gnome.nautilus.preferences recursive-search 'local-only'
-	@gsettings set org.gnome.nautilus.preferences \
-		search-filter-time-type 'last_modified'
-	@gsettings set org.gnome.nautilus.preferences show-delete-permanently false
-	@gsettings set org.gnome.nautilus.preferences \
-		show-directory-item-counts 'local-only'
-	@gsettings set org.gnome.nautilus.preferences show-image-thumbnails 'never'
+	@gsettings set $@ default-zoom-level 'small'
+	@gsettings set $@ use-tree-view false
+
+.PHONY: org.gnome.nautilus.preferences
+org.gnome.nautilus.preferences:
+	@echo ">>> Configuring $@"
+	@gsettings set $@ click-policy 'double'
+	@gsettings set $@ date-time-format 'simple'
+	@gsettings set $@ default-folder-viewer 'list-view'
+	@gsettings set $@ default-sort-in-reverse-order false
+	@gsettings set $@ default-sort-order 'name'
+	@gsettings set $@ recursive-search 'local-only'
+	@gsettings set $@ search-filter-time-type 'last_modified'
+	@gsettings set $@ show-delete-permanently false
+	@gsettings set $@ show-directory-item-counts 'local-only'
+	@gsettings set $@ show-image-thumbnails 'never'
 
 .PHONY: $(XDG_CONFIG_HOME)/gtk-3.0/bookmarks
 $(XDG_CONFIG_HOME)/gtk-3.0/bookmarks: \
@@ -1817,8 +1899,8 @@ ifeq ($(shell which newsboat 2> /dev/null),)
 	curl https://zed.dev/install.sh | sh
 endif
 	@echo "Configuring $@ $$($@ -v | cut -d' ' -f2)"
-	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_DIR)/.config/$@/keymap.json
-	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_DIR)/.config/$@/settings.json
+	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/keymap.json
+	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/settings.json
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
@@ -1862,31 +1944,8 @@ ifeq ($(shell which newsboat 2> /dev/null),)
 endif
 	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
 	@touch $</urls && chmod u=rw,g=r,o= $</urls
-	@ln -svft $< $(CFG_DIR)/.config/$@/*
+	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
 	@echo ">>> Installed $$($@ -v | head -1)"
-
-# Remove unused applications from the distribution and cleanup HOME
-.PHONY: cleanup
-cleanup: thunderbird
-	sudo apt autoremove --purge -y
-	sudo apt autoclean
-	@echo ">>> Purging dot files that are disallowed in HOME's root"
-	@rm -f $(BANNED_HOME_DOT_FILES)
-
-.PHONY: thunderbird
-thunderbird:
-	@echo ">>> Uninstalling $@"
-	sudo snap remove $@
-
-# Don't pollute HOME with dot files: applications should either respect XDG
-# specification or be configured to do so.
-BANNED_HOME_DOT_FILES := \
-	$(HOME)/.apport-ignore.xml \
-	$(HOME)/.bashrc \
-	$(HOME)/.bash_history \
-	$(HOME)/.bash_logout \
-	$(HOME)/.lesshst \
-	$(HOME)/.zsh_history
 
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh

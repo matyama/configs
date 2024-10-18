@@ -190,9 +190,6 @@ export BASE16_THEME_DEFAULT=gruvbox-dark-hard
 export BAT_CONFIG_DIR=${XDG_CONFIG_HOME}/bat
 export BAT_CONFIG_PATH=${BAT_CONFIG_DIR}/config
 
-# fd
-export FD_CONFIG_HOME=${XDG_CONFIG_HOME}/fd
-
 # rg
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
