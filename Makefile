@@ -836,14 +836,25 @@ python-tools: pipx
 	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
 	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"
 	pipx install pycobertura
-	@echo ">>> Installing ruff: https://github.com/astral-sh/ruff"
-	pipx install ruff
 	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
 	pipx install sqlfluff
 	@echo ">>> Installing gdbgui: https://www.gdbgui.com"
 	pipx install gdbgui
 	@echo ">>> Installing yamllint: https://github.com/adrienverge/yamllint"
 	pipx install yamllint
+
+.PHONY: python-lsp-server
+python-lsp-server: pipx
+	@echo ">>> Installing $@: https://github.com/python-lsp/python-lsp-server"
+	pipx install --include-deps "$@[all]"
+	@echo ">>> Installing pylsp-mypy: https://github.com/python-lsp/pylsp-mypy"
+	pipx inject --include-deps $@ pylsp-mypy
+	@echo ">>> Installing python-lsp-ruff: https://github.com/python-lsp/python-lsp-ruff"
+	pipx inject --include-deps $@ python-lsp-ruff
+	@echo ">>> Installing python-lsp-black: https://github.com/python-lsp/python-lsp-black"
+	pipx inject --include-deps $@ python-lsp-black
+	@echo ">>> Installing pylsp-rope: https://github.com/python-rope/pylsp-rope"
+	pipx inject --include-deps $@ pylsp-rope
 
 # Installation resources:
 #  - https://python-poetry.org/docs/#installation
@@ -1320,19 +1331,6 @@ nodejs: $(XDG_DATA_HOME)/npm net-tools
 	@echo ">>> Installing nodejs (LTS)"
 	sudo curl -sL install-node.now.sh/$(VERSION) | \
 		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
-
-# Install or update pyright globally form a npm package
-#  - https://microsoft.github.io/pyright/#/installation?id=npm-package
-.PHONY: pyright
-pyright:
-ifneq ($(shell which pyright 2> /dev/null),)
-	@echo ">>> $@ already installed, updating..."
-	npm update -g $@
-else
-	make nodejs
-	@echo ">>> Installing $@: https://microsoft.github.io/pyright"
-	npm install -g $@
-endif
 
 .PHONY: lua-language-server
 lua-language-server: VERSION := 3.9.3

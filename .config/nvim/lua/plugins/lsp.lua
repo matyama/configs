@@ -48,25 +48,25 @@ return {
         },
       })
 
-      -- Setup pyright (https://microsoft.github.io/pyright/#/settings)
-      lspconfig.pyright.setup({
+      -- Setup pylsp
+      -- https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md
+      -- https://github.com/python-lsp/pylsp-mypy#configuration
+      -- https://github.com/python-lsp/python-lsp-ruff#configuration
+      lspconfig.pylsp.setup({
         settings = {
-          pyright = {
-            -- Using Ruff's import organizer
-            disableOrganizeImports = true,
-          },
-          python = {
-            analysis = {
-              -- Ignore all files for analysis to exclusively lint with Ruff
-              ignore = { "*" },
+          pylsp = {
+            plugins = {
+              pylint = {
+                -- Let Ruff handle linting
+                enabled = false,
+              },
+              ruff = {
+                enabled = true,
+              },
             },
           },
         },
       })
-
-      -- Setup ruff (Python liner & formatter)
-      -- https://github.com/astral-sh/ruff/blob/main/crates/ruff_server/docs/setup/NEOVIM.md
-      lspconfig.ruff.setup({})
 
       -- Lua LSP (https://luals.github.io)
       lspconfig.lua_ls.setup({

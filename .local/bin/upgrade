@@ -186,7 +186,7 @@ if [[ "$(command -v pipx)" ]] && [[ $RUN_PIPX -gt 0 ]]; then
 		make -f "${CONF_MK}" pipx
 	fi
 	echo "Upgrading pipx tools..."
-	pipx upgrade-all
+	pipx upgrade-all --include-injected
 fi
 
 if [[ "$(command -v rustup)" ]] && [[ $RUN_RUST -gt 0 ]]; then
