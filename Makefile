@@ -1333,7 +1333,7 @@ nodejs: $(XDG_DATA_HOME)/npm net-tools
 		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
 
 .PHONY: lua-language-server
-lua-language-server: VERSION := 3.9.3
+lua-language-server: VERSION := 3.11.1
 lua-language-server: PLATFORM := linux-x64
 lua-language-server: REPO := https://github.com/LuaLS/lua-language-server
 lua-language-server: $(XDG_DATA_HOME)/lua-language-server luajit
