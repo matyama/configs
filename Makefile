@@ -1741,6 +1741,13 @@ org.gnome.desktop.interface:
 .PHONY: org.gnome.desktop.notifications
 org.gnome.desktop.notifications:
 	@echo ">>> Configuring $@"
+	@gsettings set $@ application-children \
+		$$( \
+			gsettings get $@ application-children \
+				| tr "'" '"' \
+				| jq -c '. - ["apport-gtk", "org-gnome-dejadup", "thunderbird"]' \
+				| tr '"' "'" \
+		)
 	@gsettings set $@ show-in-lock-screen false
 
 .PHONY: org.gnome.desktop.privacy
