@@ -43,15 +43,6 @@ map("i", "<A-k>", "<Esc>:m .-2<CR>==gi", { desc = "move line up" })
 map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "move line down" })
 map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "move line up" })
 
--- Press 'v' to expand the visual selection and C-v to shrink it.
--- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
-map("v", "v", "<plug>(expand_region_expand)", {
-  desc = "expand visual selection",
-})
-map("v", "<C-v>", "<plug>(expand_region_shrink)", {
-  desc = "shrink visual selection",
-})
-
 map("n", "<leader>,", ":set invlist<cr>", {
   desc = "show/hide hidden characters",
 })

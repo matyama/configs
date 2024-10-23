@@ -8,7 +8,24 @@ return {
 
   -- Visually select increasingly larger regions of text
   -- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
-  "terryma/vim-expand-region",
+  {
+    "terryma/vim-expand-region",
+    -- Press 'v' to expand the visual selection and C-v to shrink it.
+    keys = {
+      {
+        "v",
+        "<plug>(expand_region_expand)",
+        mode = "v",
+        desc = "expand visual selection",
+      },
+      {
+        "<C-v>",
+        "<plug>(expand_region_shrink)",
+        mode = "v",
+        desc = "shrink visual selection",
+      },
+    },
+  },
 
   -- Navigate and highlight matching words (i.e., better %)
   {

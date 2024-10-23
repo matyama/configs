@@ -162,6 +162,9 @@ return {
           end, opts)
 
           local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          if client == nil then
+            return
+          end
 
           -- Attach inlay hints
           if client.server_capabilities.inlayHintProvider then
