@@ -1320,12 +1320,12 @@ endif
 .PHONY: tinted-alacritty
 tinted-alacritty: URL := https://github.com/tinted-theming/tinted-alacritty.git
 tinted-alacritty:
-ifeq ($(shell test -d $(TINTED_ALACRITTY_DIR) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(TINTED_ALACRITTY_DIR)'"
-	@git -C $(TINTED_ALACRITTY_DIR) pull
+ifeq ($(shell test -d $(BASE16_ALACRITTY_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(BASE16_ALACRITTY_HOME)'"
+	@git -C $(BASE16_ALACRITTY_HOME) pull
 else
-	@echo ">>> Cloning $@ repository to '$(TINTED_ALACRITTY_DIR)'"
-	@git clone $(URL) $(TINTED_ALACRITTY_DIR)
+	@echo ">>> Cloning $@ repository to '$(BASE16_ALACRITTY_HOME)'"
+	@git clone $(URL) $(BASE16_ALACRITTY_HOME)
 endif
 
 # Notes:
