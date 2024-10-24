@@ -186,7 +186,8 @@ if [[ $PROMPT -eq 0 ]]; then
 	esac
 fi
 
-CONF_MK="${HOME}/dev/configs/Makefile"
+XDG_DEV_DIR="${XDG_DEV_DIR:-$HOME/.local/dev}"
+CONF_MK="${XDG_DEV_DIR}/configs/Makefile"
 
 if [[ $RUN_APT -gt 0 ]]; then
 	echo "Upgrading system programs..."
