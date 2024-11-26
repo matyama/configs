@@ -55,6 +55,7 @@ plugins=(
   rust                          # adds completion for rustc, rustup and cargo
   sdk                           # adds auto-completion for sdk
   stack                         # adds auto-completion for stack
+  terraform                     # adds completion, aliases & a prompt function
   tinted-shell                  # provides support for Tinted Shell themes
   zsh-sdkman                    # adds aliases and completion scripts for sdk
   zsh-syntax-highlighting       # provides fish-like syntax highlighting

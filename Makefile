@@ -736,6 +736,58 @@ test-k8s: net-tools
 	minikube status || true
 	@echo ">>> Verified kubectl $$(kubectl version --client -o json | jq -r '.clientVersion.gitVersion')"
 
+.PHONY: terraform
+terraform: binenv
+	@echo ">>> Installing $@: https://developer.hashicorp.com/terraform"
+	@binenv update
+	binenv install $@
+	@echo ">>> Installed: $$($@ -version)"
+
+# Code snippet to be used by test-terraform
+define MAIN_TF
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 3.0.1"
+    }
+  }
+}
+
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name         = "nginx"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.image_id
+  name  = "tutorial"
+
+  ports {
+    internal = 80
+    external = 8000
+  }
+}
+endef
+
+export MAIN_TF
+
+.PHONY: test-terraform
+test-terraform: TF_TEST_DIR := $(shell mktemp -d)
+test-terraform:
+ifeq ($(shell which terraform 2> /dev/null),)
+	$(error terraform command not found)
+else
+	@echo ">>> Testing $$(terraform -version)"
+	@echo "$$MAIN_TF" > $(TF_TEST_DIR)/main.tf
+	terraform -chdir="$(TF_TEST_DIR)" init
+	terraform -chdir="$(TF_TEST_DIR)" apply -auto-approve
+	terraform -chdir="$(TF_TEST_DIR)" destroy -auto-approve
+endif
+	rm -rf "$(TF_TEST_DIR)"
+
 # Installation resources:
 #  - https://github.com/devops-works/binenv#linux-bashzsh
 #
