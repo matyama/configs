@@ -874,8 +874,6 @@ python-tools: pipx
 	pipx install virtualenv $(OPS)
 	@echo ">>> Installing Ansible: https://www.ansible.com"
 	pipx install --include-deps ansible
-	@echo ">>> Installing AWS CLI"
-	pipx install awscli $(OPS)
 	@echo ">>> Installing pre-commit hooks globally"
 	pipx install pre-commit $(OPS)
 	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
@@ -1564,6 +1562,12 @@ endif
 travis: ruby
 	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
 	gem install $@ --no-document --no-user-install
+
+.PHONY: aws-cli
+aws-cli:
+	@echo ">>> Installing $@: https://docs.aws.amazon.com/cli/latest"
+	@sudo snap install $@ --classic
+	@echo ">>> Installed $$(aws --version)"
 
 .PHONY: aws-vault
 aws-vault: binenv
