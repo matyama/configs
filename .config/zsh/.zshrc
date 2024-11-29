@@ -51,6 +51,7 @@ plugins=(
   minikube                      # adds completion for minikube
   nmap                          # adds some useful aliases for Nmap
   pip                           # adds completion & some aliases
+  pipenv                        # adds completion, aliases & shell activation
   poetry                        # adds completion & keeps it up to date
   rust                          # adds completion for rustc, rustup and cargo
   sdk                           # adds auto-completion for sdk

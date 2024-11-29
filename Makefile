@@ -930,6 +930,8 @@ python-tools: pipx
 	pipx install virtualenv $(OPS)
 	@echo ">>> Installing Ansible: https://www.ansible.com"
 	pipx install --include-deps ansible
+	@echo ">>> Installing pipenv: https://pipenv.pypa.io"
+	pipx install pipenv
 	@echo ">>> Installing pre-commit hooks globally"
 	pipx install pre-commit $(OPS)
 	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
