@@ -371,10 +371,14 @@ endif
 #  - Note: installs version given by SKIM_TAG
 .PHONY: skim
 skim: SKIM_REPO := https://github.com/lotabout/skim.git
-skim: SKIM_TAG := v0.10.4
+skim: SKIM_TAG := v0.14.3
 skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1 $(ZSH_COMPLETIONS)
 ifneq ($(shell which sk 2> /dev/null),)
 	@echo ">>> Updating $@"
+ifneq ($(shell sk -V | sed 's|sk |v|'),$(shell git -C $(SKIM_BASE) describe --tags))
+	@git -C $(SKIM_BASE) fetch --all --tags --prune
+	git -C $(SKIM_BASE) checkout tags/$(SKIM_TAG)
+endif
 	git -C $(SKIM_BASE) pull
 else
 	@echo ">>> Installing $@ to '$(SKIM_BASE)'"
