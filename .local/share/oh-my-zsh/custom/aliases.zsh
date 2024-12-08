@@ -140,3 +140,8 @@ if (( $+commands[ghc] )); then
 	alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
 	alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
 fi
+
+# YouTube download (https://github.com/yt-dlp/yt-dlp)
+if (( $+commands[yt-dlp] )); then
+	alias yt2mp3="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
+fi
