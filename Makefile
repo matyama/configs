@@ -1067,6 +1067,8 @@ ifeq ($(shell which rustc 2> /dev/null),)
 	rustup component add rust-src
 	@echo ">>> Installing rust-analyzer"
 	rustup component add rust-analyzer
+	@echo ">>> Installing miri"
+	rustup +nightly component add miri
 endif
 	rustup show
 
