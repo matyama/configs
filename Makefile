@@ -204,6 +204,15 @@ INTEL_CPU := $(shell egrep 'model name\s+: Intel' /proc/cpuinfo 2> /dev/null)
 
 NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
 
+# Resources:
+#  - https://askubuntu.com/a/1263653
+#  - default timer: 00:00~24:00/4
+.PHONY: snap
+snap:
+	@echo ">>> Configuring $@"
+	sudo snap set system refresh.timer=sun,18:00~20:00/2
+	sudo snap set core experimental.refresh-app-awareness=true
+
 .PHONY: install-fonts
 install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(XDG_FONTS_HOME)
