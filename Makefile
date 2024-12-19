@@ -1487,10 +1487,10 @@ shfmt: golang $(XDG_MAN_HOME)/man1
 #
 # FIXME: use `CHECKMAKE_TAG := latest` when `checkmake --version` is fixed
 .PHONY: checkmake
-checkmake: CHECKMAKE_TAG := 0.2.2
+checkmake: CHECKMAKE_TAG := $(shell gh_latest_release mrtazz/checkmake)
 checkmake: DOWNLOAD_URL := https://github.com/mrtazz/checkmake/releases/download
 checkmake: golang $(XDG_MAN_HOME)/man1
-	@echo ">>> Installing $@: https://github.com/mrtazz/checkmake"
+	@echo ">>> Installing $@ (v$(CHECKMAKE_TAG)): https://github.com/mrtazz/checkmake"
 	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
 	@echo ">>> Downloading man pages for $@ $(CHECKMAKE_TAG)"
 	@curl -sSL "$(DOWNLOAD_URL)/$(CHECKMAKE_TAG)/$@.1" \
