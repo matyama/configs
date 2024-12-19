@@ -1445,11 +1445,11 @@ nodejs: $(XDG_DATA_HOME)/npm net-tools
 		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
 
 .PHONY: lua-language-server
-lua-language-server: VERSION := 3.11.1
+lua-language-server: VERSION := $(shell gh_latest_release LuaLS/lua-language-server)
 lua-language-server: PLATFORM := linux-x64
 lua-language-server: REPO := https://github.com/LuaLS/lua-language-server
 lua-language-server: $(XDG_DATA_HOME)/lua-language-server luajit
-	@echo ">>> Installing $@: https://luals.github.io"
+	@echo ">>> Installing $@ (v$(VERSION)): https://luals.github.io"
 	@curl -sSL \
 		"$(REPO)/releases/download/$(VERSION)/$@-$(VERSION)-$(PLATFORM).tar.gz" \
 		| tar -C $< -xzf -
