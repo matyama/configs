@@ -1581,14 +1581,13 @@ else
 	$(error >>> No NVIDIA GPU available)
 endif
 
-# TODO: fetch latest version, shell completions, man page
 # Hadolint: Dockerfile linter
 .PHONY: hadolint
 hadolint: REPO_URL := https://github.com/hadolint/hadolint
-hadolint: VERSION := 2.12.0
+hadolint: VERSION := $(shell gh_latest_release hadolint/hadolint)
 hadolint: $(XDG_BIN_HOME) net-tools
-	@echo ">>> Downloading $@ from $(REPO_URL)"
-	$(WGET) -qO $</$@ $(REPO_URL)/releases/download/v$(VERSION)/$@-Linux-$(ARCH)
+	@echo ">>> Downloading $@ ($(VERSION)) from $(REPO_URL)"
+	$(WGET) -qO $</$@ $(REPO_URL)/releases/download/$(VERSION)/$@-Linux-$(ARCH)
 	@chmod +x $</$@
 	@echo ">>> Installed: $$($@ -v)"
 
