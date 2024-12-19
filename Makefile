@@ -1993,7 +1993,7 @@ endif
 #  - linked configs: `~/.config/zed/{keymap,settings}.json`
 .PHONY: zed
 zed: $(XDG_CONFIG_HOME)/zed net-tools
-ifeq ($(shell which newsboat 2> /dev/null),)
+ifeq ($(shell which zed 2> /dev/null),)
 	@echo ">>> Downloading & running $@ installer"
 	curl https://zed.dev/install.sh | sh
 endif
