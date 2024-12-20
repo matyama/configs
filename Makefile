@@ -227,14 +227,16 @@ install-fonts: $(XDG_FONTS_HOME)
 #  - https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme#cli-installation
 #  - Note: If not already present, this will install required dependencies
 #    (sassc, gtk2-engines-murrine, and gnome-themes-extra)
-#  - Installed artifacts: installs themes to `$XDG_THEMES_HOME` and links
-#    assets to `$XDG_CONFIG_HOME/gtk-4.0` if `--libadwaita` is specified
-#  - Uninstall themes with `./install.sh --uninstall`
+#  - Installed artifacts:
+#   - Installs themes to `$XDG_THEMES_HOME`
+#   - Links assets to `$XDG_CONFIG_HOME/gtk-4.0` if `--libadwaita` is specified
+#   - Links icons to `$XDG_ICONS_HOME`
+#  - Uninstall themes with `./install.sh --uninstall`, manually remove icons
 .PHONY: install-themes
 install-themes: GRUVBOX_GTK_THEME_URL := https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme
 install-themes: GRUVBOX_GTK_THEME_DIR := $(XDG_DATA_HOME)/gruvbox-gtk-theme
 install-themes: GRUVBOX_GTK_THEME := grey
-install-themes: $(XDG_THEMES_HOME)
+install-themes: $(XDG_THEMES_HOME) $(XDG_ICONS_HOME)
 ifeq ($(shell test -d $(GRUVBOX_GTK_THEME_DIR) && echo -n yes 2> /dev/null),yes)
 	@echo ">>> Updating GTK theme repository in '$(GRUVBOX_GTK_THEME_DIR)'"
 	@git -C $(GRUVBOX_GTK_THEME_DIR) pull
@@ -244,10 +246,13 @@ else
 endif
 	@echo ">>> Installing Gruvbox GTK theme..."
 	"$(GRUVBOX_GTK_THEME_DIR)"/themes/install.sh \
-		--dest $< \
+		--dest $(XDG_THEMES_HOME) \
 		--theme "$(GRUVBOX_GTK_THEME)" \
 		--libadwaita \
 		--tweaks outline
+	@echo ">>> Linking Gruvbox icons..."
+	@ln -svft $(XDG_ICONS_HOME) "$(GRUVBOX_GTK_THEME_DIR)"/icons/Gruvbox-Dark
+	@ln -svft $(XDG_ICONS_HOME) "$(GRUVBOX_GTK_THEME_DIR)"/icons/Gruvbox-Light
 
 # Resources:
 #  - [Tinted Shell](https://github.com/tinted-theming/tinted-shell)
