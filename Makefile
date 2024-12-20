@@ -988,8 +988,6 @@ endif
 #    and `.zshenv`
 .PHONY: sdk
 sdk: SHELL := /bin/bash
-sdk: ZSH_SDKMAN_REPO := https://github.com/matthieusb/zsh-sdkman
-sdk: ZSH_SDKMAN_HOME := $(ZSH_CUSTOM)/plugins/zsh-sdkman
 sdk: net-tools
 	@echo ">>> Installing SDKMAN: https://sdkman.io/"
 	curl -s "https://get.sdkman.io?rcupdate=false" | bash
@@ -999,15 +997,15 @@ sdk: net-tools
 # Installation resources:
 #  - https://github.com/matthieusb/zsh-sdkman#installation
 .PHONY: zsh-sdkman
-zsh-sdkman: ZSH_SDKMAN_URL := https://github.com/matthieusb/zsh-sdkman
-zsh-sdkman: ZSH_SDKMAN_DIR := $(ZSH_CUSTOM)/plugins/zsh-sdkman
+zsh-sdkman: ZSH_SDKMAN_REPO_URL := https://github.com/matthieusb/zsh-sdkman
+zsh-sdkman: ZSH_SDKMAN_PLUGIN_DIR := $(ZSH_CUSTOM)/plugins/zsh-sdkman
 zsh-sdkman: zsh
-ifeq ($(shell test -d $(ZSH_SDKMAN_DIR) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(ZSH_SDKMAN_DIR)'"
-	@git -C $(ZSH_SDKMAN_DIR) pull
+ifeq ($(shell test -d $(ZSH_SDKMAN_PLUGIN_DIR) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(ZSH_SDKMAN_PLUGIN_DIR)'"
+	@git -C $(ZSH_SDKMAN_PLUGIN_DIR) pull
 else
-	@echo ">>> Cloning $@ repository to '$(ZSH_SDKMAN_DIR)'"
-	@git clone $(ZSH_SDKMAN_URL) $(ZSH_SDKMAN_DIR)
+	@echo ">>> Cloning $@ repository to '$(ZSH_SDKMAN_PLUGIN_DIR)'"
+	@git clone $(ZSH_SDKMAN_REPO_URL) $(ZSH_SDKMAN_PLUGIN_DIR)
 endif
 
 .PHONY: jvm-tools
