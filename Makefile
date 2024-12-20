@@ -23,6 +23,7 @@ XDG_DEV_HOME ?= $(HOME)/.local/dev
 XDG_FONTS_HOME := $(XDG_DATA_HOME)/fonts
 XDG_ICONS_HOME := $(XDG_DATA_HOME)/icons
 XDG_MAN_HOME := $(XDG_DATA_HOME)/man
+XDG_THEMES_HOME := $(XDG_DATA_HOME)/themes
 XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
 
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
@@ -179,6 +180,7 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
+	$(XDG_THEMES_HOME) \
 	$(XDG_TMP_HOME) \
 	$(XDG_STATE_HOME)/sqlite3 \
 	$(ZSH_COMPLETIONS):
@@ -220,6 +222,32 @@ install-fonts: $(XDG_FONTS_HOME)
 	curl -sSL "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
+
+# Resources:
+#  - https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme#cli-installation
+#  - Note: If not already present, this will install required dependencies
+#    (sassc, gtk2-engines-murrine, and gnome-themes-extra)
+#  - Installed artifacts: installs themes to `$XDG_THEMES_HOME` and links
+#    assets to `$XDG_CONFIG_HOME/gtk-4.0` if `--libadwaita` is specified
+#  - Uninstall themes with `./install.sh --uninstall`
+.PHONY: install-themes
+install-themes: GRUVBOX_GTK_THEME_URL := https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme
+install-themes: GRUVBOX_GTK_THEME_DIR := $(XDG_DATA_HOME)/gruvbox-gtk-theme
+install-themes: GRUVBOX_GTK_THEME := grey
+install-themes: $(XDG_THEMES_HOME)
+ifeq ($(shell test -d $(GRUVBOX_GTK_THEME_DIR) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating GTK theme repository in '$(GRUVBOX_GTK_THEME_DIR)'"
+	@git -C $(GRUVBOX_GTK_THEME_DIR) pull
+else
+	@echo ">>> Cloning GTK theme repository to '$(GRUVBOX_GTK_THEME_DIR)'"
+	@git clone $(GRUVBOX_GTK_THEME_URL) $(GRUVBOX_GTK_THEME_DIR)
+endif
+	@echo ">>> Installing Gruvbox GTK theme..."
+	"$(GRUVBOX_GTK_THEME_DIR)"/themes/install.sh \
+		--dest $< \
+		--theme "$(GRUVBOX_GTK_THEME)" \
+		--libadwaita \
+		--tweaks outline
 
 # Resources:
 #  - [Tinted Shell](https://github.com/tinted-theming/tinted-shell)
