@@ -41,9 +41,10 @@ BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
+BASE16_ALACRITTY_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-fzf
 BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
-BASE16_ALACRITTY_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
+BASE16_TMUX_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-tmux
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
@@ -154,6 +155,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/tealdeer \
+	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \
 	$(XDG_CONFIG_HOME)/zed \
 	$(ZDOTDIR)
@@ -259,7 +261,7 @@ endif
 #  - Note: The ZSH plugin symlink name must match the name specified in the
 #    plugins rc section (i.e., `tinted-shell.plugin.zsh`), contrary to the docs
 .PHONY: tintted-shell
-tinted-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/tinted-shell.git
+tinted-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/tinted-shell
 tinted-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
 tinted-shell: BASE16_THEME := gruvbox-dark-hard
 tinted-shell: zsh $(ZSH_CUSTOM)/plugins/tinted-shell
@@ -280,7 +282,7 @@ endif
 # Resources:
 #  - [tinted-fzf](https://github.com/tinted-theming/tinted-fzf)
 .PHONY: tinted-fzf
-tinted-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/tinted-fzf.git
+tinted-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/tinted-fzf
 tinted-fzf:
 ifeq ($(shell test -d $(BASE16_FZF_HOME) && echo -n yes 2> /dev/null),yes)
 	@echo ">>> Updating $@ repository in '$(BASE16_FZF_HOME)'"
@@ -288,6 +290,19 @@ ifeq ($(shell test -d $(BASE16_FZF_HOME) && echo -n yes 2> /dev/null),yes)
 else
 	@echo ">>> Cloning $@ repository to '$(BASE16_FZF_HOME)'"
 	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
+endif
+
+# Resources:
+#  - [tinted-tmux](https://github.com/tinted-theming/tinted-tmux)
+.PHONY: tinted-tmux
+tinted-tmux: BASE16_TMUX_REPO := https://github.com/tinted-theming/tinted-tmux
+tinted-tmux:
+ifeq ($(shell test -d $(BASE16_TMUX_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(BASE16_TMUX_HOME)'"
+	@git -C $(BASE16_TMUX_HOME) pull
+else
+	@echo ">>> Cloning $@ repository to '$(BASE16_TMUX_HOME)'"
+	@git clone $(BASE16_TMUX_REPO) $(BASE16_TMUX_HOME)
 endif
 
 # Notes:
@@ -528,6 +543,7 @@ basic-tools: \
 	wl-utils \
 	sysstat \
 	fzf \
+	tmux \
 	neovim \
 	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
@@ -539,8 +555,6 @@ basic-tools: \
 		tshark \
 		neofetch \
 		mc \
-		tmux \
-		byobu \
 		tree \
 		entr \
 		chafa \
@@ -573,6 +587,14 @@ basic-tools: \
 		redis-tools \
 		sqlite3 \
 		wireguard
+
+.PHONY: tmux
+tmux: $(XDG_CONFIG_HOME)/tmux
+	@echo ">>> Installing $@: https://github.com/tmux/tmux"
+	sudo apt install -y $@
+	@echo ">>> Linking $@ confg..."
+	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
+	make -C $(CFG_DIR) tinted-$@
 
 # Resources:
 #  - [Simple tutorial](https://phoenixnap.com/kb/ubuntu-install-kvm)

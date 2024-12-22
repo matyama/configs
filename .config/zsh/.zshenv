@@ -184,6 +184,7 @@ export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
 # Tinted Theming: Base16 and Base24 color shemes
 export BASE16_FZF_HOME=${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf
 export BASE16_SHELL_PATH=${XDG_CONFIG_HOME}/tinted-theming/tinted-shell
+export BASE16_TMUX_HOME=${XDG_CONFIG_HOME}/tinted-theming/tinted-tmux
 export BASE16_THEME_DEFAULT=gruvbox-dark-hard
 
 # Bat

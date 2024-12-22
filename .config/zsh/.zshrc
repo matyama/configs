@@ -58,6 +58,7 @@ plugins=(
   stack                         # adds auto-completion for stack
   terraform                     # adds completion, aliases & a prompt function
   tinted-shell                  # provides support for Tinted Shell themes
+  tmux                          # adds some useful aliases for tmux
   zsh-sdkman                    # adds aliases and completion scripts for sdk
   zsh-syntax-highlighting       # provides fish-like syntax highlighting
   zsh-history-substring-search  # provides fish-like history search feature
@@ -207,6 +208,10 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 # Tinted Shell (https://github.com/tinted-theming/tinted-shell)
 export TINTED_SHELL_ENABLE_VARS=1
 export TINTED_SHELL_ENABLE_BASE16_VARS=1
+
+# Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
+#export TINTED_TMUX_OPTION_ACTIVE=1
+export TINTED_TMUX_OPTION_STATUSBAR=1
 
 # Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
 BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
