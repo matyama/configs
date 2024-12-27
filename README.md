@@ -15,12 +15,14 @@ LVM VG vgubuntu, LV root as ext 4
 LVM VG vgubuntu, LV swap_1 as swap
 partition #1 of /dev/nvme0n1 as ESP
 ```
-The swap partition is by default only ~1G. In order to resize the root logical
-volume and increase swap do the following:
-1. Install Ubuntu with LVM and encryption
-1. Restart to 'Try Ubuntu', i.e. 'Live CD' so that root is not actively used
-1. Run the `increase_swap.sh` script that moves 40G space from root to swap
-1. Reboot to installed Ubuntu and continue the setup
+The swap partition is by default only ~1G. In order to resize the root
+logical volume and increase swap do the following:
+ 1. Install Ubuntu with LVM and encryption
+ 2. Restart to 'Try Ubuntu', i.e. 'Live CD' so that root is not actively
+    used
+ 3. Run the `increase_swap.sh` script that moves 40G space from root to
+    swap
+ 4. Reboot to installed Ubuntu and continue the setup
 
 ### Upgrades
 Ubuntu release upgrades can be done using the `do-release-upgrade`
@@ -53,8 +55,8 @@ Note that new LTS versions become available with release `xx.04.1`, as
 explained [here](https://askubuntu.com/a/1403657).
 
 ## Config Installation
-There is an installation make target that links config files to dedicated
-locations.
+There is an installation make target that links config files to
+dedicated locations.
 
 **WARN**: Note that original files will be overwritten!
 ```bash
@@ -80,8 +82,9 @@ Gnome session so one must logout, log back in and re-run the make
 target.
 
 ### Making CapsLock an extra Esc
-1. Make sure [GNOME Tweaks](https://wiki.gnome.org/Apps/Tweaks) is installed
-1. Follow [these instructions](https://bit.ly/33QDcdB)
+ 1. Make sure [GNOME Tweaks](https://wiki.gnome.org/Apps/Tweaks) is
+    installed
+ 2. Follow [these instructions](https://bit.ly/33QDcdB)
 
 ### Powerlevel10k
 This configuration is actually stored as `.config/zsh/p10k.zsh` and
@@ -131,10 +134,9 @@ instructed. The font download is part of `make fonts`.
 ### Base16 colors
 
 #### Tinted Shell
-[Tinted Shell](https://github.com/tinted-theming/tinted-shell) can be
-installed with `make tinted-shell`. One can then manually switch themes
-with `base16_<theme>` which creates/updates a link
-`$HOME/.config/tinted-theming/base16_shell_theme`.
+[Tinted Shell][tinted-shell] can be installed with `make tinted-shell`.
+One can then manually switch themes with `base16_<theme>` which creates
+and/or updates a link `$HOME/.config/tinted-theming/base16_shell_theme`.
 
 Note that the shell hook is already added to and liked the oh-my-zsh
 plugin `tinted-shell`, so after installation with `make` one just needs
@@ -147,8 +149,10 @@ base16_gruvbox-dark-hard
 The default theme is set in `.zshenv` to
 `BASE16_THEME_DEFAULT=gruvbox-dark-hard`.
 
-One can also [test](https://github.com/tinted-theming/tinted-shell#troubleshooting)
-the themes with included `colortest` tool.
+One can also [test](https://bit.ly/49WNREG) the themes with included
+`colortest` tool.
+
+[tinted-shell]: https://github.com/tinted-theming/tinted-shell
 
 #### Alacritty terminal
 Note that `alacritty.yml` automatically imports set color schemes:
@@ -157,9 +161,11 @@ import = ["~/.config/alacritty/colors.toml"]
 ```
 
 The `colors.toml` is a symlink created by `make alacritty` which points
-to a [tinted-alacritty](https://github.com/tinted-theming/tinted-alacritty)
-theme. Note that currently the theme is selected just once before the
-installation and further changes won't be automatically picked up.
+to a [tinted-alacritty][tinted-alacritty] theme. Note that currently the
+theme is selected just once before the installation and further changes
+won't be automatically picked up.
+
+[tinted-alacritty]: https://github.com/tinted-theming/tinted-alacritty
 
 #### Bat
 [Bat](https://github.com/sharkdp/bat) supports `base16` color theme by
@@ -189,54 +195,63 @@ Finish Poetry setup by manually
 [configuring auth tokens](https://bit.ly/3fdpMNR).
 
 ### Semantic language support for Neovim
-Nvim config automatically installs
-[coc.nvim](https://github.com/neoclide/coc.nvim) plugin. In order to setup
-language support for various languages, refer to corresponding sub-section.
+Nvim uses its built-in LSP support and leverages
+[`nvim-lspconfig`][lspconfig] to configure individual LSPs. In order to
+install LSP binaries for various languages, refer to corresponding
+sub-section below.
+
+[lspconfig]: https://github.com/neovim/nvim-lspconfig
 
 #### Rust Analyzer
-```vim
-:CocInstall coc-rust-analyzer
+[Rust Analyzer][rust-analyzer] is installed together with other `rustup`
+components as part of
+```bash
+make rust
 ```
-* https://github.com/fannheyward/coc-rust-analyzer
-* https://rust-analyzer.github.io/manual.html#vimneovim
+
+[rust-analyzer]: https://github.com/rust-lang/rust-analyzer
 
 #### Python
-```vim
-:CocInstall coc-pyright
+The [Python LSP Server][pylsp] together with all its dependencies can be
+installed via:
+```bash
+make python-language-server
 ```
-* https://github.com/fannheyward/coc-pyright#install
-* https://github.com/microsoft/pyright/blob/main/docs/configuration.md
 
-Custom configurations can be found in
-`$XDG_CONFIG_HOME/coc/coc-settings.json`.
+[pylsp]: https://github.com/python-lsp/python-lsp-server
+
+#### Python
+The [LuaLS][luals] can be installed via:
+```bash
+make lua-language-server
+```
+
+[luals]: https://github.com/LuaLS/lua-language-server
 
 #### Haskell
-[Haskell Language Server (HLS)](https://github.com/haskell/haskell-language-server)
-is configured in `$XDG_CONFIG_HOME/coc/coc-settings.json`.
-
-The installation of HLS is done as part of `ghcup` installation in
+The installation of the [Haskell Language Server (HLS)][hls] is done as
+part of `ghcup` installation in
 ```bash
 make haskell
 ```
 
-#### JSON
-[Json language extension for coc.nvim](https://github.com/neoclide/coc-json)
-```vim
-:CocInstall coc-json
-```
+[hls]: https://github.com/haskell/haskell-language-server
 
 ### Visual Studio Code
-Settings are automatically synchronized via [build-in mechanism](https://code.visualstudio.com/docs/editor/settings-sync)
-so one can just login to GitHub.
+Settings are automatically synchronized via
+[build-in mechanism][vscode-sync] so one can just login to GitHub.
+
+[vscode-sync]: https://code.visualstudio.com/docs/editor/settings-sync
 
 ### Nvidia Settings
 The `nvidia-settings` application does not currently support
-[XDG specification](https://wiki.archlinux.org/title/XDG_Base_Directory).
-The workaround is to set custom config path using the `--config` option.
+[XDG specification][xdg-dir-spec]. The workaround is to set custom
+config path using the `--config` option.
 
 `.envrc` defines an alias for this so when running `nvidia-settings`
 from shell it will automatically use
-`$XDG_CONFIG_HOME/nvidia-settings/nvidia-settings-rc` as the config file.
+`$XDG_CONFIG_HOME/nvidia-settings/nvidia-settings-rc` as the
+configuration file.
 
 However, the desktop entry (i.e. when running the app from Gnome menu)
 must be edited manually. One can do this by executing the following make
@@ -244,6 +259,8 @@ target:
 ```bash
 make nvidia-settings-rc-xdg-path
 ```
+
+[xdg-dir-spec]: https://wiki.archlinux.org/title/XDG_Base_Directory
 
 ### Unclutter `$HOME` by conforming to XDG specification
 
@@ -293,43 +310,38 @@ just run (it's not quite clear which XDG directories one should use):
 mv ~/.ipython $XDG_CONFIG_HOME/ipython
 ```
 
-[ipython]: https://ipython.readthedocs.io/en/stable/whatsnew/version8.html#re-added-support-for-xdg-config-directories
-
-## Saving configurations
-Edits to any linked configurations is automatically propagated here
-(via the symlink). Then simply commit and push the changes.
-
-### `coc.nvim` configuration
-Although the `.config/coc/coc-settings.json` configuration file is
-linked automatically, the server might not load it correctly. This issue
-is described in the *Thoubleshooting* section and can be fixed by
-rewriting the `:CocConfig` buffer.
+[ipython]: https://bit.ly/3VX4wSB
 
 ## Ubuntu Setup Notes
 
 ## KVM virtualization
 Resources:
- * Simple [installtion tutorial](https://phoenixnap.com/kb/ubuntu-install-kvm)
- * Older but comprehensive [guide](https://bit.ly/339BtPT)
- * [Ubuntu wiki](https://ubuntu.com/server/docs/virtualization-virt-tools)
+ - Simple [installtion tutorial][ubuntu-install-kvm]
+ - Older but comprehensive [guide](https://bit.ly/339BtPT)
+ - [Ubuntu wiki][virt-tools]
+
+[ubuntu-install-kvm]: https://phoenixnap.com/kb/ubuntu-install-kvm
+[virt-tools]: https://ubuntu.com/server/docs/virtualization-virt-tools
 
 ### System valiadtion for KVM
-Whether it's even possible to setup KVM on certain system or not can be checked
-with
+Whether it's even possible to setup KVM on certain system or not can be
+checked with
 ```bash
 kvm-ok
 ```
-If the CPU supports virtualization one can install all required packages and
-then run following validation check
+If the CPU supports virtualization one can install all required packages
+and then run following validation check
 ```bash
 virt-host-validate
 ```
 Typically one can see
-* *WARN* for *IOMMU* which is handled automatically by the `Makefile` target.
-	However, this step (and the `kvm` target in general) needs a reboot.
-* Another *QUEMU* warning which according to
-	[StackOverflow](https://ubuntu.com/server/docs/virtualization-virt-tools)
-	should be fine
+ - *WARN* for *IOMMU* which is handled automatically by the `Makefile`
+   target. However, this step (and the `kvm` target in general) needs a
+   reboot.
+ - Another *QUEMU* warning which according to [Ubintu wiki][virt-tools]
+   should be fine
+
+[virt-tools]: https://ubuntu.com/server/docs/virtualization-virt-tools
 
 ## Minikube on KVM
 Start Minikube on KVM by running
@@ -341,9 +353,9 @@ or for larger machnines
 minikube start --cpus 4 --memory 8192 --vm-driver kvm2
 ```
 
-Note that the `test-k8s` make target sometimes fails due to timeout after
-waiting on minikube. It may also leave some resources when it does not
-succeed.
+Note that the `test-k8s` make target sometimes fails due to timeout
+after waiting on minikube. It may also leave some resources when it does
+not succeed.
 
 ## Troubleshooting
 
@@ -412,7 +424,8 @@ sudo apt dist-upgrade
 #### Nvidia packages are kept back
 The issue with "missing" drivers is that the driver packages are "kept
 back" (shown in the snippet below). This is due to an incompatibility
-between driver libs and the kernel which `apt` cannot resolve on its own.
+between driver libraries and the kernel which `apt` cannot resolve on
+its own.
 ```
 ❯ sudo apt upgrade
 Reading package lists... Done
@@ -459,29 +472,6 @@ or even more excessive cleanup which also deletes the `~/.minikube` dir
 minikube delete --purge
 ```
 
-### Vim-plug plugin installation
-Some vim-plug plugins require the `init.vim` file (the config file) to be
-sourced again for the plugin installation to work.
-```vim
-:source $VIMRC
-:PlugInstall
-```
-
-### Language servers not working with `coc.nvim`
-Some language servers managed by
-[`coc.nvim`](https://github.com/neoclide/coc.nvim) may misbehave. For
-instance the [HLS](https://github.com/haskell/haskell-language-server)
-may error on hover to display documentation and generally not check the
-code for errors.
-
-There is a configuration file `.config/coc/coc-settings.json` that is
-automatically symlinked but nvim/coc may not load it. This situation can
-be checked by running `:CocConfig` and if the buffer is empty the linked
-file is not loaded.
-
-The fix is simply to paste the content of `coc-settings.json` to the
-`:CocConfig` buffer and (re)write it.
-
 ### `cargo-audit` installation and usage
 The installation of `cargo-audit` might fail if installed manually and
 the system does not have `libssl-dev` installed (note that if one uses
@@ -510,9 +500,8 @@ sdk-refresh-completion-files
 ```
 
 ### Reinstall `pipx` for new Python
-According to this
-[issue comment](https://github.com/pypa/pipx/issues/278#issuecomment-659703665)
-once should be able to fix `pipx` installations as follows:
+According to this [issue comment](https://bit.ly/4iR72Uq) once should be
+able to fix `pipx` installations as follows:
 ```bash
 pipx reinstall-all
 ```
