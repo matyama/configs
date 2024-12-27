@@ -54,13 +54,22 @@ sudo do-release-upgrade -d
 Note that new LTS versions become available with release `xx.04.1`, as
 explained [here](https://askubuntu.com/a/1403657).
 
-## Config Installation
-There is an installation make target that links config files to
+## Software Upgrade
+The default make target will call the `$XDG_BIN_HOME/upgrade` script:
+```bash
+make
+```
+
+Note that if the `upgrade` script has not yet been linked, then the
+recipe will call it from this repository.
+
+## Config Linking
+There is a config installation make target that links config files to
 dedicated locations.
 
 **WARN**: Note that original files will be overwritten!
 ```bash
-make config
+make links
 ```
 
 ## Manual configurations
