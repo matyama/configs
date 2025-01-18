@@ -1160,8 +1160,6 @@ endif
 #  - modules: visualize/analyze a Rust crate's internal structure
 #  - msrv: find the minimum supported Rust version (MSRV)
 #  - nextest: a next-generation test runner for Rust
-#  - outdated: display when dependencies are out of date
-#    (FIXME: use --locked https://github.com/kbknapp/cargo-outdated/pull/398)
 #  - readme: generate README.md content from doc comments
 #  - tarpaulin: a code coverage tool for Rust projects
 #  - workspaces: a tool for managing cargo workspaces and their crates
@@ -1178,22 +1176,25 @@ CARGO_EXTENSIONS := \
 	cargo-modules \
 	cargo-msrv \
 	cargo-nextest \
-	cargo-outdated \
 	cargo-readme \
 	cargo-tarpaulin \
 	cargo-workspaces
 
 # Cargo subcommands:
+#  - asm: display the Assembly, LLVM-IR, MIR and WASM generated for source code
 #  - check-external-types: verify which types from other libraries are allowed
 #    to be are exposed in their public API
 #  - deny: lint dependencies
+#  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
 #  - udeps: find unused dependencies in Cargo.toml
 #  - vet: supply-chain security for Rust
 CARGO_EXTENSIONS_LOCKED := \
 	cargo-check-external-types \
 	cargo-deny \
+	cargo-outdated \
 	cargo-semver-checks \
+	cargo-show-asm \
 	cargo-udeps \
 	cargo-vet
 
