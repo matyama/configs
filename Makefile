@@ -1399,6 +1399,16 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 	@curl -sSL -o $</_$@ \
 		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
 
+# TUI for managing bluetooth on Linux
+#  - Requires: bluez, libdbus-1-dev (build)
+.PHONY: bluetui
+bluetui: rust
+	@echo ">>> Installing system dependencies: bluez, libdbus-1-dev"
+	@sudo apt update
+	@sudo apt install -y bluez libdbus-1-dev
+	@echo ">>> Installing $@: https://github.com/pythops/bluetui"
+	cargo install --locked $@
+
 # Resources:
 #  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md
 # TODO: run alacritty on GPU (e.g., using `switcherooctl launch <CMD>`)

@@ -95,6 +95,9 @@ if (( $+commands[bitcli] )); then
 	alias shorto="bitcli --offline"
 fi
 
+# bluetui (https://github.com/pythops/bluetui)
+(( $+commands[bluetui] )) && alias bt="bluetui"
+
 # chafa (https://github.com/hpjansson/chafa)
 (( $+commands[chafa] )) && alias imshow="chafa -c 256"
 
