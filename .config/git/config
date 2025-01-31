@@ -42,6 +42,9 @@
 	algorithm = histogram
 	indentHeuristic = true
 	colorMoved = default
+[help]
+	# https://blog.gitbutler.com/why-is-git-autocorrect-too-fast-for-formula-one-drivers
+	autocorrect = prompt
 [alias]
 	c = commit
 	s = status
