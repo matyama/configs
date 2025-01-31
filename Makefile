@@ -1398,6 +1398,8 @@ tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
 	@echo ">>> Downloading zsh completions for $$($@ -v)"
 	@curl -sSL -o $</_$@ \
 		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
+	@echo ">>> Updating local $@ cache"
+	@tldr --update
 
 # TUI for managing bluetooth on Linux
 #  - Requires: bluez, libdbus-1-dev (build)
