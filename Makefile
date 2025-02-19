@@ -155,7 +155,6 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \
-	$(XDG_CONFIG_HOME)/zed \
 	$(ZDOTDIR)
 
 DATA_DIRS := \
@@ -2042,22 +2041,6 @@ else
 	@echo ">>> Complete by running command 'run_keybase'"
 endif
 	rm -f $(KEYBASE_PKG)
-
-# Installation resources:
-#  - official web page: https://zed.dev/docs/linux
-#  - config docs: https://zed.dev/docs/configuring-zed
-#  - installed artifacts: `~/.local/zed.app/`, `~/.local/bin/zed`,
-#    `~/.local/share/applications/dev.zed.Zed.desktop`
-#  - linked configs: `~/.config/zed/{keymap,settings}.json`
-.PHONY: zed
-zed: $(XDG_CONFIG_HOME)/zed net-tools
-ifeq ($(shell which zed 2> /dev/null),)
-	@echo ">>> Downloading & running $@ installer"
-	curl https://zed.dev/install.sh | sh
-endif
-	@echo "Configuring $@ $$($@ -v | cut -d' ' -f2)"
-	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/keymap.json
-	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/settings.json
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
