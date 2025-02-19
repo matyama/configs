@@ -54,6 +54,9 @@ export CUDA_CACHE_PATH=${XDG_CACHE_HOME}/nv
 export BINENV_BINDIR=${XDG_DATA_HOME}/binenv
 export BINENV_LINKDIR=${XDG_BIN_HOME}
 
+# fzf
+export FZF_BASE=${XDG_DATA_HOME}/fzf
+
 # Rust
 #  - See: https://doc.rust-lang.org/cargo/reference/environment-variables.html
 #  - Note: Out-of-the-box XDG support is still an open issue for both `rustup`
@@ -252,11 +255,6 @@ export TFDS_DATA_DIR=${XDG_CACHE_HOME}/tensorflow_datasets
 #    missing and cached datasets, `XDG_CACHE_HOME` is probably the best option
 export KERAS_HOME=${XDG_CACHE_HOME}/keras
 
-# Dungeon Crawl Stone Soup
-#  - Note: the trailing slash is required
-#  - See: https://wiki.archlinux.org/title/XDG_Base_Directory
-export CRAWL_DIR="${XDG_DATA_HOME}/crawl/"
-
 # Path extension
 typeset -aU path
 path+=${XDG_BIN_HOME}
@@ -267,5 +265,4 @@ path+=${GEM_BIN}
 path+=${KREW_BIN}
 path+="/usr/local/bin"
 path+="${CABAL_DIR}/bin"
-path+="${COURSIER_BIN_DIR}"
 path+="${XDG_DATA_HOME}/npm/bin"

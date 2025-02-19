@@ -64,13 +64,12 @@ plugins=(
   zsh-history-substring-search  # provides fish-like history search feature
   zsh-autosuggestions           # provides fish-like autosuggestions
   zsh-interactive-cd            # provides fish-like interactive cd completion
-  zsh-virsh                     # provides custom virsh extensions
 )
 
 # fzf
 #  - https://github.com/junegunn/fzf#layout
 #  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/fzf#settings
-export FZF_BASE="$XDG_DATA_HOME/fzf"
+export FZF_BASE="${FZF_BASE:-$XDG_DATA_HOME/fzf}"
 export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden"
 export FZF_CTRL_T_COMMAND="fd --type file --follow --hidden"
 export FZF_DEFAULT_OPTS="--height 25% --layout=reverse --border"
@@ -78,9 +77,13 @@ export FZF_DEFAULT_OPTS="--height 25% --layout=reverse --border"
 # skim
 #  - https://github.com/lotabout/skim
 #  - NOTE: SKIM_DEFAULT_OPTIONS reuse FZF_DEFAULT_OPTS with `--color` set below
-export SKIM_BASE="$XDG_DATA_HOME/skim"
+export SKIM_BASE="${SKIM_BASE:-$XDG_DATA_HOME/skim}"
 export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}"
 export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
+
+if (( $+commands[sk] )); then
+  source "${SKIM_BASE}/shell/key-bindings.zsh"
+fi
 
 # switch to given fuzzy finder (fzf | sk, default: fzf)
 function fzf_prog() {
@@ -254,17 +257,6 @@ zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-# coursier autocompletion
-#  - https://get-coursier.io/docs/cli-installation#zsh-completions
-if (( $+commands[cs] )); then
-  mkdir -p "${ZSH}/completion"
-  echo '#compdef _cs cs
-
-  function _cs {
-    eval "$(cs complete zsh-v1 $CURRENT $words[@])"
-  }' > "${ZSH}/completion/_cs"
-fi
-
 # pipx autocompletion
 (( $+commands[pipx] )) && eval "$(register-python-argcomplete pipx)"
 
@@ -273,6 +265,15 @@ fi
 
 # pandoc autocompletion
 (( $+commands[pandoc] )) && eval "$(pandoc --bash-completion)"
+
+# virsh helper functions
+if (( $+commands[virsh] )); then
+  virsh-rm-pool() {
+    virsh pool-autostart "${1}" --disable
+    virsh pool-destroy "${1}"
+    virsh pool-undefine "${1}"
+  }
+fi
 
 # zoxide
 if (( $+commands[zoxide] )); then

@@ -407,7 +407,7 @@ python3.6 python3.7 python3.8 python3.9 python3.10 python3.11: python
 #  - Note: installs latest version, apt pkg might be quite old
 #  - Note: `zoxide`'s interactive mode requires fzf at least v0.21.0
 .PHONY: fzf
-fzf: FZF_REPO := https://github.com/junegunn/fzf.git
+fzf: FZF_REPO := https://github.com/junegunn/fzf
 fzf: core-utils $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1
 ifneq ($(shell which fzf 2> /dev/null),)
 	@echo ">>> Updating $@"
@@ -417,6 +417,8 @@ else
 	git clone --depth 1 $(FZF_REPO) $(FZF_BASE)
 endif
 	$(FZF_BASE)/install --bin --no-update-rc
+	@ln -svf $(FZF_BASE)/bin/fzf $(XDG_BIN_HOME)/fzf
+	@ln -svf $(FZF_BASE)/bin/fzf-tmux $(XDG_BIN_HOME)/fzf-tmux
 	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
 	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN_HOME)/man1/$@-tmux.1.gz
 
@@ -424,7 +426,7 @@ endif
 #  - https://github.com/skim-rs/skim
 #  - Note: installs version given by SKIM_TAG
 .PHONY: skim
-skim: SKIM_REPO := https://github.com/skim-rs/skim.git
+skim: SKIM_REPO := https://github.com/skim-rs/skim
 skim: SKIM_TAG := $(shell gh_latest_release skim-rs/skim)
 skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1 $(ZSH_COMPLETIONS)
 ifneq ($(shell which sk 2> /dev/null),)
@@ -440,10 +442,8 @@ else
 endif
 	cargo build --release --locked --manifest-path "$(SKIM_BASE)/Cargo.toml"
 	@cp $(CARGO_TARGET_DIR)/release/sk $(XDG_BIN_HOME)
-	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
-	@ln -svf \
-		$(SKIM_BASE)/shell/key-bindings.zsh $(ZSH_CUSTOM)/sk-key-bindings.zsh
 	@ln -svf $(SKIM_BASE)/bin/sk-tmux $(XDG_BIN_HOME)/sk-tmux
+	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
 	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN_HOME)/man1/sk.1.gz
 	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN_HOME)/man1/sk-tmux.1.gz
 
@@ -529,7 +529,7 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
 #    (https://github.com/protocolbuffers/protobuf)
 #  - redis-tools: Redis command line client and other tools
-#    sqlite3: Command line interface for SQLite 3 (https://www.sqlite.org)
+#  - sqlite3: Command line interface for SQLite 3 (https://www.sqlite.org)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
 .PHONY: basic-tools
 basic-tools: \
@@ -968,7 +968,7 @@ cmake bash-language-server slack:
 #  - netron: visualizer for neural network, deep learning & ML models
 #    (https://github.com/lutzroeder/netron)
 #  - postman: API platform for building & using APIs (https://www.postman.com)
-.PHONY: dbeaver-ce gimp googler netron postman skype spotify zoom-client
+.PHONY: dbeaver-ce gimp netron postman skype spotify zoom-client
 dbeaver-ce gimp netron postman skype spotify zoom-client:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install $@
@@ -1386,9 +1386,9 @@ taplo: rust
 	cargo install --features lsp --locked taplo-cli
 
 .PHONY: tldr
-tldr: DOWNLOAD_URL := https://github.com/dbrgn/tealdeer/releases/download
+tldr: DOWNLOAD_URL := https://github.com/tealdeer-rs/tealdeer/releases/download
 tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
-	@echo ">>> Installing $@: https://github.com/dbrgn/tealdeer"
+	@echo ">>> Installing $@: https://github.com/tealdeer-rs/tealdeer"
 	cargo install tealdeer
 	@echo ">>> Configuring $$($@ -v)"
 	@ln -svft $(XDG_CONFIG_HOME)/tealdeer $(CFG_CONFIG_HOME)/tealdeer/*
@@ -1436,7 +1436,7 @@ ifeq ($(shell which alacritty 2> /dev/null),)
 		libxkbcommon-dev
 	@echo ">>> Configuring $@"
 	@{ \
-		for cfg in $$(find $(CFG_DIR)/.config/$@ -type f); do \
+		for cfg in $$(find $(CFG_CONFIG_HOME)/$@ -type f); do \
 			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
 		done;\
 	}
@@ -1722,7 +1722,6 @@ ifeq ($(shell grep "vm.swappiness" /etc/sysctl.conf),)
 else
 	@echo ">>> Manually change value of 'vm.swappiness' in '/etc/sysctl.conf'"
 endif
-
 
 # Code snippet added to /etc/bash.bashrc by bash target
 define RUN_USER_BASHRC
