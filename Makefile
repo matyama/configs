@@ -165,9 +165,7 @@ DATA_DIRS := \
 	$(XDG_DATA_HOME)/newsboat \
 	$(XDG_DATA_HOME)/npm \
 	$(ZSH_CUSTOM)/plugins/forgit \
-	$(ZSH_CUSTOM)/plugins/poetry \
-	$(ZSH_CUSTOM)/plugins/tinted-shell \
-	$(ZSH_CUSTOM)/plugins/zsh-virsh
+	$(ZSH_CUSTOM)/plugins/poetry
 
 # Ensure necessary paths exist
 $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
@@ -255,13 +253,11 @@ endif
 
 # Resources:
 #  - [Tinted Shell](https://github.com/tinted-theming/tinted-shell)
-#  - Note: The ZSH plugin symlink name must match the name specified in the
-#    plugins rc section (i.e., `tinted-shell.plugin.zsh`), contrary to the docs
 .PHONY: tintted-shell
 tinted-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/tinted-shell
 tinted-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
 tinted-shell: BASE16_THEME := gruvbox-dark-hard
-tinted-shell: zsh $(ZSH_CUSTOM)/plugins/tinted-shell
+tinted-shell: zsh
 ifeq ($(shell test -d $(BASE16_SHELL_PATH) && echo -n yes 2> /dev/null),yes)
 	@echo ">>> Updating $@ repository in '$(BASE16_SHELL_PATH)'"
 	@git -C $(BASE16_SHELL_PATH) pull
@@ -269,9 +265,6 @@ else
 	@echo ">>> Cloning $@ repository to '$(BASE16_SHELL_PATH)'"
 	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_PATH)
 endif
-	@echo ">>> Linking $@ OMZ plugin"
-	@ln -svf $(BASE16_SHELL_PATH)/base16-shell.plugin.zsh \
-		$(ZSH_CUSTOM)/plugins/tinted-shell/tinted-shell.plugin.zsh
 	@echo ">>> Testing default color scheme"
 	@$(BASE16_SHELL_PATH)/colortest
 	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
