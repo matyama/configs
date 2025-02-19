@@ -507,6 +507,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - heaptrack(-gui): A heap memory profiler for Linux
 #    (https://github.com/KDE/heaptrack)
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
+#  - kcat: Generic command line non-JVM Apache Kafka producer and consumer
+#    (https://github.com/edenhill/kcat)
 #  - libglpk-dev glpk-*: GLPK toolkit (https://www.gnu.org/software/glpk/)
 #  - libecpg-dev: Postgres instegrations
 #  - libimage-exiftool-perl: library and program to read and write meta
@@ -559,6 +561,7 @@ basic-tools: \
 		tesseract-ocr-eng \
 		direnv \
 		graphviz \
+		kcat \
 		libzstd-dev \
 		libecpg-dev \
 		libglpk-dev \
