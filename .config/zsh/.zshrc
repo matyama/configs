@@ -1,69 +1,224 @@
-# Path to your oh-my-zsh installation.
-#  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
-export ZSH="${XDG_DATA_HOME}/oh-my-zsh"
+########################################################
+##### UPDATE FPATH
+########################################################
 
-# Default user
-DEFAULT_USER=matyama
+# TODO: add completions conditionally only if binary is installed
+# Export directory for user-defined completions
+export ZSH="${XDG_DATA_HOME:-$HOME/.local}/zsh"
+export ZSH_COMPLETIONS="${ZSH}/completions"
 
-# Set name of the theme to load
-ZSH_THEME=powerlevel10k/powerlevel10k
+# Modify fpath
+typeset -gaU fpath=($fpath $ZSH_COMPLETIONS)
 
-# Set p10k configuration file
-#  - Note: *Rainbow* prompt style does now display correctly in vscode terminal,
-#    therefore `p10k-vscode.zsh` is used if current shell runs there.
-#  - See: https://stackoverflow.com/a/59231654/15112035
-if [[ -n "${TERM_PROGRAM}"  ]] && [[ "${TERM_PROGRAM}" == "vscode" ]]; then
-  POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k-vscode.zsh"
-else
-  POWERLEVEL9K_CONFIG_FILE="${XDG_CONFIG_HOME}/zsh/p10k.zsh"
+########################################################
+##### SETUP PLUGIN MANAGER (ZINIT)
+########################################################
+
+# Set up the directory to store zinit and plugins
+export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+export ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zinit}"
+
+# Download zinit, if it's not there yet
+if [ ! -d "${ZINIT_HOME}" ]; then
+  mkdir -p "$(dirname ${ZINIT_HOME})" "${ZSH_CACHE_DIR}"/completions
+  git clone https://github.com/zdharma-continuum/zinit "${ZINIT_HOME}"
 fi
 
-# Disable p10k configuration wizard
-#  - If it's really needed, set this ad-hoc to false
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+# Source/load zinit
+source "${ZINIT_HOME}/zinit.zsh"
 
-# Plugins
-#  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-#  - https://github.com/wfxr/forgit
-#  - https://github.com/tinted-theming/tinted-shell
-#  - https://github.com/zsh-users/zsh-syntax-highlighting
-#  - https://github.com/zsh-users/zsh-history-substring-search
-#  - https://github.com/zsh-users/zsh-autosuggestions
-#  - https://github.com/matthieusb/zsh-sdkman
+########################################################
+##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
+########################################################
+
+ZSH_THEME=romkatv/powerlevel10k
+DEFAULT_USER=matyama
+
+# XXX: wait/load
+# Prompt: Powerlevel10k
+# To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
+zinit wait'!' lucid nocd \
+  if'[[ "${ZSH_THEME}" = */powerlevel10k ]]' \
+  atinit"!
+    # Disable p10k configuration wizard
+    POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" \
+  atload"!
+    # Set p10k configuration file
+    case ${TERM_PROGRAM} in
+      # Rainbow prompt style does now display correctly in vscode terminal, so
+      # use p10k-vscode.zsh there instead.
+      vscode)
+        POWERLEVEL9K_CONFIG_FILE=${XDG_CONFIG_HOME}/zsh/p10k-vscode.zsh
+        ;;
+      *)
+        POWERLEVEL9K_CONFIG_FILE=${XDG_CONFIG_HOME}/zsh/p10k.zsh
+        ;;
+    esac
+    source \${POWERLEVEL9K_CONFIG_FILE}
+    _p9k_precmd" \
+  for "${ZSH_THEME}"
+
+# XXX: Prompt: Starship
+#  - https://zdharma-continuum.github.io/zinit/wiki/Multiple-prompts
+#zinit lucid for \
+#    as"command" \
+#    from"gh-r" \
+#    atinit"
+#      export N_PREFIX=$HOME/n
+#      [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"" \
+#    atload'eval "$(starship init zsh)"' \
+#    starship/starship
+
+# XXX: wait with some high precedence (e.g., 0a)
+# XXX: move some of OMZL::git.zsh to git aliases instead
+# TODO: maybe set some OMZL::directories.zsh options / aliases
+# TODO: update c/p aliases to use clipcopy/clippaste
+# TODO: replace OMZL::history with PZT::modules/history
+#  - or set manually
 #
-# Plugin directories
-#  - Standard plugins can be found in $ZSH/plugins/
-#  - Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(
-  ansible                       # adds some useful aliases for ansible
-  aws                           # completion support for awscli & few utilities
-  copybuffer                    # copy shell buffer to clipboard with ctrl-o
-  direnv                        # creates the direnv hook
-  docker                        # adds auto-completion and aliases for docker
-  docker-compose                # adds completion & some aliases
-  fzf                           # enables fuzzy auto-completion & key bindings
-  git                           # adds many aliases & few useful functions
-  forgit                        # interactive git+fzf & overrides git aliases
-  gh                            # adds completion for the GitHub CLI
-  helm                          # adds completion for helm
-  history                       # adds a couple of convenient aliases
-  kubectl                       # adds completion & some aliases
-  minikube                      # adds completion for minikube
-  nmap                          # adds some useful aliases for Nmap
-  pip                           # adds completion & some aliases
-  pipenv                        # adds completion, aliases & shell activation
-  poetry                        # adds completion & keeps it up to date
-  rust                          # adds completion for rustc, rustup and cargo
-  sdk                           # adds auto-completion for sdk
-  stack                         # adds auto-completion for stack
-  terraform                     # adds completion, aliases & a prompt function
-  tmux                          # adds some useful aliases for tmux
-  zsh-sdkman                    # adds aliases and completion scripts for sdk
-  zsh-syntax-highlighting       # provides fish-like syntax highlighting
-  zsh-history-substring-search  # provides fish-like history search feature
-  zsh-autosuggestions           # provides fish-like autosuggestions
-  zsh-interactive-cd            # provides fish-like interactive cd completion
-)
+# Priority plugins/libs
+#  1. Load history early to prevent empty history stack for other plugins
+#  2. Load OMZ library snippets, some of which are pre-requisites for plugins
+#  3. Load tmux first to prevent jumps when it is loaded after zshrc
+#     (adds some useful aliases for tmux)
+zinit lucid for \
+  is-snippet \
+    OMZL::{'clipboard','completion','git','grep','history','key-bindings'}.zsh \
+  has"tmux" atinit"
+      ZSH_TMUX_FIXTERM=false
+      ZSH_TMUX_AUTOSTART=false
+      ZSH_TMUX_AUTOCONNECT=false" \
+    OMZP::tmux
+
+# FIXME: aws completions
+# XXX: deprecate OMZP::history (add to custom aliases or OMZL::history atload)
+# TODO: deprecate OMZP::minikube (resp., generate as completions)
+# TODO: deprecate OMZP::poetry (resp., generate as completions)
+# TODO: OMZP::poetry is just completion definition
+# TODO: OMZP::poetry just generates and sources completions (gen on update)
+# XXX: OMZ::git -> gitfast (zinit svn snippet for OMZP::gitfast)
+# TODO: https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
+#
+#
+# Resuorces:
+#  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
+#  - https://github.com/zdharma-continuum/zinit#migration
+#  - https://zdharma-continuum.github.io/zinit/wiki/Example-Oh-My-Zsh-setup
+#
+# OMZ plugins/snippets/completions
+#  - ansible                       adds some useful aliases for ansible
+#  - aws                           completion support for awscli & few utilities
+#  - copybuffer                    copy shell buffer to clipboard with ctrl-o
+#  - direnv                        creates the direnv hook
+#  - docker                        adds auto-completion and aliases for docker
+#  - docker-compose                adds completion & some aliases
+#  - fzf                           enables fuzzy auto-completion & key bindings
+#  - gh                            adds completion for the GitHub CLI
+#  - git                           adds many aliases & few useful functions
+#  - helm                          adds completion for helm
+#  - history                       adds a couple of convenient aliases
+#  - kubectl                       adds completion & some aliases
+#  - minikube                      adds completion for minikube
+#  - nmap                          adds some useful aliases for Nmap
+#  - pip                           adds completion & some aliases
+#  - poetry                        adds completion & keeps it up to date
+#  - rust                          adds completion for rustc, rustup and cargo
+#  - sdk                           adds auto-completion for sdk
+#  - stack                         adds auto-completion for stack
+#  - terraform                     adds completion, aliases & a prompt function
+#  - zsh-interactive-cd            provides fish-like interactive cd completion
+zinit wait lucid for \
+  has'ansible' OMZP::ansible \
+  has'aws' OMZP::aws \
+  OMZP::copybuffer \
+  has'direnv' OMZP::direnv \
+  has'docker' OMZP::docker \
+  has'docker' as'completion' OMZP::docker/completions/_docker \
+  has'docker-compose' OMZP::docker-compose \
+  has'docker-compose' as'completion' OMZP::docker-compose/_docker-compose \
+  has'fzf' OMZP::fzf \
+  has'gh' OMZP::gh \
+  OMZP::git \
+  has'helm' OMZP::helm \
+  OMZP::history \
+  has'kubectl' OMZP::kubectl \
+  has'minikube' OMZP::minikube \
+  has'nmap' OMZP::nmap \
+  has'pip' OMZP::pip \
+  has'pip' as'completion' OMZP::pip/_pip \
+  has'poetry' OMZP::poetry \
+  has'rustc' as'completion' OMZP::rust/_rustc \
+  has'rustup' has'cargo' OMZP::rust \
+  OMZP::sdk \
+  has'stack' OMZP::stack \
+  has'terraform' OMZP::terraform \
+  has'terraform' as'completion' OMZP::terraform/_terraform \
+  OMZP::zsh-interactive-cd
+
+# FIXME: zsh-autosuggestions is too slow to load
+# Resources
+#  - zsh-autosuggestions: provides fish-like autosuggestions
+#    https://github.com/zsh-users/zsh-autosuggestions
+#  - forgit: interactive git+fzf & overrides git aliases
+#    https://github.com/wfxr/forgit
+#
+# XXX: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
+zinit wait lucid for \
+  atload="!_zsh_autosuggest_start" \
+    zsh-users/zsh-autosuggestions \
+  has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
+  atinit"export FORGIT_COPY_CMD='wl-copy'" \
+    wfxr/forgit
+
+# TODO: fast-syntax-highlighting (zsh-syntax-highlighting is too slow to load)
+# https://github.com/zdharma-continuum/fast-syntax-highlighting
+#zinit wait lucid for \
+# atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+#    zdharma-continuum/fast-syntax-highlighting
+#
+# zsh-syntax-highlighting: provides fish-like syntax highlighting
+# https://github.com/zsh-users/zsh-syntax-highlighting
+zinit wait'0a' lucid for \
+  zsh-users/zsh-syntax-highlighting
+
+# zsh-history-substring-search: provides fish-like history search feature
+# https://github.com/zsh-users/zsh-history-substring-search
+
+# NOTE: https://github.com/zsh-users/zsh-history-substring-search/issues/110
+function _history_substring_search_config() {
+  # Move up/down with arrows
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+  # Accept autosuggestion with <Ctrl><Space>
+  bindkey '^ ' autosuggest-accept
+  # Accept and execute current suggestion with Ctrl+x
+  bindkey '^x' autosuggest-execute
+}
+
+# NOTE: must be load after zsh-syntax-highlighting, hence the 0b wait slot
+zinit wait'0b' lucid for \
+  atload"
+    HISTORY_SUBSTRING_SEARCH_FUZZY=true
+    _history_substring_search_config" \
+      zsh-users/zsh-history-substring-search
+
+# XXX: zsh-completions
+# zinit wait lucid for \
+#   blockf atpull'zinit creinstall -q .' \
+#     zsh-users/zsh-completions
+
+# XXX: maybe even install sdk here
+# https://zdharma-continuum.github.io/zinit/wiki/GALLERY/#programs
+#
+# zsh-sdkman: adds aliases and completion scripts for sdk
+# https://github.com/matthieusb/zsh-sdkman
+zinit wait'1' lucid for \
+  if'[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]' \
+  atpull'sdk selfupdate' \
+  atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
+    matthieusb/zsh-sdkman
+
+########## TODO: move the below somewhere else
 
 # fzf
 #  - https://github.com/junegunn/fzf#layout
@@ -80,6 +235,8 @@ export SKIM_BASE="${SKIM_BASE:-$XDG_DATA_HOME/skim}"
 export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}"
 export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
 
+# TODO: move to some lazy `zinit wait lucid has'sk' as'command' ...`
+#  - maybe use just the null repo with atinit'source ...'
 if (( $+commands[sk] )); then
   source "${SKIM_BASE}/shell/key-bindings.zsh"
 fi
@@ -92,14 +249,6 @@ export fzf_prog
 
 # set default fuzzy finder
 fzf_prog fzf
-
-# forgit
-#  - https://github.com/wfxr/forgit#git
-path+="${FORGIT_INSTALL_DIR}/bin"
-
-export FORGIT_COPY_CMD='wl-copy'
-
-source $ZSH/oh-my-zsh.sh
 
 # TODO: organize (split up and move to apps, leave here just generic ones)
 ########################################################
@@ -209,6 +358,7 @@ fi
 # chafa (https://github.com/hpjansson/chafa)
 (( $+commands[chafa] )) && alias imshow="chafa -c 256"
 
+# TODO: move to as atinit on the docker plugin
 # Docker
 if (( $+commands[docker] )); then
 	alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
@@ -261,10 +411,6 @@ fi
 ##### USER CONFIGURATION
 ########################################################
 
-# TODO: move to default user
-# Default browser
-export BROWSER="firefox"
-
 # History management
 #  - https://stackoverflow.com/a/38549502
 #  - https://stackoverflow.com/a/19454838
@@ -296,20 +442,14 @@ if (( $+commands[mcfly] )); then
   export MCFLY_FUZZY=2
   export MCFLY_RESULTS=20
   export MCFLY_HISTORY_LIMIT=10000
+  # TODO: generate via zinit wait lucid as'program' ...
+  #  - use null repo with atinit'eval ...'
   eval "$(mcfly init zsh)"
 fi
-
-# History search
-#  - https://github.com/zsh-users/zsh-history-substring-search#configuration
-HISTORY_SUBSTRING_SEARCH_FUZZY=true
 
 ########################################################
 ##### KEYBINDINGS
 ########################################################
-
-# Accept autosuggestion with <Ctrl><Space>
-#  - https://github.com/zsh-users/zsh-autosuggestions#key-bindings
-bindkey '^ ' autosuggest-accept
 
 # Use Ctrl-Z to switch back to Vim
 #  - https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
@@ -360,10 +500,6 @@ export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 (( $+commands[lesspipe.sh] )) && export LESSOPEN="|lesspipe.sh %s"
 (( $+commands[bat] )) && export LESSCOLORIZER=bat
 
-# To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
-[[ ! -f "${POWERLEVEL9K_CONFIG_FILE}" ]] || \
-  source "${POWERLEVEL9K_CONFIG_FILE}"
-
 # Tinted Shell (https://github.com/tinted-theming/tinted-shell)
 export TINTED_SHELL_ENABLE_VARS=1
 export TINTED_SHELL_ENABLE_BASE16_VARS=1
@@ -402,14 +538,22 @@ export BAT_STYLE=full
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
 
+########################################################
+##### COMPLETIONS
+########################################################
+
 # Initialize completions
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 #  - https://unix.stackexchange.com/a/391670
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 
+# FIXME: (de)duplicate with $ZSH_CACHE_DIR
 autoload -U +X compinit && \
   compinit -i -d "${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
 autoload -U +X bashcompinit && bashcompinit
+
+# zinit: replay cached completions (recommended)
+zinit cdreplay -q
 
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 
@@ -436,12 +580,13 @@ if (( $+commands[virsh] )); then
   }
 fi
 
+# XXX: zoxide is only relevant for interactive shells
+#  - rationale: it's only initialized here in zshrc, so won't work elsewhere
+#  - so we could install it here, see:
+#    https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
+#
 # zoxide
 if (( $+commands[zoxide] )); then
   eval "$(zoxide init --cmd cd zsh)"
   alias cdf=cdi
 fi
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] && \
-  source "${SDKMAN_DIR}/bin/sdkman-init.sh"

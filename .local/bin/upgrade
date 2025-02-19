@@ -18,7 +18,7 @@ SKIP: Skip selected tool(s), overrides RUN.
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
 	sdk          Skip sdk upgrade
-	omz          Skip omz update
+	zsh          Skip zsh update
 	vim          Skip (neo)vim updates (vim-plug, coc)
 	extras       Skip all but apt upgrade
 
@@ -29,7 +29,7 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 	rust         Run only rustup update
 	binenv       Run only binenv upgrade
 	sdk          Run only sdk upgrade
-	omz          Run only omz update
+	zsh          Run only zsh update
 	vim          Run only (neo)vim updates (vim-plug, coc)
 "
 
@@ -45,7 +45,7 @@ RUN_PIPX=0
 RUN_RUST=0
 RUN_BINENV=0
 RUN_SDK=0
-RUN_OMZ=0
+RUN_ZSH=0
 RUN_VIM=0
 
 POSITIONAL_ARGS=()
@@ -80,8 +80,8 @@ while [[ $# -gt 0 ]]; do
 				sdk)
 					RUN_SDK=$((RUN_SDK - 2))
 					;;
-				omz)
-					RUN_OMZ=$((RUN_OMZ - 2))
+				zsh)
+					RUN_ZSH=$((RUN_ZSH - 2))
 					;;
 				vim)
 					RUN_VIM=$((RUN_VIM - 2))
@@ -92,7 +92,7 @@ while [[ $# -gt 0 ]]; do
 					RUN_RUST=$((RUN_RUST - 2))
 					RUN_BINENV=$((RUN_BINENV - 2))
 					RUN_SDK=$((RUN_SDK - 2))
-					RUN_OMZ=$((RUN_OMZ - 2))
+					RUN_ZSH=$((RUN_ZSH - 2))
 					RUN_VIM=$((RUN_VIM - 2))
 					;;
 				*)
@@ -128,7 +128,7 @@ if [[ $# -eq 0 ]]; then
 	RUN_RUST=$((RUN_RUST + 1))
 	RUN_BINENV=$((RUN_BINENV + 1))
 	RUN_SDK=$((RUN_SDK + 1))
-	RUN_OMZ=$((RUN_OMZ + 1))
+	RUN_ZSH=$((RUN_ZSH + 1))
 	RUN_VIM=$((RUN_VIM + 1))
 else
 	while [[ $# -gt 0 ]]; do
@@ -157,8 +157,8 @@ else
 				RUN_SDK=$((RUN_SDK + 1))
 				shift
 				;;
-			omz)
-				RUN_OMZ=$((RUN_OMZ + 1))
+			zsh)
+				RUN_ZSH=$((RUN_ZSH + 1))
 				shift
 				;;
 			vim)
@@ -315,10 +315,9 @@ if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
 	sdk flush
 fi
 
-if [[ -n $ZSH ]] && [[ $ZSH == *oh-my-zsh ]] && [[ $RUN_OMZ -gt 0 ]]; then
-	# There should be no downside to running the upgrade script directly
-	#  - See: https://bit.ly/3Nlq6KP
-	"$ZSH/tools/upgrade.sh"
+if [[ "$(command -v zsh)" ]] && [[ $RUN_ZSH -gt 0 ]]; then
+	echo "Upgrading zsh plugins, snippets, and completions..."
+	zsh -ic 'zinit update -a'
 fi
 
 if [[ -n "$EDITOR" ]] && [[ "$EDITOR" == *vim ]] && [[ $RUN_VIM -gt 0 ]]; then

@@ -29,11 +29,7 @@ XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
 ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
-ZSH ?= $(XDG_DATA_HOME)/oh-my-zsh
-ZSH_COMPLETIONS := $(ZSH)/completions
-ZSH_CUSTOM ?= $(ZSH)/custom
-ZSH_PLUGINS ?= $(ZSH_CUSTOM)/plugins
-ZSH_THEMES ?= $(ZSH_CUSTOM)/themes
+ZSH_COMPLETIONS ?= $(XDG_DATA_HOME)/zsh/completions
 
 BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
@@ -67,7 +63,6 @@ CABAL_CONFIG ?= $(CABAL_DIR)/config
 STACK_ROOT ?= $(XDG_DATA_HOME)/stack
 
 SDKMAN_DIR ?= $(XDG_DATA_HOME)/sdkman
-ZSH_SDKMAN_DIR ?= $(XDG_DATA_HOME)/zsh-sdkman
 
 GOPATH ?= $(XDG_DATA_HOME)/go
 
@@ -163,9 +158,7 @@ DATA_DIRS := \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
-	$(XDG_DATA_HOME)/npm \
-	$(ZSH_CUSTOM)/plugins/forgit \
-	$(ZSH_CUSTOM)/plugins/poetry
+	$(XDG_DATA_HOME)/npm
 
 # Ensure necessary paths exist
 $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
@@ -415,13 +408,14 @@ endif
 	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
 	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN_HOME)/man1/$@-tmux.1.gz
 
+# TODO: move completion linking and keybindings to zshrc (use `has'sk'`)
 # skim: Fuzzy Finder in rust!
 #  - https://github.com/skim-rs/skim
 #  - Note: installs version given by SKIM_TAG
 .PHONY: skim
 skim: SKIM_REPO := https://github.com/skim-rs/skim
 skim: SKIM_TAG := $(shell gh_latest_release skim-rs/skim)
-skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1 $(ZSH_COMPLETIONS)
+skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1
 ifneq ($(shell which sk 2> /dev/null),)
 	@echo ">>> Updating $@"
 ifneq ($(shell sk -V | sed 's|sk |v|'),$(SKIM_TAG))
@@ -439,18 +433,6 @@ endif
 	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
 	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN_HOME)/man1/sk.1.gz
 	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN_HOME)/man1/sk-tmux.1.gz
-
-.PHONY: forgit
-forgit: FORGIT_REPO := https://github.com/wfxr/forgit.git
-forgit: zsh fzf $(ZSH_CUSTOM)/plugins/forgit
-ifneq ($(wildcard $(ZSH_CUSTOM)/plugins/forgit/.),)
-	@echo ">>> Updating $@"
-	@git -C $(ZSH_CUSTOM)/plugins/$@ pull
-else
-	@echo ">>> Installing $@ to '$(ZSH_CUSTOM)/plugins/$@'"
-	@git clone $(FORGIT_REPO) $(ZSH_CUSTOM)/plugins/$@
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
-endif
 
 .PHONY: gitui
 gitui: rust
@@ -876,7 +858,7 @@ else
 	"$(DOWNLOAD_DIR)/$@" install $@
 	@echo ">>> Generating zsh completions for $@"
 	$@ completion zsh > $</_$@
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@echo ">>> Finish $@ completion setup by reloading zsh"
 endif
 	@rm -rf $(DOWNLOAD_DIR)
 
@@ -892,61 +874,15 @@ binenv-tools: binenv $(XDG_MAN_HOME)/man1
 		| tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip \
 		> $(XDG_MAN_HOME)/man1/duf.1.gz
 
-# Installation resources:
-#  - https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
-#  - https://github.com/ohmyzsh/ohmyzsh#custom-directory
-#  - https://github.com/ohmyzsh/ohmyzsh/issues/9543
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
 .PHONY: zsh
-zsh: $(XDG_CACHE_HOME)/zsh core-utils net-tools
+zsh: $(XDG_CACHE_HOME)/zsh $(ZSH_COMPLETIONS) core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
 	@echo ">>> $@ already installed"
 else
-	@echo ">>> Installing zsh and oh-my-zsh"
+	@echo ">>> Installing zsh"
 	sudo apt install -y $@ fonts-powerline
 	$@ --version
-	sh -c "$$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 	sudo chsh -s $$(which $@)
-endif
-	@echo ">>> Setting up $@ plugins"
-	make -C $(CFG_DIR) $(ZSH_USERS_PLUGINS) $(ZSH_LINKED_PLUGINS)
-	@echo ">>> Setting up $@ themes"
-	make -C $(CFG_DIR) powerlevel10k
-
-ZSH_USERS_PLUGINS := \
-	zsh-syntax-highlighting \
-	zsh-history-substring-search \
-	zsh-autosuggestions
-
-.PHONY: $(ZSH_USERS_PLUGINS)
-$(ZSH_USERS_PLUGINS): core-utils
-ifeq ($(shell test -d $(ZSH_PLUGINS)/$@ && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(ZSH_PLUGINS)/$@'"
-	@git -C "$(ZSH_PLUGINS)/$@" pull
-else
-	@echo ">>> Cloning $@ repository to '$(ZSH_PLUGINS)/$@'"
-	git clone "https://github.com/zsh-users/$@" "$(ZSH_PLUGINS)/$@"
-endif
-
-ZSH_LINKED_PLUGINS := \
-	zsh-virsh
-
-.PHONY: $(ZSH_LINKED_PLUGINS)
-$(ZSH_LINKED_PLUGINS):
-	@echo ">>> Linking $@ plugin to '$(ZSH_PLUGINS)/$@'"
-	@mkdir -p "$(ZSH_PLUGINS)/$@"
-	@ln -svft \
-		"$(ZSH_PLUGINS)/$@" \
-		"$(CFG_DATA_HOME)/oh-my-zsh/custom/plugins/$@"/*.zsh
-
-.PHONY: powerlevel10k
-powerlevel10k: core-utils
-ifeq ($(shell test -d $(ZSH_THEMES)/$@ && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(ZSH_THEMES)/$@'"
-	@git -C "$(ZSH_THEMES)/$@" pull
-else
-	@echo ">>> Cloning $@ repository to '$(ZSH_THEMES)/$@'"
-	@git clone https://github.com/romkatv/powerlevel10k "$(ZSH_THEMES)/$@"
 endif
 
 # Installation resources:
@@ -1016,19 +952,16 @@ python-lsp-server: pipx
 
 # Installation resources:
 #  - https://python-poetry.org/docs/#installation
-#  - https://python-poetry.org/docs/#enable-tab-completion-for-bash-fish-or-zsh
 .PHONY: poetry
-poetry: pipx zsh $(ZSH_PLUGINS)/poetry
+poetry: pipx
 ifneq ($(shell which poetry 2> /dev/null),)
 	@echo ">>> $$($@ --version) already installed, upgrading instead..."
 	pipx upgrade poetry
-	@echo ">>> Using $$($@ --version)"
 else
-	@echo ">>> Installing Poetry: https://python-poetry.org/docs/"
+	@echo ">>> Installing Poetry: https://python-poetry.org/docs"
 	pipx install $@
 endif
-	@echo ">>> Updating shell completions for $@"
-	$@ completions zsh > $(ZSH_PLUGINS)/$@/_$@
+	@echo ">>> Using $$($@ --version)"
 
 # Installation resources:
 #  - https://sdkman.io/install
@@ -1040,21 +973,6 @@ sdk: net-tools
 	@echo ">>> Installing SDKMAN: https://sdkman.io/"
 	curl -s "https://get.sdkman.io?rcupdate=false" | bash
 	source $(SDKMAN_DIR)/bin/sdkman-init.sh
-	make -C $(CFG_DIR) zsh-sdkman
-
-# Installation resources:
-#  - https://github.com/matthieusb/zsh-sdkman#installation
-.PHONY: zsh-sdkman
-zsh-sdkman: ZSH_SDKMAN_REPO_URL := https://github.com/matthieusb/zsh-sdkman
-zsh-sdkman: ZSH_SDKMAN_PLUGIN_DIR := $(ZSH_CUSTOM)/plugins/zsh-sdkman
-zsh-sdkman: zsh
-ifeq ($(shell test -d $(ZSH_SDKMAN_PLUGIN_DIR) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(ZSH_SDKMAN_PLUGIN_DIR)'"
-	@git -C $(ZSH_SDKMAN_PLUGIN_DIR) pull
-else
-	@echo ">>> Cloning $@ repository to '$(ZSH_SDKMAN_PLUGIN_DIR)'"
-	@git clone $(ZSH_SDKMAN_REPO_URL) $(ZSH_SDKMAN_PLUGIN_DIR)
-endif
 
 .PHONY: jvm-tools
 jvm-tools: SHELL := /bin/bash
@@ -1109,7 +1027,7 @@ else
 	@echo ">>> Dowloading zsh completions for $@"
 	curl -sSL -o $</_$@ \
 		"$(GHCUP_URL)/-/raw/v$$($@ --numeric-version)/shell-completions/zsh"
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@echo ">>> Finish $@ completion setup by reloading zsh"
 endif
 
 # Installed tools:
@@ -1227,7 +1145,7 @@ cargo-watch: $(ZSH_COMPLETIONS) $(XDG_MAN_HOME)/man1 net-tools rust
 		tar -C $(DOWNLOAD_DIR) -xJf - --strip-components=1 --wildcards */$@.1 */completions/zsh
 	@gzip -c $(DOWNLOAD_DIR)/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
 	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@echo ">>> Finish $@ completion setup by reloading zsh"
 	@rm -rf $(DOWNLOAD_DIR)
 
 .PHONY: cargo-tools
@@ -1458,7 +1376,7 @@ endif
 	@ln -svf \
 		"$(BASE16_ALACRITTY_HOME)/colors-256/base16-$(BASE16_THEME).toml" \
 		"$(XDG_CONFIG_HOME)/$@/colors.toml"
-	@echo ">>> Finish $@ completion setup by reloading zsh with 'omz reload'"
+	@echo ">>> Finish $@ completion setup by reloading zsh"
 	@rm -rf $(DOWNLOAD_DIR)
 
 # Base16 and Base24 themes for Alacritty
@@ -2008,7 +1926,7 @@ else
 	sudo snap install bitwarden bw
 	@echo ">>> Setting up bw zsh completions"
 	bw completion --shell zsh > "$(ZSH_COMPLETIONS)/_bw"
-	@echo ">>> Finish bw completion setup by reloading zsh with 'omz reload'"
+	@echo ">>> Finish bw completion setup by reloading zsh"
 endif
 
 # Installation resources:

@@ -38,6 +38,9 @@ export VISUAL=nvim
 export EDITOR=${VISUAL}
 export VIMRC=${XDG_CONFIG_HOME}/vim/vimrc
 
+# Browser setup
+export BROWSER=firefox
+
 # Personal user info
 export NAME="Martin Matyášek"
 export EMAIL=martin.matyasek@gmail.com
@@ -149,11 +152,7 @@ export GEM_BIN=${GEM_HOME}/bin
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://github.com/sdkman/sdkman-cli/issues/659
 #  - https://sdkman.io/install
-#
-# ZSH plugin
-#  - https://github.com/matthieusb/zsh-sdkman
 export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
-export ZSH_SDKMAN_DIR=${XDG_DATA_HOME}/zsh-sdkman
 
 # Java
 #  - Workaround to support XDG and move `~/.java` out of `HOME`
