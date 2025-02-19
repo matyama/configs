@@ -271,10 +271,6 @@ fi
 # aws-vault autocompletion
 (( $+commands[aws-vault] )) && eval "$(aws-vault --completion-script-zsh)"
 
-# travis autocompletion
-[[ -s "${TRAVIS_CONFIG_PATH}/travis.sh" ]] && \
-  source "${TRAVIS_CONFIG_PATH}/travis.sh"
-
 # pandoc autocompletion
 (( $+commands[pandoc] )) && eval "$(pandoc --bash-completion)"
 

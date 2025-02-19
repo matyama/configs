@@ -61,8 +61,6 @@ endif
 GEM_HOME ?= $(XDG_CONFIG_HOME)/gem
 GEM_SPEC_CACHE ?= $(XDG_CACHE_HOME)/gem
 
-TRAVIS_CONFIG_PATH ?= $(XDG_CONFIG_HOME)/travis
-
 GHCUP_USE_XDG_DIRS ?= 1
 CABAL_DIR ?= $(XDG_CONFIG_HOME)/cabal
 CABAL_CONFIG ?= $(CABAL_DIR)/config
@@ -1703,12 +1701,6 @@ else
 	sudo apt install -y $@
 	@echo ">>> Installed $$($@ --version)"
 endif
-
-# Note: `--no-user-install` forces gem to respect `$GEM_HOME`
-.PHONY: travis
-travis: ruby
-	@echo ">>> Installing Travis CLI: https://github.com/travis-ci/travis.rb"
-	gem install $@ --no-document --no-user-install
 
 .PHONY: aws-cli
 aws-cli:

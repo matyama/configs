@@ -142,11 +142,6 @@ export GEM_HOME=${XDG_DATA_HOME}/gem
 export GEM_SPEC_CACHE=${XDG_CACHE_HOME}/gem
 export GEM_BIN=${GEM_HOME}/bin
 
-# Travis
-#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
-#  - https://github.com/travis-ci/travis.rb/issues/219
-export TRAVIS_CONFIG_PATH=${XDG_CONFIG_HOME}/travis
-
 # SDKMAN: JVM ecosystem
 #  - Note: Out-of-the-box XDG support is still an open issue, monitor.
 #  - https://github.com/sdkman/sdkman-cli/issues/659
