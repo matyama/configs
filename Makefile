@@ -787,6 +787,7 @@ terraform: binenv
 	@echo ">>> Installed: $$($@ -version)"
 
 # Code snippet to be used by test-terraform
+# editorconfig-checker-disable
 define MAIN_TF
 terraform {
   required_providers {
@@ -814,6 +815,7 @@ resource "docker_container" "nginx" {
   }
 }
 endef
+# editorconfig-checker-enable
 
 export MAIN_TF
 
@@ -1959,8 +1961,9 @@ endif
 #  - calibre: ebook manager (https://calibre-ebook.com)
 #  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
 #  - mpv: command line video player (https://mpv.io)
+#  - shellcheck: static analysis tool for shell scripts (https://shellcheck.net)
 .PHONY: calibre luajit mpv
-calibre luajit mpv:
+calibre luajit mpv shellcheck:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
 

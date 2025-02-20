@@ -98,7 +98,8 @@ return {
         },
       })
 
-      -- Bash LSP
+      -- Bash LSP (https://github.com/bash-lsp/bash-language-server)
+      -- FIXME: https://github.com/neovim/nvim-lspconfig/issues/3453
       local configs = require("lspconfig.configs")
 
       if not configs.bash_lsp and vim.fn.executable("bash-language-server") == 1 then

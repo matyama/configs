@@ -1,3 +1,5 @@
+# shellcheck shell=bash disable=SC2139
+
 # This file sets environment variables that should be globally set on the system
 #
 # See:
@@ -31,7 +33,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 # System and architecture
 #  - https://zsh.sourceforge.io/Doc/Release/Parameters.html
 export ARCH="${MACHTYPE:-x86_64}"
-export DIST_ARCH="$(dpkg --print-architecture)"
+DIST_ARCH="$(dpkg --print-architecture)"
+export DIST_ARCH
 
 # Editor setup
 export VISUAL=nvim
@@ -256,12 +259,12 @@ export KERAS_HOME=${XDG_CACHE_HOME}/keras
 
 # Path extension
 typeset -aU path
-path+=${XDG_BIN_HOME}
-path+=${CARGO_BIN}
-path+=${CARGO_RELEASE_DIR}
-path+=${GOBIN}
-path+=${GEM_BIN}
-path+=${KREW_BIN}
-path+="/usr/local/bin"
-path+="${CABAL_DIR}/bin"
-path+="${XDG_DATA_HOME}/npm/bin"
+path+=("${XDG_BIN_HOME}")
+path+=("${CARGO_BIN}")
+path+=("${CARGO_RELEASE_DIR}")
+path+=("${GOBIN}")
+path+=("${GEM_BIN}")
+path+=("${KREW_BIN}")
+path+=("/usr/local/bin")
+path+=("${CABAL_DIR}/bin")
+path+=("${XDG_DATA_HOME}/npm/bin")

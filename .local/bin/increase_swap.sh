@@ -3,17 +3,17 @@
 echo "WARNINIG: Run this in a 'Live CD', not the installed Ubuntu"
 read -p "Continue (yY/nN)? " choice
 case "$choice" in
-	y | Y)
-		echo ">>> Running swap increase"
-		;;
-	n | N)
-		echo ">>> Stopping swap increase"
-		exit 0
-		;;
-	*)
-		echo ">>> Stopping swap increase"
-		exit 0
-		;;
+  y | Y)
+    echo ">>> Running swap increase"
+    ;;
+  n | N)
+    echo ">>> Stopping swap increase"
+    exit 0
+    ;;
+  *)
+    echo ">>> Stopping swap increase"
+    exit 0
+    ;;
 esac
 
 # Change swap size which is only 1G after installation
@@ -29,17 +29,17 @@ free -th | grep -i swap
 sudo lvmdiskscan
 
 if [[ "$(sudo lvmdiskscan | grep nvme0n1p3)" != "" ]]; then
-	# Lenovo ThinkPad T480
-	LVM_PARTITION=/dev/nvme0n1p3
-	UBUNTU_VG=ubuntu-vg
-	ROOT_NAME=ubuntu-lv
-	SWAP_NAME=swap
+  # Lenovo ThinkPad T480
+  LVM_PARTITION=/dev/nvme0n1p3
+  UBUNTU_VG=ubuntu-vg
+  ROOT_NAME=ubuntu-lv
+  SWAP_NAME=swap
 else
-	# Dell XPS
-	LVM_PARTITION=/dev/sda3
-	UBUNTU_VG=vgubuntu
-	ROOT_NAME=root
-	SWAP_NAME=swap_1
+  # Dell XPS
+  LVM_PARTITION=/dev/sda3
+  UBUNTU_VG=vgubuntu
+  ROOT_NAME=root
+  SWAP_NAME=swap_1
 fi
 
 ROOT_LV="/dev/${UBUNTU_VG}/${ROOT_NAME}"
@@ -66,9 +66,9 @@ sudo lvresize -y --resizefs -L-40G "${ROOT_LV}"
 
 # Add 40G to the swap volume or create a new one
 if [[ $(sudo lvs --noheading | grep "${SWAP_NAME}") != "" ]]; then
-	sudo lvresize -y -L+40G "${SWAP_LV}"
+  sudo lvresize -y -L+40G "${SWAP_LV}"
 else
-	sudo lvcreate -y -L+40G -n "${SWAP_NAME}"
+  sudo lvcreate -y -L+40G -n "${SWAP_NAME}"
 fi
 
 sudo lvs

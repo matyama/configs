@@ -34,7 +34,7 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 "
 
 usage() {
-	echo "$__USAGE"
+  echo "$__USAGE"
 }
 
 PROMPT=1
@@ -51,276 +51,280 @@ RUN_VIM=0
 POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
-	case $1 in
-		-h | --help)
-			usage
-			exit 0
-			;;
-		-p | --prompt)
-			PROMPT=0
-			shift
-			;;
-		-s | --skip)
-			case "$2" in
-				apt)
-					RUN_APT=$((RUN_APT - 2))
-					;;
-				snap)
-					RUN_SNAP=$((RUN_SNAP - 2))
-					;;
-				pipx)
-					RUN_PIPX=$((RUN_PIPX - 2))
-					;;
-				rust)
-					RUN_RUST=$((RUN_RUST - 2))
-					;;
-				binenv)
-					RUN_BINENV=$((RUN_BINENV - 2))
-					;;
-				sdk)
-					RUN_SDK=$((RUN_SDK - 2))
-					;;
-				zsh)
-					RUN_ZSH=$((RUN_ZSH - 2))
-					;;
-				vim)
-					RUN_VIM=$((RUN_VIM - 2))
-					;;
-				extras)
-					RUN_SNAP=$((RUN_SNAP - 2))
-					RUN_PIPX=$((RUN_PIPX - 2))
-					RUN_RUST=$((RUN_RUST - 2))
-					RUN_BINENV=$((RUN_BINENV - 2))
-					RUN_SDK=$((RUN_SDK - 2))
-					RUN_ZSH=$((RUN_ZSH - 2))
-					RUN_VIM=$((RUN_VIM - 2))
-					;;
-				*)
-					echo "Unknown skip option value $2"
-					usage
-					exit 1
-					;;
-			esac
-			# move past argument and value
-			shift
-			shift
-			;;
-		-* | --*)
-			echo "Unknown option $1"
-			usage
-			exit 1
-			;;
-		*)
-			# save positional arg
-			POSITIONAL_ARGS+=("$1")
-			shift
-			;;
-	esac
+  case $1 in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -p | --prompt)
+      PROMPT=0
+      shift
+      ;;
+    -s | --skip)
+      case "$2" in
+        apt)
+          RUN_APT=$((RUN_APT - 2))
+          ;;
+        snap)
+          RUN_SNAP=$((RUN_SNAP - 2))
+          ;;
+        pipx)
+          RUN_PIPX=$((RUN_PIPX - 2))
+          ;;
+        rust)
+          RUN_RUST=$((RUN_RUST - 2))
+          ;;
+        binenv)
+          RUN_BINENV=$((RUN_BINENV - 2))
+          ;;
+        sdk)
+          RUN_SDK=$((RUN_SDK - 2))
+          ;;
+        zsh)
+          RUN_ZSH=$((RUN_ZSH - 2))
+          ;;
+        vim)
+          RUN_VIM=$((RUN_VIM - 2))
+          ;;
+        extras)
+          RUN_SNAP=$((RUN_SNAP - 2))
+          RUN_PIPX=$((RUN_PIPX - 2))
+          RUN_RUST=$((RUN_RUST - 2))
+          RUN_BINENV=$((RUN_BINENV - 2))
+          RUN_SDK=$((RUN_SDK - 2))
+          RUN_ZSH=$((RUN_ZSH - 2))
+          RUN_VIM=$((RUN_VIM - 2))
+          ;;
+        *)
+          echo "Unknown skip option value $2"
+          usage
+          exit 1
+          ;;
+      esac
+      # move past argument and value
+      shift
+      shift
+      ;;
+    --* | -*)
+      echo "Unknown option $1"
+      usage
+      exit 1
+      ;;
+    *)
+      # save positional arg
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
 done
 
 # restore positional parameters
 set -- "${POSITIONAL_ARGS[@]}"
 
 if [[ $# -eq 0 ]]; then
-	RUN_APT=$((RUN_APT + 1))
-	RUN_SNAP=$((RUN_SNAP + 1))
-	RUN_PIPX=$((RUN_PIPX + 1))
-	RUN_RUST=$((RUN_RUST + 1))
-	RUN_BINENV=$((RUN_BINENV + 1))
-	RUN_SDK=$((RUN_SDK + 1))
-	RUN_ZSH=$((RUN_ZSH + 1))
-	RUN_VIM=$((RUN_VIM + 1))
+  RUN_APT=$((RUN_APT + 1))
+  RUN_SNAP=$((RUN_SNAP + 1))
+  RUN_PIPX=$((RUN_PIPX + 1))
+  RUN_RUST=$((RUN_RUST + 1))
+  RUN_BINENV=$((RUN_BINENV + 1))
+  RUN_SDK=$((RUN_SDK + 1))
+  RUN_ZSH=$((RUN_ZSH + 1))
+  RUN_VIM=$((RUN_VIM + 1))
 else
-	while [[ $# -gt 0 ]]; do
-		case $1 in
-			apt)
-				RUN_APT=$((RUN_APT + 1))
-				shift
-				;;
-			snap)
-				RUN_SNAP=$((RUN_SNAP + 1))
-				shift
-				;;
-			pipx)
-				RUN_PIPX=$((RUN_PIPX + 1))
-				shift
-				;;
-			rust)
-				RUN_RUST=$((RUN_RUST + 1))
-				shift
-				;;
-			binenv)
-				RUN_BINENV=$((RUN_BINENV + 1))
-				shift
-				;;
-			sdk)
-				RUN_SDK=$((RUN_SDK + 1))
-				shift
-				;;
-			zsh)
-				RUN_ZSH=$((RUN_ZSH + 1))
-				shift
-				;;
-			vim)
-				RUN_VIM=$((RUN_VIM + 1))
-				shift
-				;;
-			*)
-				shift
-				;;
-		esac
-	done
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      apt)
+        RUN_APT=$((RUN_APT + 1))
+        shift
+        ;;
+      snap)
+        RUN_SNAP=$((RUN_SNAP + 1))
+        shift
+        ;;
+      pipx)
+        RUN_PIPX=$((RUN_PIPX + 1))
+        shift
+        ;;
+      rust)
+        RUN_RUST=$((RUN_RUST + 1))
+        shift
+        ;;
+      binenv)
+        RUN_BINENV=$((RUN_BINENV + 1))
+        shift
+        ;;
+      sdk)
+        RUN_SDK=$((RUN_SDK + 1))
+        shift
+        ;;
+      zsh)
+        RUN_ZSH=$((RUN_ZSH + 1))
+        shift
+        ;;
+      vim)
+        RUN_VIM=$((RUN_VIM + 1))
+        shift
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
 fi
 
 if [[ $PROMPT -eq 0 ]]; then
-	read -p "Running system & tooling update - continue (yY/nN)? " choice
-	case "$choice" in
-		y | Y) ;;
+  read -p "Running system & tooling update - continue (yY/nN)? " choice
+  case "$choice" in
+    y | Y) ;;
 
-		n | N)
-			exit 0
-			;;
-		*)
-			exit 0
-			;;
-	esac
+    n | N)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
 fi
 
 XDG_DEV_HOME="${XDG_DEV_HOME:-$HOME/.local/dev}"
 CONF_MK="${XDG_DEV_HOME}/configs/Makefile"
 
 if [[ $RUN_APT -gt 0 ]]; then
-	echo "Upgrading system programs..."
-	sudo apt update
-	sudo apt upgrade -y
-	sudo apt autoremove -y
-	sudo apt autoclean
+  echo "Upgrading system programs..."
+  sudo apt update
+  sudo apt upgrade -y
+  sudo apt autoremove -y
+  sudo apt autoclean
 fi
 
 if [[ $RUN_SNAP -gt 0 ]]; then
-	echo "Refreshing snaps..."
-	sudo snap refresh
+  echo "Refreshing snaps..."
+  sudo snap refresh
 fi
 
 if [[ "$(command -v pipx)" ]] && [[ $RUN_PIPX -gt 0 ]]; then
-	if [[ -f "${CONF_MK}" ]]; then
-		echo "Upgrading pipx..."
-		make -f "${CONF_MK}" pipx
-	fi
-	echo "Upgrading pipx tools..."
-	pipx upgrade-all --include-injected
+  if [[ -f "${CONF_MK}" ]]; then
+    echo "Upgrading pipx..."
+    make -f "${CONF_MK}" pipx
+  fi
+  echo "Upgrading pipx tools..."
+  pipx upgrade-all --include-injected
 fi
 
 if [[ "$(command -v rustup)" ]] && [[ $RUN_RUST -gt 0 ]]; then
-	echo "Upgrading Rust stable toolchain..."
-	rustup update stable
+  echo "Upgrading Rust stable toolchain..."
+  rustup update stable
 
-	if [[ -f "${CONF_MK}" ]]; then
-		# TODO: autoremove old/unused versions
-		echo "Upgrading Rust applications & Cargo extensions..."
-		make -f "${CONF_MK}" rust-tools cargo-tools
-	fi
+  if [[ -f "${CONF_MK}" ]]; then
+    # TODO: autoremove old/unused versions
+    echo "Upgrading Rust applications & Cargo extensions..."
+    make -f "${CONF_MK}" rust-tools cargo-tools
+  fi
 fi
 
 binenv_upgrade() {
-	local dist="$(echo $1 | cut -d: -f1)"
+  local dist
+  dist="$(echo $1 | cut -d: -f1)"
 
-	# TODO: improvement - don't unnecessarily check for current (default) version
-	local version=$(
-		echo $1 |
-			# select release version list
-			cut -d : -f 2 |
-			# select only later releases than the currently installed one
-			sed 's|(default).*||g' |
-			tr " " "\n" |
-			# filter out any RC/alpha/beta releases and non-version outputs
-			egrep -v "rc|alpha|beta|^[[:space:]]*$" |
-			# select the latest release version
-			head -1 |
-			# make sure to select only semantic version and strip color outputs
-			egrep -o "[[:digit:]]+(\.[[:digit:]]+)+"
-	)
+  # TODO: improvement - don't unnecessarily check for current (default) version
+  local version
+  version=$(
+    echo $1 |
+      # select release version list
+      cut -d : -f 2 |
+      # select only later releases than the currently installed one
+      sed 's|(default).*||g' |
+      tr " " "\n" |
+      # filter out any RC/alpha/beta releases and non-version outputs
+      egrep -v "rc|alpha|beta|^[[:space:]]*$" |
+      # select the latest release version
+      head -1 |
+      # make sure to select only semantic version and strip color outputs
+      egrep -o "[[:digit:]]+(\.[[:digit:]]+)+"
+  )
 
-	binenv install "${dist}" "${version}"
+  binenv install "${dist}" "${version}"
 }
 
 binenv_clean() {
-	local dist="$(echo $1 | cut -d: -f1)"
+  local dist
+  dist="$(echo $1 | cut -d: -f1)"
 
-	# TODO: improvement - silence or skip version which is not installed
-	#  - Note: this can happen because `binenv_clean` is called even if `dist`
-	#    was not recently updated
-	# TODO: improvement - uninstall all non-default currently installed versions
-	local version=$(
-		echo $1 |
-			# select release version list
-			cut -d : -f 2 |
-			# select only earlier releases than the currently installed one
-			sed -e 's|^.*(default)||g' |
-			tr " " "\n" |
-			tail -n +2 |
-			# filter out any RC/alpha/beta releases and non-version outputs
-			egrep -v "rc|alpha|beta|^[[:space:]]*$" |
-			# select the latest release version
-			head -1 |
-			# make sure to select only semantic version and strip color outputs
-			egrep -o "[[:digit:]]+(\.[[:digit:]]+)+"
-	)
+  # TODO: improvement - silence or skip version which is not installed
+  #  - Note: this can happen because `binenv_clean` is called even if `dist`
+  #    was not recently updated
+  # TODO: improvement - uninstall all non-default currently installed versions
+  local version
+  version=$(
+    echo $1 |
+      # select release version list
+      cut -d : -f 2 |
+      # select only earlier releases than the currently installed one
+      sed -e 's|^.*(default)||g' |
+      tr " " "\n" |
+      tail -n +2 |
+      # filter out any RC/alpha/beta releases and non-version outputs
+      egrep -v "rc|alpha|beta|^[[:space:]]*$" |
+      # select the latest release version
+      head -1 |
+      # make sure to select only semantic version and strip color outputs
+      egrep -o "[[:digit:]]+(\.[[:digit:]]+)+"
+  )
 
-	binenv uninstall "${dist}" "${version}"
+  binenv uninstall "${dist}" "${version}"
 }
 
 if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
-	echo "Upgrading binenv distributions..."
-	binenv update -a
-	# upgrade binenv before any other distribution and refresh distribution list
-	binenv_upgrade $(binenv versions | grep binenv)
-	binenv update -a
-	while read -r binenv_dist; do
-		binenv_upgrade "${binenv_dist}"
-		binenv_clean "${binenv_dist}"
-	done <<<"$(binenv versions | grep default | grep -v binenv)"
+  echo "Upgrading binenv distributions..."
+  binenv update -a
+  # upgrade binenv before any other distribution and refresh distribution list
+  binenv_upgrade "$(binenv versions | grep binenv)"
+  binenv update -a
+  while read -r binenv_dist; do
+    binenv_upgrade "${binenv_dist}"
+    binenv_clean "${binenv_dist}"
+  done <<<"$(binenv versions | grep default | grep -v binenv)"
 fi
 
 # Include `sdkman-init.sh` to make `sdk` command available
 [[ $RUN_SDK -gt 0 ]] &&
-	[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] &&
-	source "${SDKMAN_DIR}/bin/sdkman-init.sh"
+  [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] &&
+  source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 
 if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
-	echo "Updating sdk..."
-	sdk selfupdate
-	echo "Updating sdk candidates..."
-	sdk update
-	echo "Upgrading sdk candidates..."
-	CANDIDATES=$(
-		# make this non-interactive and don't run any upgrade
-		yes n |
-			head -1 |
-			# list upgradable candidates
-			sdk ug |
-			# strip irrelevant output and keep only lines with candidates
-			grep local |
-			# skipping automatic java upgrade because it breaks apps
-			grep -v java |
-			# grep candidate name
-			cut -d ' ' -f 1 |
-			# remove colors from the output
-			sed -r 's|\x1b\[[0-9;]*m||g'
-	)
-	for candidate in $CANDIDATES; do
-		yes Y | head -1 | sdk upgrade "${candidate}"
-	done
-	echo "Flushing sdk's local state..."
-	sdk flush
+  echo "Updating sdk..."
+  sdk selfupdate
+  echo "Updating sdk candidates..."
+  sdk update
+  echo "Upgrading sdk candidates..."
+  CANDIDATES=$(
+    # make this non-interactive and don't run any upgrade
+    yes n |
+      head -1 |
+      # list upgradable candidates
+      sdk ug |
+      # strip irrelevant output and keep only lines with candidates
+      grep local |
+      # skipping automatic java upgrade because it breaks apps
+      grep -v java |
+      # grep candidate name
+      cut -d ' ' -f 1 |
+      # remove colors from the output
+      sed -r 's|\x1b\[[0-9;]*m||g'
+  )
+  for candidate in $CANDIDATES; do
+    yes Y | head -1 | sdk upgrade "${candidate}"
+  done
+  echo "Flushing sdk's local state..."
+  sdk flush
 fi
 
 if [[ "$(command -v zsh)" ]] && [[ $RUN_ZSH -gt 0 ]]; then
-	echo "Upgrading zsh plugins, snippets, and completions..."
-	zsh -ic 'zinit update -a'
+  echo "Upgrading zsh plugins, snippets, and completions..."
+  zsh -ic 'zinit update -a'
 fi
 
 if [[ -n "$EDITOR" ]] && [[ "$EDITOR" == *vim ]] && [[ $RUN_VIM -gt 0 ]]; then
-	echo "Upgrading ${EDITOR} plugins..."
-	"$EDITOR" --headless "+Lazy! sync" +qa &>/dev/null
+  echo "Upgrading ${EDITOR} plugins..."
+  "$EDITOR" --headless "+Lazy! sync" +qa &>/dev/null
 fi

@@ -30,6 +30,7 @@ return {
       end,
       sql = { "sqlfluff" },
       sh = { "shfmt" },
+      zsh = { "shfmt" },
     },
 
     -- Set up format-on-save
@@ -45,7 +46,8 @@ return {
     -- Customize formatters
     formatters = {
       shfmt = {
-        prepend_args = { "-ci" },
+        -- Google style (https://google.github.io/styleguide/shellguide.html)
+        prepend_args = { "-i", "2", "-ci" },
       },
     },
   },

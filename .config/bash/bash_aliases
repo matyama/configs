@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Bash aliases sourced by ~/.config/bash/bashrc
 
 # some more ls aliases

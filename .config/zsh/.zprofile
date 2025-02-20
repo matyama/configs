@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 # Alacritty (Wayland, Nvidia)
 #  - Hotfix based on https://github.com/NVIDIA/egl-wayland/issues/41
 #  - See also this issue: https://github.com/alacritty/alacritty/issues/3587

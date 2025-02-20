@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 ########################################################
 ##### UPDATE FPATH
 ########################################################
@@ -8,6 +10,7 @@ export ZSH="${XDG_DATA_HOME:-$HOME/.local}/zsh"
 export ZSH_COMPLETIONS="${ZSH}/completions"
 
 # Modify fpath
+# shellcheck disable=SC2206
 typeset -gaU fpath=($fpath $ZSH_COMPLETIONS)
 
 ########################################################
@@ -32,7 +35,7 @@ source "${ZINIT_HOME}/zinit.zsh"
 ########################################################
 
 ZSH_THEME=romkatv/powerlevel10k
-DEFAULT_USER=matyama
+export DEFAULT_USER=matyama
 
 # XXX: wait/load
 # Prompt: Powerlevel10k
@@ -83,12 +86,12 @@ zinit wait'!' lucid nocd \
 #     (adds some useful aliases for tmux)
 zinit lucid for \
   is-snippet \
-    OMZL::{'clipboard','completion','git','grep','history','key-bindings'}.zsh \
+  OMZL::{'clipboard','completion','git','grep','history','key-bindings'}.zsh \
   has"tmux" atinit"
       ZSH_TMUX_FIXTERM=false
       ZSH_TMUX_AUTOSTART=false
       ZSH_TMUX_AUTOCONNECT=false" \
-    OMZP::tmux
+  OMZP::tmux
 
 # FIXME: aws completions
 # XXX: deprecate OMZP::history (add to custom aliases or OMZL::history atload)
@@ -165,10 +168,10 @@ zinit wait lucid for \
 # XXX: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
 zinit wait lucid for \
   atload="!_zsh_autosuggest_start" \
-    zsh-users/zsh-autosuggestions \
+  zsh-users/zsh-autosuggestions \
   has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
   atinit"export FORGIT_COPY_CMD='wl-copy'" \
-    wfxr/forgit
+  wfxr/forgit
 
 # TODO: fast-syntax-highlighting (zsh-syntax-highlighting is too slow to load)
 # https://github.com/zdharma-continuum/fast-syntax-highlighting
@@ -200,7 +203,7 @@ zinit wait'0b' lucid for \
   atload"
     HISTORY_SUBSTRING_SEARCH_FUZZY=true
     _history_substring_search_config" \
-      zsh-users/zsh-history-substring-search
+  zsh-users/zsh-history-substring-search
 
 # XXX: zsh-completions
 # zinit wait lucid for \
@@ -216,7 +219,7 @@ zinit wait'1' lucid for \
   if'[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]' \
   atpull'sdk selfupdate' \
   atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
-    matthieusb/zsh-sdkman
+  matthieusb/zsh-sdkman
 
 ########## TODO: move the below somewhere else
 
@@ -237,7 +240,7 @@ export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
 
 # TODO: move to some lazy `zinit wait lucid has'sk' as'command' ...`
 #  - maybe use just the null repo with atinit'source ...'
-if (( $+commands[sk] )); then
+if [[ "${commands[sk]}" ]]; then
   source "${SKIM_BASE}/shell/key-bindings.zsh"
 fi
 
@@ -256,48 +259,47 @@ fzf_prog fzf
 ########################################################
 
 # ZSH
-alias zenv="nvim ${ZDOTDIR}/.zshenv"
-alias zconf="nvim ${ZDOTDIR}/.zshrc"
+alias zenv='nvim ${ZDOTDIR}/.zshenv'
+alias zconf='nvim ${ZDOTDIR}/.zshrc'
 
 # XDG
-alias o="xdg-open"
+alias o='xdg-open'
 
 # Copy/Paste
-alias y="wl-copy"
-alias c="wl-copy"
-alias p="wl-paste"
-alias rmclip="wl-copy -c"
+alias y='wl-copy'
+alias c='wl-copy'
+alias p='wl-paste'
+alias rmclip='wl-copy -c'
 
 # Find why is a given package installed via apt
 #  - Based on a comment under this answer: https://askubuntu.com/a/5637
-alias why="apt-cache rdepends --no-{suggests,conflicts,breaks,replaces,enhances} --installed --recurse"
+alias why='apt-cache rdepends --no-{suggests,conflicts,breaks,replaces,enhances} --installed --recurse'
 
 # List GPUs or launch a command on a GPU
-if (( $+commands[switcherooctl] )); then
-	alias lsgpu="switcherooctl list"
-	alias gpuexec="switcherooctl launch -g 1"
+if [[ "${commands[switcherooctl]}" ]]; then
+  alias lsgpu='switcherooctl list'
+  alias gpuexec='switcherooctl launch -g 1'
 fi
 
 # Bitwarden
 #  - https://bitwarden.com/help/cli/#log-in
 #  - NOTE: currently using two-step login via an authenticator app
 #  - TODO: switch to FIDO2 two-step login method once supported by the app
-alias bwl="bw login --method 0 ${EMAIL}"
-
-# Command auto-correction
-(( $+commands[fuck] )) && alias f="fuck"
+alias bwl='bw login --method 0 ${EMAIL}'
 
 # EDITOR
-alias e="nvim"
-alias ep="nvim -p"
-alias vim="vi -u ${VIMRC}" # vi is actually vim, but use custom vimrc
-alias vimdiff="nvim -d"
+alias e='nvim'
+alias ep='nvim -p'
+alias vim='vi -u ${VIMRC}' # vi is actually vim, but use custom vimrc
+alias vimdiff='nvim -d'
 
 # Search file with a fuzzy finder (fzf|sk) and open it with the editor
 alias ef='e $("${FZF:-fzf}" --preview="bat --style=numbers --color=always {}")'
 
 # Search installed packages with a fuzzy finder (fzf|sk)
-alias fpkg="dpkg -l | rg -N '^ii\s(.*)\$' -or '\$1' | ${FZF:-fzf}"
+function fpkg() {
+  dpkg -l | rg -N '^ii\s(.*)$' -or '$1' | "${FZF:-fzf}"
+}
 
 # Remove colors from output (https://stackoverflow.com/a/18000433)
 alias decolorize='sed -r "s/\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"'
@@ -311,18 +313,19 @@ alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/No
 # Extract given range of pages from a pdf file and output to stdout
 #  - Example: `pdfextract 2,6-9,11,42- in.pdf > out.pdf`
 #  - TODO: disable or otherwise fix pdfmark error (seem to have no effect)
+# shellcheck disable=SC2142
 alias pdfextract='pdfext() { gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sPageList="$1" -sOutputFile=%stdout "$2" ; }; pdfext'
 
 # Git
 alias gah="git stash && git pull --rebase && git stash pop"
-(( $+commands[gitui] )) && alias gui="gitui --watcher"
-(( $+commands[lazygit] )) && alias lg="lazygit"
+[[ "${commands[gitui]}" ]] && alias gui="gitui --watcher"
+[[ "${commands[lazygit]}" ]] && alias lg="lazygit"
 
 # make
 alias m="make"
 
 # just
-(( $+commands[just] )) && alias j="just"
+[[ "${commands[just]}" ]] && alias j="just"
 
 # grep
 alias grep='grep --color=auto'
@@ -333,61 +336,65 @@ alias egrep='egrep --color=auto'
 alias hg='history | egrep'
 
 # Ansible
-if (( $+commands[ansible-lint] )); then
-	alias alint="ansible-lint"
+# NOTE: must use local variable, otherwise shfmt breaks it into "<lhs> - <rhs>"
+_zshrc_cmd="ansible-lint"
+if [[ "${commands[$_zshrc_cmd]}" ]]; then
+  alias alint="ansible-lint"
 fi
 
 # eza (https://eza.rocks)
-(( $+commands[eza] )) && alias l="eza -lahg@ --git"
+[[ "${commands[eza]}" ]] && alias l="eza -lahg@ --git"
 
 # bat (https://github.com/sharkdp/bat)
-if (( $+commands[bat] )); then
-	alias b="bat"
-	alias bp="bat --plain"
+if [[ "${commands[bat]}" ]]; then
+  alias b="bat"
+  alias bp="bat --plain"
 fi
 
 # bitcli (https://github.com/matyama/bitcli)
-if (( $+commands[bitcli] )); then
-	alias short="bitcli shorten"
-	alias shorto="bitcli --offline"
+if [[ "${commands[bitcli]}" ]]; then
+  alias short="bitcli shorten"
+  alias shorto="bitcli --offline"
 fi
 
 # bluetui (https://github.com/pythops/bluetui)
-(( $+commands[bluetui] )) && alias bt="bluetui"
+[[ "${commands[bluetui]}" ]] && alias bt="bluetui"
 
 # chafa (https://github.com/hpjansson/chafa)
-(( $+commands[chafa] )) && alias imshow="chafa -c 256"
+[[ "${commands[chafa]}" ]] && alias imshow="chafa -c 256"
 
 # TODO: move to as atinit on the docker plugin
 # Docker
-if (( $+commands[docker] )); then
-	alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
+if [[ "${commands[docker]}" ]]; then
+  alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
 fi
 
 # parallel-ssh (https://github.com/ParallelSSH/parallel-ssh)
-if (( $+commands[parallel-ssh] )); then
-	alias pssh="parallel-ssh"
-	alias pscp="parallel-scp"
-	alias prsync="parallel-rsync"
-	alias pnuke="parallel-nuke"
-	alias pslurp="parallel-slurp"
+_zshrc_cmd="parallel-ssh"
+if [[ "${commands[$_zshrc_cmd]}" ]]; then
+  alias pssh="parallel-ssh"
+  alias pscp="parallel-scp"
+  alias prsync="parallel-rsync"
+  alias pnuke="parallel-nuke"
+  alias pslurp="parallel-slurp"
 fi
 
 # wireguard (https://wiki.archlinux.org/title/WireGuard)
-if (( $+commands[wg-quick] )); then
-	alias wgup="sudo wg-quick up"
-	alias wgdn="sudo wg-quick down"
+_zshrc_cmd="wg-quick"
+if [[ "${commands[$_zshrc_cmd]}" ]]; then
+  alias wgup="sudo wg-quick up"
+  alias wgdn="sudo wg-quick down"
 fi
 
 # hyperfine (https://github.com/sharkdp/hyperfine)
-if (( $+commands[hyperfine] )); then
-	alias bench="hyperfine -S zsh"
+if [[ "${commands[hyperfine]}" ]]; then
+  alias bench="hyperfine -S zsh"
 fi
 
 # Newsboat RSS/Atom feed reader (https://newsboat.org)
-if (( $+commands[newsboat] )); then
-	alias news="newsboat -q"
-	alias podcasts="podboat -a"
+if [[ "${commands[newsboat]}" ]]; then
+  alias news="newsboat -q"
+  alias podcasts="podboat -a"
 fi
 
 # Python
@@ -396,15 +403,16 @@ alias wp="which python"
 alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
 # Haskell
-if (( $+commands[ghc] )); then
-	# Quick check if Haskell source file(s) compile
-	alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
-	alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
+if [[ "${commands[ghc]}" ]]; then
+  # Quick check if Haskell source file(s) compile
+  alias hsc="ghc -no-keep-o-files -no-keep-hi-files"
+  alias hscdir="ghc -no-keep-o-files -no-keep-hi-files *.hs"
 fi
 
 # YouTube download (https://github.com/yt-dlp/yt-dlp)
-if (( $+commands[yt-dlp] )); then
-	alias yt2mp3="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
+_zshrc_cmd="yt-dlp"
+if [[ "${commands[$_zshrc_cmd]}" ]]; then
+  alias yt2mp3="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
 fi
 
 ########################################################
@@ -428,6 +436,8 @@ zshaddhistory() {
   emulate -L zsh
   ## uncomment if HISTORY_IGNORE should use EXTENDED_GLOB syntax
   # setopt extendedglob
+  # FIXME: shfmt is unable to parse this line (fails on ~)
+  # shellcheck disable=SC2053,SC2296
   [[ $1 != ${~HISTORY_IGNORE} ]]
 }
 
@@ -437,7 +447,7 @@ setopt hist_ignore_space
 # McFly history search
 #  - https://github.com/cantino/mcfly
 #  - NOTE: overrides Ctrl+R from the fzf plugin above
-if (( $+commands[mcfly] )); then
+if [[ "${commands[mcfly]}" ]]; then
   export MCFLY_KEY_SCHEME=vim
   export MCFLY_FUZZY=2
   export MCFLY_RESULTS=20
@@ -453,7 +463,8 @@ fi
 
 # Use Ctrl-Z to switch back to Vim
 #  - https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
-fancy-ctrl-z () {
+# shellcheck disable=SC2309,SC2034
+fancy-ctrl-z() {
   if [[ $#BUFFER -eq 0 ]]; then
     BUFFER="fg"
     zle accept-line
@@ -497,8 +508,8 @@ export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
 export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
 
 # Configure lesspipe.sh (https://github.com/wofr06/lesspipe)
-(( $+commands[lesspipe.sh] )) && export LESSOPEN="|lesspipe.sh %s"
-(( $+commands[bat] )) && export LESSCOLORIZER=bat
+[[ "${commands[lesspipe.sh]}" ]] && export LESSOPEN="|lesspipe.sh %s"
+[[ "${commands[bat]}" ]] && export LESSCOLORIZER=bat
 
 # Tinted Shell (https://github.com/tinted-theming/tinted-shell)
 export TINTED_SHELL_ENABLE_VARS=1
@@ -506,7 +517,7 @@ export TINTED_SHELL_ENABLE_BASE16_VARS=1
 
 # TODO: zinit/tinty
 # Tinted shell (https://github.com/tinted-theming/tinted-shell)
-[[ -s "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh" ]] && \
+[[ -s "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh" ]] &&
   source "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh"
 
 # Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
@@ -515,9 +526,10 @@ export TINTED_TMUX_OPTION_STATUSBAR=1
 
 # Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
 BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
-[[ ! -d "$BASE16_FZF_HOME" ]] || \
-  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] || \
-  source "$BASE16_FZF_HOME/sh/base16-$BASE16_THEME.sh"
+# shellcheck disable=SC1090
+[[ ! -d "$BASE16_FZF_HOME" ]] ||
+  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] ||
+  source "${BASE16_FZF_HOME}/sh/base16-${BASE16_THEME}.sh"
 
 # skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
 export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"
@@ -548,7 +560,7 @@ export BAT_STYLE=full
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 
 # FIXME: (de)duplicate with $ZSH_CACHE_DIR
-autoload -U +X compinit && \
+autoload -U +X compinit &&
   compinit -i -d "${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
 autoload -U +X bashcompinit && bashcompinit
 
@@ -563,16 +575,17 @@ zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # pipx autocompletion
-(( $+commands[pipx] )) && eval "$(register-python-argcomplete pipx)"
+[[ "${commands[pipx]}" ]] && eval "$(register-python-argcomplete pipx)"
 
 # aws-vault autocompletion
-(( $+commands[aws-vault] )) && eval "$(aws-vault --completion-script-zsh)"
+_zshrc_cmd="aws-vault"
+[[ "${commands[$_zshrc_cmd]}" ]] && eval "$(aws-vault --completion-script-zsh)"
 
 # pandoc autocompletion
-(( $+commands[pandoc] )) && eval "$(pandoc --bash-completion)"
+[[ "${commands[pandoc]}" ]] && eval "$(pandoc --bash-completion)"
 
 # virsh helper functions
-if (( $+commands[virsh] )); then
+if [[ "${commands[virsh]}" ]]; then
   virsh-rm-pool() {
     virsh pool-autostart "${1}" --disable
     virsh pool-destroy "${1}"
@@ -586,7 +599,10 @@ fi
 #    https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
 #
 # zoxide
-if (( $+commands[zoxide] )); then
+if [[ "${commands[zoxide]}" ]]; then
   eval "$(zoxide init --cmd cd zsh)"
   alias cdf=cdi
 fi
+
+# TODO: figure out a better solution than _zshrc_cmd
+unset _zshrc_cmd

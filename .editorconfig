@@ -5,7 +5,20 @@ end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 
+[*.{bash,sh,zsh}]
+indent_style = space
+indent_size = 2
+switch_case_indent = true
+
 [*.lua]
 indent_style = space
 indent_size = 2
 max_line_length = 120
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+[*.py]
+indent_style = space
+indent_size = 4
