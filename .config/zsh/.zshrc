@@ -173,6 +173,13 @@ zinit wait lucid for \
 #
 # XXX: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
 zinit wait lucid for \
+  atinit"
+    # Disable suggestion for large buffers
+    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=80
+    # Accept autosuggestion with <Ctrl><Space>
+    bindkey '^ ' autosuggest-accept
+    # Accept and execute current suggestion with Ctrl+x
+    bindkey '^x' autosuggest-execute" \
   atload="!_zsh_autosuggest_start" \
   zsh-users/zsh-autosuggestions \
   has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
@@ -198,10 +205,6 @@ function _history_substring_search_config() {
   # Move up/down with arrows
   bindkey '^[[A' history-substring-search-up
   bindkey '^[[B' history-substring-search-down
-  # Accept autosuggestion with <Ctrl><Space>
-  bindkey '^ ' autosuggest-accept
-  # Accept and execute current suggestion with Ctrl+x
-  bindkey '^x' autosuggest-execute
 }
 
 # NOTE: must be load after zsh-syntax-highlighting, hence the 0b wait slot
