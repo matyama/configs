@@ -8,6 +8,7 @@
 # Export directory for user-defined completions
 export ZSH="${XDG_DATA_HOME:-$HOME/.local}/zsh"
 export ZSH_COMPLETIONS="${ZSH}/completions"
+export ZSH_FUNCTIONS="${ZSH}/functions"
 
 # Modify fpath
 # shellcheck disable=SC2206
@@ -23,7 +24,12 @@ export ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zinit}"
 
 # Download zinit, if it's not there yet
 if [ ! -d "${ZINIT_HOME}" ]; then
-  mkdir -p "$(dirname ${ZINIT_HOME})" "${ZSH_CACHE_DIR}"/completions
+  mkdir -p \
+    "$(dirname ${ZINIT_HOME})" \
+    "${ZSH_CACHE_DIR}"/completions \
+    "${ZSH_COMPLETIONS}" \
+    "${ZSH_FUNCTIONS}"
+
   git clone https://github.com/zdharma-continuum/zinit "${ZINIT_HOME}"
 fi
 
@@ -432,14 +438,11 @@ export SAVEHIST="${HISTFILESIZE}"
 export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
 export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
 
-zshaddhistory() {
-  emulate -L zsh
-  ## uncomment if HISTORY_IGNORE should use EXTENDED_GLOB syntax
-  # setopt extendedglob
-  # FIXME: shfmt is unable to parse this line (fails on ~)
-  # shellcheck disable=SC2053,SC2296
-  [[ $1 != ${~HISTORY_IGNORE} ]]
-}
+# NOTE: shfmt is unable to parse zshaddhistory, which applies to the whole file
+# TODO: find some more elegant way setup history
+if [[ -f "${ZSH_FUNCTIONS}/history.zsh" ]]; then
+  source "${ZSH_FUNCTIONS}/history.zsh"
+fi
 
 setopt hist_ignore_all_dups
 setopt hist_ignore_space

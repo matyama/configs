@@ -30,6 +30,7 @@ GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
 ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
 ZSH_COMPLETIONS ?= $(XDG_DATA_HOME)/zsh/completions
+ZSH_FUNCTIONS ?= $(XDG_DATA_HOME)/zsh/functions
 
 BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
@@ -158,7 +159,9 @@ DATA_DIRS := \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
-	$(XDG_DATA_HOME)/npm
+	$(XDG_DATA_HOME)/npm \
+	$(ZSH_COMPLETIONS) \
+	$(ZSH_FUNCTIONS)
 
 # Ensure necessary paths exist
 $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
@@ -172,8 +175,7 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(XDG_MAN_HOME)/man5 \
 	$(XDG_THEMES_HOME) \
 	$(XDG_TMP_HOME) \
-	$(XDG_STATE_HOME)/sqlite3 \
-	$(ZSH_COMPLETIONS):
+	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
 $(APT_KEYRINGS) $(USR_KEYRINGS):
