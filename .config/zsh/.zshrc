@@ -58,7 +58,7 @@ zinit wait'!' lucid nocd \
     POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" \
   atload"!
     # Set p10k configuration file
-    case ${TERM_PROGRAM} in
+    case ${TERM_PROGRAM:-$TERM} in
       # Rainbow prompt style does now display correctly in vscode terminal, so
       # use p10k-vscode.zsh there instead.
       vscode)
