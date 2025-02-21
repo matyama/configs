@@ -22,12 +22,13 @@ typeset -gaU fpath=($fpath $ZSH_COMPLETIONS)
 
 # Set up the directory to store zinit and plugins
 export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+ZINIT_DATA_DIR="$(dirname ${ZINIT_HOME})"
 export ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zinit}"
 
 # Download zinit, if it's not there yet
 if [ ! -d "${ZINIT_HOME}" ]; then
   mkdir -p \
-    "$(dirname ${ZINIT_HOME})" \
+    "${ZINIT_DATA_DIR}" \
     "${ZSH_CACHE_DIR}"/completions \
     "${ZSH_COMPLETIONS}" \
     "${ZSH_FUNCTIONS}"
@@ -174,13 +175,48 @@ zinit wait lucid for \
 
 # FIXME: zsh-autosuggestions is too slow to load
 # Resources
-#  - zsh-autosuggestions: provides fish-like autosuggestions
-#    https://github.com/zsh-users/zsh-autosuggestions
+#  - aws-vault: provides autocompletion
 #  - forgit: interactive git+fzf & overrides git aliases
 #    https://github.com/wfxr/forgit
+#  - mcfly: intelligent history search
+#    https://github.com/cantino/mcfly
+#  - pandoc: pandoc autocompletion
+#  - pipx: pipx autocompletion
+#    https://pipx.pypa.io/latest/installation/#shell-completion
+#  - zoxide: smarter cd command
+#    https://github.com/ajeetdsouza/zoxide
+#  - zsh-autosuggestions: provides fish-like autosuggestions
+#    https://github.com/zsh-users/zsh-autosuggestions
 #
-# XXX: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
+# XXX: forgit: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
+# XXX: pandoc, pipx: ensure `autoload -U +X bashcompinit && bashcompinit`
 zinit wait lucid for \
+  has'aws-vault' as'completion' is-snippet id-as'aws-vault' \
+  atinit'source ${ZINIT_DATA_DIR}/snippets/aws-vault/aws-vault' \
+  https://raw.githubusercontent.com/99designs/aws-vault/master/contrib/completions/zsh/aws-vault.zsh \
+  has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
+  atinit"export FORGIT_COPY_CMD='wl-copy'" \
+  wfxr/forgit \
+  has'mcfly' as'null' id-as'mcfly' \
+  atinit"
+      MCFLY_KEY_SCHEME=vim
+      MCFLY_FUZZY=2
+      MCFLY_RESULTS=20
+      MCFLY_HISTORY_LIMIT=10000
+      # NOTE: overrides Ctrl+R from the OMZP::fzf plugin above
+      eval $(mcfly init zsh)" \
+  zdharma-continuum/null \
+  has'pandoc' as'null' id-as'pandoc' \
+  atinit='eval "$(pandoc --bash-completion)"' \
+  zdharma-continuum/null \
+  has'pipx' as'null' id-as'pipx' \
+  atinit'eval "$(register-python-argcomplete pipx)"' \
+  zdharma-continuum/null \
+  has'zoxide' as'null' id-as'zoxide' \
+  atinit"
+      eval $(zoxide init --cmd cd zsh)
+      alias cdf=cdi" \
+  zdharma-continuum/null \
   atinit"
     # Disable suggestion for large buffers
     ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=80
@@ -189,10 +225,7 @@ zinit wait lucid for \
     # Accept and execute current suggestion with Ctrl+x
     bindkey '^x' autosuggest-execute" \
   atload="!_zsh_autosuggest_start" \
-  zsh-users/zsh-autosuggestions \
-  has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
-  atinit"export FORGIT_COPY_CMD='wl-copy'" \
-  wfxr/forgit
+  zsh-users/zsh-autosuggestions
 
 # TODO: fast-syntax-highlighting (zsh-syntax-highlighting is too slow to load)
 # https://github.com/zdharma-continuum/fast-syntax-highlighting
@@ -458,19 +491,6 @@ fi
 setopt hist_ignore_all_dups
 setopt hist_ignore_space
 
-# McFly history search
-#  - https://github.com/cantino/mcfly
-#  - NOTE: overrides Ctrl+R from the fzf plugin above
-if [[ "${commands[mcfly]}" ]]; then
-  export MCFLY_KEY_SCHEME=vim
-  export MCFLY_FUZZY=2
-  export MCFLY_RESULTS=20
-  export MCFLY_HISTORY_LIMIT=10000
-  # TODO: generate via zinit wait lucid as'program' ...
-  #  - use null repo with atinit'eval ...'
-  eval "$(mcfly init zsh)"
-fi
-
 ########################################################
 ##### KEYBINDINGS
 ########################################################
@@ -588,16 +608,6 @@ zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-# pipx autocompletion
-[[ "${commands[pipx]}" ]] && eval "$(register-python-argcomplete pipx)"
-
-# aws-vault autocompletion
-_zshrc_cmd="aws-vault"
-[[ "${commands[$_zshrc_cmd]}" ]] && eval "$(aws-vault --completion-script-zsh)"
-
-# pandoc autocompletion
-[[ "${commands[pandoc]}" ]] && eval "$(pandoc --bash-completion)"
-
 # virsh helper functions
 if [[ "${commands[virsh]}" ]]; then
   virsh-rm-pool() {
@@ -605,17 +615,6 @@ if [[ "${commands[virsh]}" ]]; then
     virsh pool-destroy "${1}"
     virsh pool-undefine "${1}"
   }
-fi
-
-# XXX: zoxide is only relevant for interactive shells
-#  - rationale: it's only initialized here in zshrc, so won't work elsewhere
-#  - so we could install it here, see:
-#    https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
-#
-# zoxide
-if [[ "${commands[zoxide]}" ]]; then
-  eval "$(zoxide init --cmd cd zsh)"
-  alias cdf=cdi
 fi
 
 # TODO: figure out a better solution than _zshrc_cmd
