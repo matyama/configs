@@ -151,7 +151,13 @@ zinit wait lucid for \
   OMZP::copybuffer \
   has'direnv' OMZP::direnv \
   has'docker' OMZP::docker \
-  has'docker' as'completion' OMZP::docker/completions/_docker \
+  has'docker' as'completion' \
+  atinit"
+    # Enable option stacking in docker auto-completion
+    #  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/docker#settings
+    zstyle ':completion:*:*:docker:*' option-stacking yes
+    zstyle ':completion:*:*:docker-*:*' option-stacking yes" \
+  OMZP::docker/completions/_docker \
   has'docker-compose' OMZP::docker-compose \
   has'docker-compose' as'completion' OMZP::docker-compose/_docker-compose \
   has'fzf' OMZP::fzf \
@@ -183,6 +189,8 @@ zinit wait lucid for \
 #  - pandoc: pandoc autocompletion
 #  - pipx: pipx autocompletion
 #    https://pipx.pypa.io/latest/installation/#shell-completion
+#  - skim: loads skim key-bindings
+#    https://github.com/skim-rs/skim
 #  - zoxide: smarter cd command
 #    https://github.com/ajeetdsouza/zoxide
 #  - zsh-autosuggestions: provides fish-like autosuggestions
@@ -211,6 +219,9 @@ zinit wait lucid for \
   zdharma-continuum/null \
   has'pipx' as'null' id-as'pipx' \
   atinit'eval "$(register-python-argcomplete pipx)"' \
+  zdharma-continuum/null \
+  has'sk' as'null' id-as'skim' \
+  atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
   zdharma-continuum/null \
   has'zoxide' as'null' id-as'zoxide' \
   atinit"
@@ -287,12 +298,6 @@ export FZF_DEFAULT_OPTS="--height 25% --layout=reverse --border"
 export SKIM_BASE="${SKIM_BASE:-$XDG_DATA_HOME/skim}"
 export SKIM_DEFAULT_COMMAND="${FZF_DEFAULT_COMMAND}"
 export SKIM_CTRL_T_COMMAND="${FZF_CTRL_T_COMMAND}"
-
-# TODO: move to some lazy `zinit wait lucid has'sk' as'command' ...`
-#  - maybe use just the null repo with atinit'source ...'
-if [[ "${commands[sk]}" ]]; then
-  source "${SKIM_BASE}/shell/key-bindings.zsh"
-fi
 
 # switch to given fuzzy finder (fzf | sk, default: fzf)
 function fzf_prog() {
@@ -602,11 +607,6 @@ autoload -U +X bashcompinit && bashcompinit
 zinit cdreplay -q
 
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
-
-# Enable option stacking in docker auto-completion
-#  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/docker#settings
-zstyle ':completion:*:*:docker:*' option-stacking yes
-zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # virsh helper functions
 if [[ "${commands[virsh]}" ]]; then
