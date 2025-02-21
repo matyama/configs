@@ -1,5 +1,7 @@
 # shellcheck shell=bash
 
+export DEFAULT_USER=matyama
+
 ########################################################
 ##### UPDATE FPATH
 ########################################################
@@ -37,11 +39,13 @@ fi
 source "${ZINIT_HOME}/zinit.zsh"
 
 ########################################################
-##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
+##### PROMPT / THEME
 ########################################################
 
+# Reevaluate the prompt string each time zsh wants to display a prompt
+setopt promptsubst
+
 ZSH_THEME=romkatv/powerlevel10k
-export DEFAULT_USER=matyama
 
 # XXX: wait/load
 # Prompt: Powerlevel10k
@@ -77,6 +81,10 @@ zinit wait'!' lucid nocd \
 #      [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"" \
 #    atload'eval "$(starship init zsh)"' \
 #    starship/starship
+
+########################################################
+##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
+########################################################
 
 # XXX: wait with some high precedence (e.g., 0a)
 # XXX: move some of OMZL::git.zsh to git aliases instead

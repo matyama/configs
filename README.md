@@ -133,8 +133,8 @@ created include:
  1. Prompt Spacing: Sparse
  1. Icons: Many icons
  1. Prompt Flow: Concise
- 1. Enable Transient Prompt?: No
- 1. Instant Prompt Mode: Off
+ 1. Enable Transient Prompt?: same-dir
+ 1. Instant Prompt Mode: quiet
 
 Additionally one can download
 [Meslo Nerd Fonts](https://bit.ly/3uZhBeH) and configure terminals as
