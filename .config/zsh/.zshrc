@@ -39,6 +39,18 @@ fi
 # Source/load zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
+# Add binaries managed by zinit to the PATH
+path+=("${ZPFX}/bin")
+
+########################################################
+##### ZINIT EXTENSIONS (ANNEXES)
+########################################################
+
+# Annexes
+#  - https://github.com/zdharma-continuum/zinit-annex-binary-symlink
+zinit light-mode lucid for \
+  zdharma-continuum/zinit-annex-binary-symlink
+
 ########################################################
 ##### PROMPT / THEME
 ########################################################
@@ -47,6 +59,7 @@ source "${ZINIT_HOME}/zinit.zsh"
 setopt promptsubst
 
 ZSH_THEME=romkatv/powerlevel10k
+#ZSH_THEME=starship/starship
 
 # XXX: wait/load
 # Prompt: Powerlevel10k
@@ -72,16 +85,13 @@ zinit wait'!' lucid nocd \
     _p9k_precmd" \
   for "${ZSH_THEME}"
 
-# XXX: Prompt: Starship
-#  - https://zdharma-continuum.github.io/zinit/wiki/Multiple-prompts
-#zinit lucid for \
-#    as"command" \
-#    from"gh-r" \
-#    atinit"
-#      export N_PREFIX=$HOME/n
-#      [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"" \
-#    atload'eval "$(starship init zsh)"' \
-#    starship/starship
+# Prompt: Starship
+zinit wait'!' lucid \
+  if'[[ "${ZSH_THEME}" = */starship ]]' \
+  from'gh-r' \
+  lbin'!' \
+  atload'eval "$(starship init zsh)"' \
+  for "${ZSH_THEME}"
 
 ########################################################
 ##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
