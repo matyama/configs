@@ -927,6 +927,8 @@ python-tools: pipx
 	pipx install virtualenv $(OPS)
 	@echo ">>> Installing Ansible: https://www.ansible.com"
 	pipx install --include-deps ansible
+	@echo ">>> Installing ansible-lint: https://github.com/ansible/ansible-lint"
+	pipx install ansible-lint
 	@echo ">>> Installing pipenv: https://pipenv.pypa.io"
 	pipx install pipenv
 	@echo ">>> Installing pre-commit hooks globally"
