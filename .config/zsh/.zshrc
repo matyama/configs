@@ -6,6 +6,19 @@ export DEFAULT_USER=matyama
 export skip_global_compinit=1
 
 ########################################################
+##### PROFILING START
+########################################################
+
+ZSHRC_PROFILE_STARTUP=false
+
+if [[ "${ZSHRC_PROFILE_STARTUP}" == true ]]; then
+  zmodload zsh/zprof
+  PS4=$'%D{%M%S%.} %N:%i> '
+  exec 3>&2 2>"${XDG_CACHE_HOME:-$HOME/.cache}/zsh/startlog.$$"
+  setopt xtrace prompt_subst
+fi
+
+########################################################
 ##### UPDATE FPATH
 ########################################################
 
@@ -645,3 +658,13 @@ fi
 
 # TODO: figure out a better solution than _zshrc_cmd
 unset _zshrc_cmd
+
+########################################################
+##### PROFILING END
+########################################################
+
+if [[ "$ZSHRC_PROFILE_STARTUP" == true ]]; then
+  unsetopt xtrace
+  exec 2>&3 3>&-
+  zprof >"${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zshprofile-$(date +'%s')"
+fi
