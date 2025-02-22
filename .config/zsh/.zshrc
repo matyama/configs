@@ -2,6 +2,9 @@
 
 export DEFAULT_USER=matyama
 
+# Skip the not really helping Ubuntu global compinit (https://bit.ly/41dLFV8)
+export skip_global_compinit=1
+
 ########################################################
 ##### UPDATE FPATH
 ########################################################
@@ -14,30 +17,56 @@ export ZSH_FUNCTIONS="${ZSH}/functions"
 
 # Modify fpath
 # shellcheck disable=SC2206
-typeset -gaU fpath=($fpath $ZSH_COMPLETIONS)
+typeset -gaU fpath=($ZSH_COMPLETIONS $fpath)
 
 ########################################################
 ##### SETUP PLUGIN MANAGER (ZINIT)
 ########################################################
 
-# Set up the directory to store zinit and plugins
-export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
-ZINIT_DATA_DIR="$(dirname ${ZINIT_HOME})"
 export ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zinit}"
 
+# Set up zinit variables
+#  - https://github.com/zdharma-continuum/zinit#customizing-paths
+#  - https://github.com/zdharma-continuum/zinit#using-zpfx-variable
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+typeset -gAH ZINIT
+
+# Where zinit should create all working directories
+ZINIT[HOME_DIR]="${XDG_DATA_HOME:-$HOME/.local/share}/zinit"
+
+# Standard "prefix" for installing compiled software
+ZPFX="${ZINIT[HOME_DIR]}/polaris"
+
+# Where zinit code resides
+ZINIT[BIN_DIR]="${ZINIT[HOME_DIR]}/zinit.git"
+
+# Setup working directory for plugins, completions, and snippets
+ZINIT[PLUGINS_DIR]="${ZINIT[HOME_DIR]}/plugins"
+ZINIT[COMPLETIONS_DIR]="${ZINIT[HOME_DIR]}/completions"
+ZINIT[SNIPPETS_DIR]="${ZINIT[HOME_DIR]}/snippets"
+
+# Path to .zcompdump file, with the file included
+ZINIT[ZCOMPDUMP_PATH]="${ZSH_CACHE_DIR}/zcompdump-${ZSH_VERSION}"
+
+# If set to 1, then zinit will skip checking if a turbo-loaded object exists on
+# the disk. This option can give a performance gain.
+ZINIT[OPTIMIZE_OUT_DISK_ACCESSES]=1
+
 # Download zinit, if it's not there yet
-if [ ! -d "${ZINIT_HOME}" ]; then
+if [ ! -d "${ZINIT[BIN_DIR]}" ]; then
   mkdir -p \
-    "${ZINIT_DATA_DIR}" \
+    "${ZINIT[HOME_DIR]}" \
     "${ZSH_CACHE_DIR}"/completions \
     "${ZSH_COMPLETIONS}" \
     "${ZSH_FUNCTIONS}"
 
-  git clone https://github.com/zdharma-continuum/zinit "${ZINIT_HOME}"
+  git clone https://github.com/zdharma-continuum/zinit "${ZINIT[BIN_DIR]}"
+
+  zcompile "${ZINIT[BIN_DIR]}"/zinit.zsh
 fi
 
 # Source/load zinit
-source "${ZINIT_HOME}/zinit.zsh"
+source "${ZINIT[BIN_DIR]}/zinit.zsh"
 
 # Add binaries managed by zinit to the PATH
 path+=("${ZPFX}/bin")
@@ -56,7 +85,7 @@ zinit light-mode lucid for \
 ########################################################
 
 # Reevaluate the prompt string each time zsh wants to display a prompt
-setopt promptsubst
+setopt prompt_subst
 
 ZSH_THEME=romkatv/powerlevel10k
 #ZSH_THEME=starship/starship
@@ -100,7 +129,7 @@ zinit wait'!' lucid \
 # XXX: wait with some high precedence (e.g., 0a)
 # XXX: move some of OMZL::git.zsh to git aliases instead
 # TODO: maybe set some OMZL::directories.zsh options / aliases
-# TODO: update c/p aliases to use clipcopy/clippaste
+# TODO: deprecate clipboard or update c/p aliases
 # TODO: replace OMZL::history with PZT::modules/history
 #  - or set manually
 #
@@ -109,6 +138,10 @@ zinit wait'!' lucid \
 #  2. Load OMZ library snippets, some of which are pre-requisites for plugins
 #  3. Load tmux first to prevent jumps when it is loaded after zshrc
 #     (adds some useful aliases for tmux)
+#
+# NOTE: OMZL::completions does
+#  - `zstyle ':completion:*' cache-path $ZSH_CACHE_DIR``
+#  - `autoload -U +X bashcompinit && bashcompinit`
 zinit lucid for \
   is-snippet \
   OMZL::{'clipboard','completion','git','grep','history','key-bindings'}.zsh \
@@ -119,7 +152,8 @@ zinit lucid for \
   OMZP::tmux
 
 # FIXME: aws completions
-# XXX: deprecate OMZP::history (add to custom aliases or OMZL::history atload)
+# TODO: deprecate OMZP::history (add to custom aliases or OMZL::history atload)
+#  - set it directly here or base it on
 # TODO: deprecate OMZP::minikube (resp., generate as completions)
 # TODO: deprecate OMZP::poetry (resp., generate as completions)
 # TODO: OMZP::poetry is just completion definition
@@ -155,7 +189,7 @@ zinit lucid for \
 #  - stack                         adds auto-completion for stack
 #  - terraform                     adds completion, aliases & a prompt function
 #  - zsh-interactive-cd            provides fish-like interactive cd completion
-zinit wait lucid for \
+zinit wait'0a' lucid for \
   has'ansible' OMZP::ansible \
   has'aws' OMZP::aws \
   OMZP::copybuffer \
@@ -166,7 +200,9 @@ zinit wait lucid for \
     # Enable option stacking in docker auto-completion
     #  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/docker#settings
     zstyle ':completion:*:*:docker:*' option-stacking yes
-    zstyle ':completion:*:*:docker-*:*' option-stacking yes" \
+    zstyle ':completion:*:*:docker-*:*' option-stacking yes
+    # Alias for pruning all dangling volumes
+    alias dvpd='docker volume rm \$(docker volume ls -qf dangling=true)'" \
   OMZP::docker/completions/_docker \
   has'docker-compose' OMZP::docker-compose \
   has'docker-compose' as'completion' OMZP::docker-compose/_docker-compose \
@@ -189,7 +225,6 @@ zinit wait lucid for \
   has'terraform' as'completion' OMZP::terraform/_terraform \
   OMZP::zsh-interactive-cd
 
-# FIXME: zsh-autosuggestions is too slow to load
 # Resources
 #  - aws-vault: provides autocompletion
 #  - forgit: interactive git+fzf & overrides git aliases
@@ -203,14 +238,12 @@ zinit wait lucid for \
 #    https://github.com/skim-rs/skim
 #  - zoxide: smarter cd command
 #    https://github.com/ajeetdsouza/zoxide
-#  - zsh-autosuggestions: provides fish-like autosuggestions
-#    https://github.com/zsh-users/zsh-autosuggestions
 #
 # XXX: forgit: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
 # XXX: pandoc, pipx: ensure `autoload -U +X bashcompinit && bashcompinit`
-zinit wait lucid for \
+zinit wait'0a' lucid for \
   has'aws-vault' as'completion' is-snippet id-as'aws-vault' \
-  atinit'source ${ZINIT_DATA_DIR}/snippets/aws-vault/aws-vault' \
+  atinit'source ${ZINIT[SNIPPETS_DIR]}/aws-vault/aws-vault' \
   https://raw.githubusercontent.com/99designs/aws-vault/master/contrib/completions/zsh/aws-vault.zsh \
   has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
   atinit"export FORGIT_COPY_CMD='wl-copy'" \
@@ -237,7 +270,30 @@ zinit wait lucid for \
   atinit"
       eval $(zoxide init --cmd cd zsh)
       alias cdf=cdi" \
-  zdharma-continuum/null \
+  zdharma-continuum/null
+
+# XXX: maybe even install sdk here
+# https://zdharma-continuum.github.io/zinit/wiki/GALLERY/#programs
+#
+# zsh-sdkman: adds aliases and completion scripts for sdk
+# https://github.com/matthieusb/zsh-sdkman
+#
+# NOTE: Make sure to `sdk config` and set `sdkman_auto_complete=false` to
+# prevent additional conmpinit calls which would slow down shell startup.
+zinit wait'0a' lucid for \
+  if'[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]' \
+  atpull'sdk selfupdate' \
+  atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
+  matthieusb/zsh-sdkman
+
+# XXX: pull zsh-completions as well
+# zinit wait'0d' lucid for \
+#   blockf atpull'zinit creinstall -q .' \
+#     zsh-users/zsh-completions
+
+# zsh-autosuggestions: provides fish-like autosuggestions
+# https://github.com/zsh-users/zsh-autosuggestions
+zinit wait'0b' lucid for \
   atinit"
     # Disable suggestion for large buffers
     ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=80
@@ -248,15 +304,18 @@ zinit wait lucid for \
   atload="!_zsh_autosuggest_start" \
   zsh-users/zsh-autosuggestions
 
-# TODO: fast-syntax-highlighting (zsh-syntax-highlighting is too slow to load)
-# https://github.com/zdharma-continuum/fast-syntax-highlighting
-#zinit wait lucid for \
-# atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
-#    zdharma-continuum/fast-syntax-highlighting
+# FIXME: zcompdump only in ZSH_CACHE_DIR (currently appears also in ZDOTDIR)
+# XXX: https://github.com/zdharma-continuum/fast-syntax-highlighting
 #
 # zsh-syntax-highlighting: provides fish-like syntax highlighting
 # https://github.com/zsh-users/zsh-syntax-highlighting
-zinit wait'0a' lucid for \
+#
+# NOTE: COMPINIT_OPTS are for compinit call, -C speeds up loading
+#
+# NOTE: Make sure that all completions are set up before. This plugin's atinit
+# runs compinit, and it should be the only compinit call to get the best perf.
+zinit wait'0c' lucid for \
+  atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
   zsh-users/zsh-syntax-highlighting
 
 # zsh-history-substring-search: provides fish-like history search feature
@@ -269,30 +328,17 @@ function _history_substring_search_config() {
   bindkey '^[[B' history-substring-search-down
 }
 
-# NOTE: must be load after zsh-syntax-highlighting, hence the 0b wait slot
-zinit wait'0b' lucid for \
+# NOTE: must be load after zsh-syntax-highlighting
+zinit wait'0d' lucid for \
   atload"
     HISTORY_SUBSTRING_SEARCH_FUZZY=true
     _history_substring_search_config" \
   zsh-users/zsh-history-substring-search
 
-# XXX: zsh-completions
-# zinit wait lucid for \
-#   blockf atpull'zinit creinstall -q .' \
-#     zsh-users/zsh-completions
-
-# XXX: maybe even install sdk here
-# https://zdharma-continuum.github.io/zinit/wiki/GALLERY/#programs
-#
-# zsh-sdkman: adds aliases and completion scripts for sdk
-# https://github.com/matthieusb/zsh-sdkman
-zinit wait'1' lucid for \
-  if'[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]' \
-  atpull'sdk selfupdate' \
-  atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
-  matthieusb/zsh-sdkman
-
-########## TODO: move the below somewhere else
+# TODO: move the below somewhere else
+########################################################
+##### FUZZY SEARCH CONFIG
+########################################################
 
 # fzf
 #  - https://github.com/junegunn/fzf#layout
@@ -392,11 +438,6 @@ alias m="make"
 # just
 [[ "${commands[just]}" ]] && alias j="just"
 
-# grep
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
 # history
 alias hg='history | egrep'
 
@@ -427,12 +468,6 @@ fi
 
 # chafa (https://github.com/hpjansson/chafa)
 [[ "${commands[chafa]}" ]] && alias imshow="chafa -c 256"
-
-# TODO: move to as atinit on the docker plugin
-# Docker
-if [[ "${commands[docker]}" ]]; then
-  alias dvpd='docker volume rm $(docker volume ls -qf dangling=true)'
-fi
 
 # parallel-ssh (https://github.com/ParallelSSH/parallel-ssh)
 _zshrc_cmd="parallel-ssh"
@@ -598,25 +633,6 @@ export BAT_STYLE=full
 # Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
-
-########################################################
-##### COMPLETIONS
-########################################################
-
-# Initialize completions
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
-#  - https://unix.stackexchange.com/a/391670
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
-
-# FIXME: (de)duplicate with $ZSH_CACHE_DIR
-autoload -U +X compinit &&
-  compinit -i -d "${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
-autoload -U +X bashcompinit && bashcompinit
-
-# zinit: replay cached completions (recommended)
-zinit cdreplay -q
-
-zstyle ':completion:*' cache-path "${XDG_CACHE_HOME}/zsh/zcompcache"
 
 # virsh helper functions
 if [[ "${commands[virsh]}" ]]; then
