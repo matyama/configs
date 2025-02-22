@@ -374,10 +374,35 @@ zinit wait'0d' lucid for \
     _history_substring_search_config" \
   zsh-users/zsh-history-substring-search
 
-# TODO: move the below somewhere else
 ########################################################
-##### FUZZY SEARCH CONFIG
+##### COLORS / THEMING / VISUALS
 ########################################################
+
+# Colored man output
+# See: https://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
+export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking
+export LESS_TERMCAP_md=$'\e[01;38;5;74m'  # begin bold
+export LESS_TERMCAP_me=$'\e[0m'           # end mode
+export LESS_TERMCAP_se=$'\e[0m'           # end standout-mode
+export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
+export LESS_TERMCAP_ue=$'\e[0m'           # end underline
+export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
+
+# Make less better
+# X = leave content on-screen
+# F = quit automatically if less than one screenfull
+# R = raw terminal characters (fixes git diff)
+#     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
+export LESS="-F -X -R"
+
+# Set configuration files for less
+#  - TODO: XDG should be fully supported when version 600 lands
+export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
+export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
+
+# Configure lesspipe.sh (https://github.com/wofr06/lesspipe)
+[[ "${commands[lesspipe.sh]}" ]] && export LESSOPEN="|lesspipe.sh %s"
+[[ "${commands[bat]}" ]] && export LESSCOLORIZER=bat
 
 # fzf
 #  - https://github.com/junegunn/fzf#layout
@@ -403,9 +428,41 @@ export fzf_prog
 # set default fuzzy finder
 fzf_prog fzf
 
+# Tinted Shell (https://github.com/tinted-theming/tinted-shell)
+export TINTED_SHELL_ENABLE_VARS=1
+export TINTED_SHELL_ENABLE_BASE16_VARS=1
+
+# TODO: zinit/tinty
+# Tinted shell (https://github.com/tinted-theming/tinted-shell)
+[[ -s "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh" ]] &&
+  source "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh"
+
+# Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
+#export TINTED_TMUX_OPTION_ACTIVE=1
+export TINTED_TMUX_OPTION_STATUSBAR=1
+
+# Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
+BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
+# shellcheck disable=SC1090
+[[ ! -d "$BASE16_FZF_HOME" ]] ||
+  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] ||
+  source "${BASE16_FZF_HOME}/sh/base16-${BASE16_THEME}.sh"
+
+# skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
+export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"
+
+# Bat customization (https://github.com/sharkdp/bat#customization)
+#  - Do not add `BAT_THEME` to `.zshenv`/`.zprofile` or bat config file as it
+#    might be altered by the Base16 hook above.
+#  - Use `base16-256` for bat which, according to the docs, "is designed for
+#    `base16-shell`"
+#  - Use fully stylized bat by default
+export BAT_THEME=base16-256
+export BAT_STYLE=full
+
 # TODO: organize (split up and move to apps, leave here just generic ones)
 ########################################################
-##### ALIASES
+##### CUSTOM ALIASES AND FUNCTIONS
 ########################################################
 
 # ZSH
@@ -551,6 +608,18 @@ if [[ "${commands[$_zshrc_cmd]}" ]]; then
   alias yt2mp3="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
 fi
 
+# virsh helper functions
+if [[ "${commands[virsh]}" ]]; then
+  virsh-rm-pool() {
+    virsh pool-autostart "${1}" --disable
+    virsh pool-destroy "${1}"
+    virsh pool-undefine "${1}"
+  }
+fi
+
+# TODO: figure out a better solution than _zshrc_cmd
+unset _zshrc_cmd
+
 ########################################################
 ##### KEYBINDINGS
 ########################################################
@@ -570,91 +639,8 @@ fancy-ctrl-z() {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# Colored man output
-# See: https://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
-export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking
-export LESS_TERMCAP_md=$'\e[01;38;5;74m'  # begin bold
-export LESS_TERMCAP_me=$'\e[0m'           # end mode
-export LESS_TERMCAP_se=$'\e[0m'           # end standout-mode
-export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
-export LESS_TERMCAP_ue=$'\e[0m'           # end underline
-export LESS_TERMCAP_us=$'\e[04;38;5;146m' # begin underline
-
-# Make less better
-# X = leave content on-screen
-# F = quit automatically if less than one screenfull
-# R = raw terminal characters (fixes git diff)
-#     see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
-export LESS="-F -X -R"
-
-# Set configuration files for less
-#  - TODO: XDG should be fully supported when version 600 lands
-export LESSKEY=${XDG_CONFIG_HOME}/less/lesskey
-export LESSHISTFILE=${XDG_STATE_HOME}/less/lesshst
-
-# Configure lesspipe.sh (https://github.com/wofr06/lesspipe)
-[[ "${commands[lesspipe.sh]}" ]] && export LESSOPEN="|lesspipe.sh %s"
-[[ "${commands[bat]}" ]] && export LESSCOLORIZER=bat
-
-# Tinted Shell (https://github.com/tinted-theming/tinted-shell)
-export TINTED_SHELL_ENABLE_VARS=1
-export TINTED_SHELL_ENABLE_BASE16_VARS=1
-
-# TODO: zinit/tinty
-# Tinted shell (https://github.com/tinted-theming/tinted-shell)
-[[ -s "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh" ]] &&
-  source "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh"
-
-# Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
-#export TINTED_TMUX_OPTION_ACTIVE=1
-export TINTED_TMUX_OPTION_STATUSBAR=1
-
-# Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
-BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
-# shellcheck disable=SC1090
-[[ ! -d "$BASE16_FZF_HOME" ]] ||
-  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] ||
-  source "${BASE16_FZF_HOME}/sh/base16-${BASE16_THEME}.sh"
-
-# skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
-export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"
-
-# Bat customization (https://github.com/sharkdp/bat#customization)
-#  - Do not add `BAT_THEME` to `.zshenv`/`.zprofile` or bat config file as it
-#    might be altered by the Base16 hook above.
-#  - Use `base16-256` for bat which, according to the docs, "is designed for
-#    `base16-shell`"
-#  - Use fully stylized bat by default
-export BAT_THEME=base16-256
-export BAT_STYLE=full
-
 # Make CapsLock an extra Esc
 # setxkbmap -option caps:escape
-
-# Nvidia CUDA - CUPTI (https://www.tensorflow.org/install/gpu#linux_setup)
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/include
-
-# virsh helper functions
-if [[ "${commands[virsh]}" ]]; then
-  virsh-rm-pool() {
-    virsh pool-autostart "${1}" --disable
-    virsh pool-destroy "${1}"
-    virsh pool-undefine "${1}"
-  }
-fi
-
-# TODO: figure out a better solution than _zshrc_cmd
-unset _zshrc_cmd
 
 ########################################################
 ##### PROFILING END
