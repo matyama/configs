@@ -139,12 +139,9 @@ zinit wait'!' lucid \
 ##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
 ########################################################
 
-# XXX: wait with some high precedence (e.g., 0a)
 # XXX: move some of OMZL::git.zsh to git aliases instead
 # TODO: maybe set some OMZL::directories.zsh options / aliases
 # TODO: deprecate clipboard or update c/p aliases
-# TODO: replace OMZL::history with PZT::modules/history
-#  - or set manually
 #
 # Priority plugins/libs
 #  1. Load history early to prevent empty history stack for other plugins
@@ -152,12 +149,43 @@ zinit wait'!' lucid \
 #  3. Load tmux first to prevent jumps when it is loaded after zshrc
 #     (adds some useful aliases for tmux)
 #
+# History management
+#  - https://stackoverflow.com/a/38549502
+#  - https://stackoverflow.com/a/19454838
+#  - https://unix.stackexchange.com/a/273863
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
+#
 # NOTE: OMZL::completions does
 #  - `zstyle ':completion:*' cache-path $ZSH_CACHE_DIR``
 #  - `autoload -U +X bashcompinit && bashcompinit`
 zinit lucid for \
-  is-snippet \
-  OMZL::{'clipboard','completion','git','grep','history','key-bindings'}.zsh \
+  is-snippet atload'
+    HISTCONTROL=ignoreboth
+    HISTSIZE=5000
+    HISTFILE="${XDG_STATE_HOME}/zsh/history"
+    HISTFILESIZE=50000
+    SAVEHIST="${HISTFILESIZE}"
+    HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
+    HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
+
+    zshaddhistory() {
+      emulate -L zsh
+      ## uncomment if HISTORY_IGNORE should use EXTENDED_GLOB syntax
+      # setopt extendedglob
+      [[ $1 != ${~HISTORY_IGNORE} ]]
+    }
+
+    # Set options in addition to OMZL::history
+    setopt hist_ignore_all_dups
+
+    # Set aliases (custom and from OMZP::history)
+    alias h="history"
+    alias hl="history | less"
+    alias hs="history | grep"
+    alias hg="history | egrep"
+    alias hsi="history | grep -i"' \
+  OMZL::history.zsh \
+  is-snippet OMZL::{'clipboard','completion','git','grep','key-bindings'}.zsh \
   has"tmux" atinit"
       ZSH_TMUX_FIXTERM=false
       ZSH_TMUX_AUTOSTART=false
@@ -165,20 +193,12 @@ zinit lucid for \
   OMZP::tmux
 
 # FIXME: aws completions
-# TODO: deprecate OMZP::history (add to custom aliases or OMZL::history atload)
-#  - set it directly here or base it on
 # TODO: deprecate OMZP::minikube (resp., generate as completions)
 # TODO: deprecate OMZP::poetry (resp., generate as completions)
 # TODO: OMZP::poetry is just completion definition
 # TODO: OMZP::poetry just generates and sources completions (gen on update)
 # XXX: OMZ::git -> gitfast (zinit svn snippet for OMZP::gitfast)
 # TODO: https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
-#
-#
-# Resuorces:
-#  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
-#  - https://github.com/zdharma-continuum/zinit#migration
-#  - https://zdharma-continuum.github.io/zinit/wiki/Example-Oh-My-Zsh-setup
 #
 # OMZ plugins/snippets/completions
 #  - ansible                       adds some useful aliases for ansible
@@ -191,7 +211,6 @@ zinit lucid for \
 #  - gh                            adds completion for the GitHub CLI
 #  - git                           adds many aliases & few useful functions
 #  - helm                          adds completion for helm
-#  - history                       adds a couple of convenient aliases
 #  - kubectl                       adds completion & some aliases
 #  - minikube                      adds completion for minikube
 #  - nmap                          adds some useful aliases for Nmap
@@ -202,6 +221,11 @@ zinit lucid for \
 #  - stack                         adds auto-completion for stack
 #  - terraform                     adds completion, aliases & a prompt function
 #  - zsh-interactive-cd            provides fish-like interactive cd completion
+#
+# Resuorces:
+#  - https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins
+#  - https://github.com/zdharma-continuum/zinit#migration
+#  - https://zdharma-continuum.github.io/zinit/wiki/Example-Oh-My-Zsh-setup
 zinit wait'0a' lucid for \
   has'ansible' OMZP::ansible \
   has'aws' OMZP::aws \
@@ -223,7 +247,6 @@ zinit wait'0a' lucid for \
   has'gh' OMZP::gh \
   OMZP::git \
   has'helm' OMZP::helm \
-  OMZP::history \
   has'kubectl' OMZP::kubectl \
   has'minikube' OMZP::minikube \
   has'nmap' OMZP::nmap \
@@ -242,8 +265,6 @@ zinit wait'0a' lucid for \
 #  - aws-vault: provides autocompletion
 #  - forgit: interactive git+fzf & overrides git aliases
 #    https://github.com/wfxr/forgit
-#  - mcfly: intelligent history search
-#    https://github.com/cantino/mcfly
 #  - pandoc: pandoc autocompletion
 #  - pipx: pipx autocompletion
 #    https://pipx.pypa.io/latest/installation/#shell-completion
@@ -261,15 +282,6 @@ zinit wait'0a' lucid for \
   has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
   atinit"export FORGIT_COPY_CMD='wl-copy'" \
   wfxr/forgit \
-  has'mcfly' as'null' id-as'mcfly' \
-  atinit"
-      MCFLY_KEY_SCHEME=vim
-      MCFLY_FUZZY=2
-      MCFLY_RESULTS=20
-      MCFLY_HISTORY_LIMIT=10000
-      # NOTE: overrides Ctrl+R from the OMZP::fzf plugin above
-      eval $(mcfly init zsh)" \
-  zdharma-continuum/null \
   has'pandoc' as'null' id-as'pandoc' \
   atinit='eval "$(pandoc --bash-completion)"' \
   zdharma-continuum/null \
@@ -280,10 +292,24 @@ zinit wait'0a' lucid for \
   atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
   zdharma-continuum/null \
   has'zoxide' as'null' id-as'zoxide' \
-  atinit"
-      eval $(zoxide init --cmd cd zsh)
-      alias cdf=cdi" \
+  atinit'
+    eval "$(zoxide init --cmd cd zsh)"
+    alias cdf=cdi' \
   zdharma-continuum/null
+
+# mcfly: intelligent history search
+# https://github.com/cantino/mcfly
+#
+# NOTE: overrides Ctrl+R from the OMZP::fzf plugin above, so load it after
+zinit wait'0a' lucid \
+  has'mcfly' as'null' id-as'mcfly' \
+  atinit'
+    MCFLY_KEY_SCHEME=vim
+    MCFLY_FUZZY=2
+    MCFLY_RESULTS=20
+    MCFLY_HISTORY_LIMIT=10000
+    eval "$(mcfly init zsh)"' \
+  for zdharma-continuum/null
 
 # XXX: maybe even install sdk here
 # https://zdharma-continuum.github.io/zinit/wiki/GALLERY/#programs
@@ -300,7 +326,7 @@ zinit wait'0a' lucid for \
   matthieusb/zsh-sdkman
 
 # XXX: pull zsh-completions as well
-# zinit wait'0d' lucid for \
+# zinit wait'0b' lucid for \
 #   blockf atpull'zinit creinstall -q .' \
 #     zsh-users/zsh-completions
 
@@ -451,9 +477,6 @@ alias m="make"
 # just
 [[ "${commands[just]}" ]] && alias j="just"
 
-# history
-alias hg='history | egrep'
-
 # Ansible
 # NOTE: must use local variable, otherwise shfmt breaks it into "<lhs> - <rhs>"
 _zshrc_cmd="ansible-lint"
@@ -527,32 +550,6 @@ _zshrc_cmd="yt-dlp"
 if [[ "${commands[$_zshrc_cmd]}" ]]; then
   alias yt2mp3="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
 fi
-
-########################################################
-##### USER CONFIGURATION
-########################################################
-
-# History management
-#  - https://stackoverflow.com/a/38549502
-#  - https://stackoverflow.com/a/19454838
-#  - https://unix.stackexchange.com/a/273863
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
-export HISTCONTROL=ignoreboth
-export HISTSIZE=5000
-export HISTFILE="${XDG_STATE_HOME}/zsh/history"
-export HISTFILESIZE=50000
-export SAVEHIST="${HISTFILESIZE}"
-export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
-export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
-
-# NOTE: shfmt is unable to parse zshaddhistory, which applies to the whole file
-# TODO: find some more elegant way setup history
-if [[ -f "${ZSH_FUNCTIONS}/history.zsh" ]]; then
-  source "${ZSH_FUNCTIONS}/history.zsh"
-fi
-
-setopt hist_ignore_all_dups
-setopt hist_ignore_space
 
 ########################################################
 ##### KEYBINDINGS
