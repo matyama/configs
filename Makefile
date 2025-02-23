@@ -521,6 +521,7 @@ basic-tools: \
 	fzf \
 	tmux \
 	neovim \
+	pandoc \
 	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
@@ -540,7 +541,6 @@ basic-tools: \
 		mypaint \
 		tlp \
 		dos2unix \
-		pandoc \
 		tesseract-ocr \
 		tesseract-ocr-eng \
 		direnv \
@@ -564,6 +564,13 @@ basic-tools: \
 		redis-tools \
 		sqlite3 \
 		wireguard
+
+.PHONY: pandoc
+pandoc: $(ZSH_COMPLETIONS)
+	@echo ">>> Installing $@"
+	sudo apt install -y $@
+	@echo ">>> Setting up $@ completions"
+	$@ --bash-completion > $</_$@
 
 .PHONY: tmux
 tmux: $(XDG_CONFIG_HOME)/tmux
@@ -910,7 +917,7 @@ dbeaver-ce gimp netron postman skype spotify zoom-client:
 	sudo snap install $@
 
 .PHONY: pipx
-pipx: python
+pipx: $(ZSH_COMPLETIONS) python
 ifneq ($(shell which pipx 2> /dev/null),)
 	@echo ">>> $@ already installed (v$$($@ --version))"
 else
@@ -919,6 +926,8 @@ else
 	sudo apt -y install $@
 	$@ ensurepath
 endif
+	@echo ">>> Setting up $@ completions"
+	@register-python-argcomplete $@ > $</_$@
 
 .PHONY: python-tools
 python-tools: OPS :=
@@ -1209,7 +1218,7 @@ cargo-tools: \
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
 .PHONY: rust-tools
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
-rust-tools: zsh rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
+rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
 		cargo install --locked --force bat
@@ -1472,7 +1481,7 @@ golang: $(GOPATH)
 shfmt: SHFMT_MOD := mvdan.cc/sh
 shfmt: SHFMT_API := v3
 shfmt: SHFMT_TAG := latest
-shfmt: golang $(XDG_MAN_HOME)/man1
+shfmt: golang pandoc $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing $@: https://github.com/mvdan/sh"
 	go install "$(SHFMT_MOD)/$(SHFMT_API)/cmd/$@@$(SHFMT_TAG)"
 	@pandoc -s -t man \

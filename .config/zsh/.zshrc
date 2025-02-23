@@ -265,9 +265,6 @@ zinit wait'0a' lucid for \
 #  - aws-vault: provides autocompletion
 #  - forgit: interactive git+fzf & overrides git aliases
 #    https://github.com/wfxr/forgit
-#  - pandoc: pandoc autocompletion
-#  - pipx: pipx autocompletion
-#    https://pipx.pypa.io/latest/installation/#shell-completion
 #  - skim: loads skim key-bindings
 #    https://github.com/skim-rs/skim
 #  - zoxide: smarter cd command
@@ -275,19 +272,15 @@ zinit wait'0a' lucid for \
 #
 # XXX: forgit: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
 # XXX: pandoc, pipx: ensure `autoload -U +X bashcompinit && bashcompinit`
+# TODO: aws-vault master -> version tag
+#  - issue: for some reason, `aws-vault --version` writes to STDERR
 zinit wait'0a' lucid for \
-  has'aws-vault' as'completion' is-snippet id-as'aws-vault' \
-  atinit'source ${ZINIT[SNIPPETS_DIR]}/aws-vault/aws-vault' \
+  has'aws-vault' as'completion' id-as'aws-vault' \
+  mv'aws-vault -> _aws-vault' \
   https://raw.githubusercontent.com/99designs/aws-vault/master/contrib/completions/zsh/aws-vault.zsh \
   has'fzf' atclone="ln -sft ${XDG_BIN_HOME} \$PWD/bin/*" atpull"%atclone" \
   atinit"export FORGIT_COPY_CMD='wl-copy'" \
   wfxr/forgit \
-  has'pandoc' as'null' id-as'pandoc' \
-  atinit='eval "$(pandoc --bash-completion)"' \
-  zdharma-continuum/null \
-  has'pipx' as'null' id-as'pipx' \
-  atinit'eval "$(register-python-argcomplete pipx)"' \
-  zdharma-continuum/null \
   has'sk' as'null' id-as'skim' \
   atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
   zdharma-continuum/null \
