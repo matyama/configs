@@ -130,9 +130,9 @@ zinit wait'!' lucid nocd \
 # Prompt: Starship
 zinit wait'!' lucid \
   if'[[ "${ZSH_THEME}" = */starship ]]' \
-  from'gh-r' \
-  lbin'!' \
-  atload'eval "$(starship init zsh)"' \
+  from'gh-r' lbin'!' src'starship.zsh' reset \
+  atclone'./starship init zsh > starship.zsh; zcompile -Uz starship.zsh' \
+  atpull'%atclone' \
   for "${ZSH_THEME}"
 
 ########################################################
