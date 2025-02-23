@@ -160,13 +160,13 @@ zinit wait'!' lucid \
 #  - `autoload -U +X bashcompinit && bashcompinit`
 zinit lucid for \
   is-snippet atload'
-    HISTCONTROL=ignoreboth
-    HISTSIZE=5000
-    HISTFILE="${XDG_STATE_HOME}/zsh/history"
-    HISTFILESIZE=50000
-    SAVEHIST="${HISTFILESIZE}"
-    HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
-    HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
+    export HISTCONTROL=ignoreboth
+    export HISTSIZE=5000
+    export HISTFILE="${XDG_STATE_HOME}/zsh/history"
+    export HISTFILESIZE=50000
+    export SAVEHIST="${HISTFILESIZE}"
+    export HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
+    export HISTORY_IGNORE="(clear|bg|fg|cd|cd -|cd ..|cd ~|exit|date|w|* --help|h|ls|la|l|ll|eza)"
 
     zshaddhistory() {
       emulate -L zsh
@@ -186,10 +186,10 @@ zinit lucid for \
     alias hsi="history | grep -i"' \
   OMZL::history.zsh \
   is-snippet OMZL::{'clipboard','completion','git','grep','key-bindings'}.zsh \
-  has"tmux" atinit"
-      ZSH_TMUX_FIXTERM=false
-      ZSH_TMUX_AUTOSTART=false
-      ZSH_TMUX_AUTOCONNECT=false" \
+  has'tmux' atinit'
+    export ZSH_TMUX_FIXTERM=false
+    export ZSH_TMUX_AUTOSTART=false
+    export ZSH_TMUX_AUTOCONNECT=false' \
   OMZP::tmux
 
 # FIXME: aws completions
@@ -284,10 +284,10 @@ zinit wait'0a' lucid for \
   has'sk' as'null' id-as'skim' \
   atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
   zdharma-continuum/null \
-  has'zoxide' as'null' id-as'zoxide' \
-  atinit'
-    eval "$(zoxide init --cmd cd zsh)"
-    alias cdf=cdi' \
+  has'zoxide' as'program' id-as'zoxide' src'zoxide.zsh' reset run-atpull \
+  atclone'zoxide init --cmd cd zsh > zoxide.zsh; zcompile -Uz zoxide.zsh' \
+  atpull'%atclone' \
+  atinit'alias cdf=cdi' \
   zdharma-continuum/null
 
 # mcfly: intelligent history search
@@ -295,13 +295,14 @@ zinit wait'0a' lucid for \
 #
 # NOTE: overrides Ctrl+R from the OMZP::fzf plugin above, so load it after
 zinit wait'0a' lucid \
-  has'mcfly' as'null' id-as'mcfly' \
+  has'mcfly' as'program' id-as'mcfly' src'mcfly.zsh' reset run-atpull \
+  atclone'mcfly init zsh > mcfly.zsh; zcompile -Uz mcfly.zsh' \
+  atpull'%atclone' \
   atinit'
-    MCFLY_KEY_SCHEME=vim
-    MCFLY_FUZZY=2
-    MCFLY_RESULTS=20
-    MCFLY_HISTORY_LIMIT=10000
-    eval "$(mcfly init zsh)"' \
+    export MCFLY_KEY_SCHEME=vim
+    export MCFLY_FUZZY=2
+    export MCFLY_RESULTS=20
+    export MCFLY_HISTORY_LIMIT=10000' \
   for zdharma-continuum/null
 
 # XXX: maybe even install sdk here
