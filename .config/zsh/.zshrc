@@ -233,7 +233,6 @@ zinit lucid for \
 #  - poetry                        adds completion & keeps it up to date
 #  - rust                          adds completion for rustc, rustup and cargo
 #  - sdk                           adds auto-completion for sdk
-#  - stack                         adds auto-completion for stack
 #  - terraform                     adds completion, aliases & a prompt function
 #  - zsh-interactive-cd            provides fish-like interactive cd completion
 #
@@ -271,7 +270,6 @@ zinit wait'0a' lucid for \
   has'rustc' as'completion' OMZP::rust/_rustc \
   has'rustup' has'cargo' OMZP::rust \
   OMZP::sdk \
-  has'stack' OMZP::stack \
   has'terraform' OMZP::terraform \
   has'terraform' as'completion' OMZP::terraform/_terraform \
   OMZP::zsh-interactive-cd
@@ -282,6 +280,7 @@ zinit wait'0a' lucid for \
 #    https://github.com/wfxr/forgit
 #  - skim: loads skim key-bindings
 #    https://github.com/skim-rs/skim
+#  - stack: generates and sources completion for stack (assumes bashcompinit)
 #  - zoxide: smarter cd command
 #    https://github.com/ajeetdsouza/zoxide
 #
@@ -298,6 +297,10 @@ zinit wait'0a' lucid for \
   wfxr/forgit \
   has'sk' as'null' id-as'skim' \
   atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
+  zdharma-continuum/null \
+  has'stack' as'program' id-as'stack' src'stack.bash' reset run-atpull \
+  atclone'stack --bash-completion-script stack > stack.bash' \
+  atpull'%atclone' \
   zdharma-continuum/null \
   has'zoxide' as'program' id-as'zoxide' src'zoxide.zsh' reset run-atpull \
   atclone'zoxide init --cmd cd zsh > zoxide.zsh; zcompile -Uz zoxide.zsh' \
