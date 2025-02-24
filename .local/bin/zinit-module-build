@@ -1,0 +1,53 @@
+#!/usr/bin/env zsh
+# shellcheck shell=bash
+
+# NOTE: see zinit-module/scripts/mod-install.sh
+
+ZINIT_HOME="${ZINIT[HOME_DIR]:-${XDG_DATA_DIR:-$HOME/.local/share}/zinit}"
+ZINIT_MODULE_HOME="${ZINIT_HOME}/module"
+ZINIT_MODULE_PATCH="${ZINIT_HOME}/patches/0001-zsh-5.8.1-compatibility.patch"
+PATCH_SHA=8b365110b04c5fb2704173b97516a53460d10576deda0d418551158300ec1190
+
+if [[ ! -d "${ZINIT_MODULE_HOME}" ]]; then
+  # call build to clone the sources
+  echo "ERROR: No module directory ${ZINIT_MODULE_HOME}"
+  exit 1
+fi
+
+if [[ ! -f "${ZINIT_MODULE_PATCH}" ]]; then
+  # NOTE: Downloading the patch file is a bit silly, but storing it in this
+  # repository gets annoying due to trailing whitespaces and pre-commit.
+  PATCH_REPO=Aloxaf/zinit-module
+  PATCH_URL="https://raw.githubusercontent.com/${PATCH_REPO}/zsh_5.8.1_patch"
+  PATCH_FILE="$(basename ${ZINIT_MODULE_PATCH})"
+
+  echo "Downloading patch file ${PATCH_FILE}"
+  mkdir -p "$(dirname ${ZINIT_MODULE_PATCH})"
+  curl -sSL "${PATCH_URL}/${PATCH_FILE}" >"${ZINIT_MODULE_PATCH}"
+fi
+
+echo "Validating patch file integrity"
+echo "${PATCH_SHA} ${ZINIT_MODULE_PATCH}" | sha256sum -c
+[[ $? == 0 ]] || exit 1
+
+echo "Resetting and updating module repository"
+git -C "${ZINIT_MODULE_HOME}" reset --hard
+git -C "${ZINIT_MODULE_HOME}" pull
+
+# make clean
+make -C "${ZINIT_MODULE_HOME}" clean
+
+echo "Applying module patch"
+git -C "${ZINIT_MODULE_HOME}" apply "${ZINIT_MODULE_PATCH}"
+
+# configure
+(
+  cd "${ZINIT_MODULE_HOME}" &&
+    CPPFLAGS=-I/usr/local/include \
+      CFLAGS="-g -Wall -O3" \
+      LDFLAGS=-L/usr/local/lib \
+      ./configure --disable-gdbm --without-tcsetpgrp
+)
+
+# build the module
+make -C "${ZINIT_MODULE_HOME}"

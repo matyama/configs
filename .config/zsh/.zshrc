@@ -31,7 +31,7 @@ fi
 # Should stay close to the top of zshrc. Initialization code that may require
 # console input ( password prompts, [y/n] confirmations, etc.) must go above
 # this block, everything else may go below.
-if [[ "${ZSH_THEME}" = */powerlevel10k ]] &&
+if [[ "${ZSH_THEME}" = */powerlevel10k ]] && [[ -n "${functions[p10k]}" ]] &&
   [[ -r "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh" ]]; then
   # shellcheck disable=SC1090
   source "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh"
@@ -100,6 +100,19 @@ fi
 # Source/load zinit
 source "${ZINIT[BIN_DIR]}/zinit.zsh"
 
+# Build and load zsh module for automatically compiling sourced files
+# https://github.com/zdharma-continuum/zinit-module#with-zinit
+if [[ ! -d "${ZINIT[HOME_DIR]}/module" ]]; then
+  # first build to initialize the module repository
+  zinit module build || true
+  # run patched module build
+  # https://github.com/zdharma-continuum/zinit-module/issues/4
+  [[ "$(command -v zinit-module-build)" ]] && zinit-module-build
+fi
+
+module_path+=("${ZINIT[HOME_DIR]}/module/Src")
+zmodload zdharma_continuum/zinit
+
 # Add binaries managed by zinit to the PATH
 path+=("${ZPFX}/bin")
 
@@ -122,7 +135,7 @@ setopt prompt_subst
 # Prompt: Powerlevel10k
 #  - Customize via `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
 #  - Instant prompt requires this to be load/light, not a wait
-zinit light-mode lucid nocd \
+zinit light-mode lucid nocd depth'1' \
   if'[[ "${ZSH_THEME}" = */powerlevel10k ]]' \
   atinit"!
     # Disable p10k configuration wizard
@@ -144,9 +157,9 @@ zinit light-mode lucid nocd \
 
 # Prompt: Starship
 zinit wait'!' lucid \
-  if'[[ "${ZSH_THEME}" = */starship ]]' \
+  if'[[ "${ZSH_THEME}" = */starship ]] && [[ "${commands[starship]}" ]]' \
   from'gh-r' lbin'!' src'starship.zsh' reset \
-  atclone'./starship init zsh > starship.zsh; zcompile -Uz starship.zsh' \
+  atclone'./starship init zsh > starship.zsh' \
   atpull'%atclone' \
   for "${ZSH_THEME}"
 
@@ -303,7 +316,7 @@ zinit wait'0a' lucid for \
   atpull'%atclone' \
   zdharma-continuum/null \
   has'zoxide' as'program' id-as'zoxide' src'zoxide.zsh' reset run-atpull \
-  atclone'zoxide init --cmd cd zsh > zoxide.zsh; zcompile -Uz zoxide.zsh' \
+  atclone'zoxide init --cmd cd zsh > zoxide.zsh' \
   atpull'%atclone' \
   atinit'alias cdf=cdi' \
   zdharma-continuum/null
@@ -314,7 +327,7 @@ zinit wait'0a' lucid for \
 # NOTE: overrides Ctrl+R from the OMZP::fzf plugin above, so load it after
 zinit wait'0a' lucid \
   has'mcfly' as'program' id-as'mcfly' src'mcfly.zsh' reset run-atpull \
-  atclone'mcfly init zsh > mcfly.zsh; zcompile -Uz mcfly.zsh' \
+  atclone'mcfly init zsh > mcfly.zsh' \
   atpull'%atclone' \
   atinit'
     export MCFLY_KEY_SCHEME=vim

@@ -483,6 +483,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 	touch $(XDG_CONFIG_HOME)/nvim/spell/en-utf-8.add
 
 # Installed tools:
+#  - autoconf: automatic configure script builder
+#    (https://www.gnu.org/software/autoconf)
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - entr: Run arbitrary commands when files change
@@ -525,6 +527,7 @@ basic-tools: \
 	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
+		autoconf \
 		git-lfs \
 		htop \
 		iotop \
