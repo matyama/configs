@@ -5,6 +5,10 @@ export DEFAULT_USER=matyama
 # Skip the not really helping Ubuntu global compinit (https://bit.ly/41dLFV8)
 export skip_global_compinit=1
 
+# Select prompt theme
+ZSH_THEME=romkatv/powerlevel10k
+#ZSH_THEME=starship/starship
+
 ########################################################
 ##### PROFILING START
 ########################################################
@@ -16,6 +20,21 @@ if [[ "${ZSHRC_PROFILE_STARTUP}" == true ]]; then
   PS4=$'%D{%M%S%.} %N:%i> '
   exec 3>&2 2>"${XDG_CACHE_HOME:-$HOME/.cache}/zsh/startlog.$$"
   setopt xtrace prompt_subst
+fi
+
+########################################################
+##### INSTANT PROMPT
+########################################################
+
+# Enable Powerlevel10k instant prompt.
+#
+# Should stay close to the top of zshrc. Initialization code that may require
+# console input ( password prompts, [y/n] confirmations, etc.) must go above
+# this block, everything else may go below.
+if [[ "${ZSH_THEME}" = */powerlevel10k ]] &&
+  [[ -r "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh" ]]; then
+  # shellcheck disable=SC1090
+  source "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh"
 fi
 
 ########################################################
@@ -100,13 +119,10 @@ zinit light-mode lucid for \
 # Reevaluate the prompt string each time zsh wants to display a prompt
 setopt prompt_subst
 
-ZSH_THEME=romkatv/powerlevel10k
-#ZSH_THEME=starship/starship
-
-# XXX: wait/load
 # Prompt: Powerlevel10k
-# To customize prompt, run `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
-zinit wait'!' lucid nocd \
+#  - Customize via `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
+#  - Instant prompt requires this to be load/light, not a wait
+zinit light-mode lucid nocd \
   if'[[ "${ZSH_THEME}" = */powerlevel10k ]]' \
   atinit"!
     # Disable p10k configuration wizard
@@ -123,8 +139,7 @@ zinit wait'!' lucid nocd \
         POWERLEVEL9K_CONFIG_FILE=${XDG_CONFIG_HOME}/zsh/p10k.zsh
         ;;
     esac
-    source \${POWERLEVEL9K_CONFIG_FILE}
-    _p9k_precmd" \
+    source \${POWERLEVEL9K_CONFIG_FILE}" \
   for "${ZSH_THEME}"
 
 # Prompt: Starship
