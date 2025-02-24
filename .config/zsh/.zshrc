@@ -313,10 +313,6 @@ zinit wait'0a' lucid for \
   has'sk' as'null' id-as'skim' \
   atinit'source "${SKIM_BASE}/shell/key-bindings.zsh"' \
   zdharma-continuum/null \
-  has'stack' as'program' id-as'stack' src'stack.bash' reset run-atpull \
-  atclone'stack --bash-completion-script stack > stack.bash' \
-  atpull'%atclone' \
-  zdharma-continuum/null \
   has'zoxide' as'program' id-as'zoxide' src'zoxide.zsh' reset run-atpull \
   atclone'zoxide init --cmd cd zsh > zoxide.zsh' \
   atpull'%atclone' \
@@ -352,14 +348,14 @@ zinit wait'0a' lucid for \
   atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
   matthieusb/zsh-sdkman
 
-# XXX: pull zsh-completions as well
-# zinit wait'0b' lucid for \
-#   blockf atpull'zinit creinstall -q .' \
-#     zsh-users/zsh-completions
-
-# zsh-autosuggestions: provides fish-like autosuggestions
-# https://github.com/zsh-users/zsh-autosuggestions
+# Resources
+#  - zsh-autosuggestions: provides fish-like autosuggestions
+#    https://github.com/zsh-users/zsh-autosuggestions
+#  - zsh-completions: provides additional completion definitions
+#    https://github.com/zsh-users/zsh-completions
 zinit wait'0b' lucid for \
+  as'completion' atpull'zinit cclear' blockf \
+  zsh-users/zsh-completions \
   atinit"
     # Disable suggestion for large buffers
     ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=80
