@@ -48,8 +48,10 @@ export ZSH_COMPLETIONS="${ZSH}/completions"
 export ZSH_FUNCTIONS="${ZSH}/functions"
 
 # Modify fpath
-# shellcheck disable=SC2206
-typeset -gaU fpath=($ZSH_COMPLETIONS $fpath)
+typeset -gaU fpath=("${ZSH_COMPLETIONS}" "${ZSH_FUNCTIONS}" "${fpath[@]}")
+
+# Auto-load custom functions
+autoload -Uz ${ZSH_FUNCTIONS}/*
 
 ########################################################
 ##### SETUP PLUGIN MANAGER (ZINIT)
@@ -369,7 +371,6 @@ zinit wait'0b' lucid for \
   zsh-users/zsh-autosuggestions
 
 # FIXME: zcompdump only in ZSH_CACHE_DIR (currently appears also in ZDOTDIR)
-# XXX: https://github.com/zdharma-continuum/fast-syntax-highlighting
 #
 # zsh-syntax-highlighting: provides fish-like syntax highlighting
 # https://github.com/zsh-users/zsh-syntax-highlighting
@@ -379,7 +380,7 @@ zinit wait'0b' lucid for \
 # NOTE: Make sure that all completions are set up before. This plugin's atinit
 # runs compinit, and it should be the only compinit call to get the best perf.
 zinit wait'0c' lucid for \
-  atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+  atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit_fast; zicdreplay" \
   zsh-users/zsh-syntax-highlighting
 
 # zsh-history-substring-search: provides fish-like history search feature
