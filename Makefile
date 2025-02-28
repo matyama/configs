@@ -1977,11 +1977,12 @@ endif
 
 # Installation resources:
 #  - calibre: ebook manager (https://calibre-ebook.com)
+#  - inkscape: vector graphics editor (https://inkscape.org)
 #  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
 #  - mpv: command line video player (https://mpv.io)
 #  - shellcheck: static analysis tool for shell scripts (https://shellcheck.net)
-.PHONY: calibre luajit mpv
-calibre luajit mpv shellcheck:
+.PHONY: calibre inkscape luajit mpv shellcheck
+calibre inkscape luajit mpv shellcheck:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
 
