@@ -1219,8 +1219,10 @@ cargo-tools: \
 #  - xh: Friendly and fast tool for sending HTTP requests
 #    (https://github.com/ducaale/xh)
 #  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
+#
+# TODO: remove the dependency on CRATES_SRC / crates.io index
 .PHONY: rust-tools
-rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-6f17d22bba15001f
+rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-1949cf8c6b5b557f
 rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
 	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
