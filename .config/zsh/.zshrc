@@ -222,13 +222,10 @@ zinit lucid for \
     export ZSH_TMUX_AUTOCONNECT=false' \
   OMZP::tmux
 
-# FIXME: aws completions
+# FIXME: aws completions (`aws_completer` not installed)
 # TODO: deprecate OMZP::minikube (resp., generate as completions)
 # TODO: deprecate OMZP::poetry (resp., generate as completions)
-# TODO: OMZP::poetry is just completion definition
-# TODO: OMZP::poetry just generates and sources completions (gen on update)
 # XXX: OMZ::git -> gitfast (zinit svn snippet for OMZP::gitfast)
-# TODO: https://zdharma-continuum.github.io/zinit/wiki/Direnv-explanation
 #
 # OMZ plugins/snippets/completions
 #  - ansible                       adds some useful aliases for ansible
@@ -257,7 +254,7 @@ zinit lucid for \
 #  - https://zdharma-continuum.github.io/zinit/wiki/Example-Oh-My-Zsh-setup
 zinit wait'0a' lucid for \
   has'ansible' OMZP::ansible \
-  has'aws' OMZP::aws \
+  has'aws' atinit'SHOW_AWS_PROMPT=false' OMZP::aws \
   OMZP::copybuffer \
   has'direnv' OMZP::direnv \
   has'docker' OMZP::docker \
@@ -300,7 +297,6 @@ zinit wait'0a' lucid for \
 #    https://github.com/ajeetdsouza/zoxide
 #
 # XXX: forgit: alternatively use `atload"!PATH+=:${FORGIT_INSTALL_DIR}/bin"`
-# XXX: pandoc, pipx: ensure `autoload -U +X bashcompinit && bashcompinit`
 # TODO: aws-vault master -> version tag
 #  - issue: for some reason, `aws-vault --version` writes to STDERR
 zinit wait'0a' lucid for \
