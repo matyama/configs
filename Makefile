@@ -1180,6 +1180,8 @@ cargo-tools: \
 #  - bitcli:  Simple CLI tool for URL shortening via Bitly
 #    (https://github.com/matyama/bitcli)
 #  - click: Command Line Interactive Controller for Kubernetes
+#  - cross: “Zero setup” cross compilation and “cross testing” of Rust crates
+#    (https://github.com/cross-rs/cross)
 #  - eza: A modern, maintained replacement for 'ls'
 #    (https://github.com/eza-community/eza)
 #  - fd: A simple, fast and user-friendly alternative to 'find'
@@ -1232,6 +1234,7 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
 	cargo install --locked --git https://github.com/matyama/bitcli
+	make -C $(CFG_DIR) cross
 	@echo ">>> Installing eza: https://eza.rocks"
 	cargo install eza
 	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
@@ -1312,6 +1315,13 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	cargo install zoxide --locked
 	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" \
 		> $(XDG_MAN_HOME)/man1/zoxide.1.gz
+
+# “Zero setup” cross compilation and “cross testing” of Rust crates
+#  - Requires: docker, binfmt-support (for testing)
+.PHONY: cross
+cross: rust binfmt-support
+	@echo ">>> Installing $@: https://github.com/cross-rs/cross"
+	cargo install --locked cross
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
@@ -1976,13 +1986,15 @@ endif
 	rm -f $(KEYBASE_PKG)
 
 # Installation resources:
+#  - binfmt-support: support for extra binary formats
+#    (https://www.nongnu.org/binfmt-support)
 #  - calibre: ebook manager (https://calibre-ebook.com)
 #  - inkscape: vector graphics editor (https://inkscape.org)
 #  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
 #  - mpv: command line video player (https://mpv.io)
 #  - shellcheck: static analysis tool for shell scripts (https://shellcheck.net)
-.PHONY: calibre inkscape luajit mpv shellcheck
-calibre inkscape luajit mpv shellcheck:
+.PHONY: binfmt-support calibre inkscape luajit mpv shellcheck
+binfmt-support calibre inkscape luajit mpv shellcheck:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
 
