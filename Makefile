@@ -340,7 +340,16 @@ linux-tools:
 .PHONY: net-tools
 net-tools:
 	@echo ">>> Installing basic network tools"
-	sudo apt install -y curl jq net-tools ncat nmap wget libssl-dev pssh
+	sudo apt install -y \
+		curl \
+		jq \
+		libssl-dev \
+		net-tools \
+		ncat \
+		nmap \
+		pssh \
+		traceroute \
+		wget
 
 # Installed tools:
 #  - cpu-checker: tools to help evaluate certain CPU (or BIOS) features
