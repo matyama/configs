@@ -2034,6 +2034,16 @@ endif
 	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
 	@echo ">>> Installed $$($@ -v | head -1)"
 
+# Android Debug Bridge (adb)
+#  - https://developer.android.com/tools/adb
+#  - https://developer.android.com/studio/run/device#setting-up
+.PHONY: adb
+adb:
+	@echo ">>> Installing $@: https://developer.android.com/tools/adb"
+	@sudo apt install -y $@
+	@echo ">>> Adding $(LOGNAME) to 'plugdev' group (requires new login)"
+	@sudo usermod -aG plugdev $(LOGNAME)
+
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
 fix-ssh-perms:
