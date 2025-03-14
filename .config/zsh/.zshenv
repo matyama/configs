@@ -195,6 +195,11 @@ export BAT_CONFIG_PATH=${BAT_CONFIG_DIR}/config
 export RIPGREP_CONFIG_HOME="${XDG_CONFIG_HOME}/rg"
 export RIPGREP_CONFIG_PATH=${RIPGREP_CONFIG_HOME}/ripgreprc
 
+# cross / xargo
+#  - https://github.com/cross-rs/cross/wiki/Configuration#environment-variables
+#  - https://github.com/japaric/xargo
+export XARGO_HOME="${XDG_CACHE_HOME}/xargo"
+
 # nvidia-settings
 #  - `nvidia-settings --config ...` is a workaround to make nvidia-settings XDG
 #    compliant, see: https://github.com/NVIDIA/nvidia-settings/issues/30
