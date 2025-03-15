@@ -192,6 +192,33 @@ return {
     end,
   },
 
+  -- Crates LSP: https://github.com/Saecki/crates.nvim
+  {
+    "saecki/crates.nvim",
+    tag = "stable",
+    event = { "BufRead Cargo.toml" },
+    config = function()
+      require("crates").setup({
+        popup = {
+          autofocus = true,
+          hide_on_select = true,
+        },
+        completion = {
+          cmp = {
+            enabled = true,
+          },
+        },
+        lsp = {
+          enabled = true,
+          actions = true,
+          -- use cmp for completions
+          completion = false,
+          hover = true,
+        },
+      })
+    end,
+  },
+
   -- FIXME: lsp_signatur handler RPC[Error] code_name = ContentModified
   -- message = "waiting for cargo metadata or cargo check"
   -- https://github.com/ray-x/lsp_signature.nvim/issues/168

@@ -70,19 +70,6 @@ return {
     end,
   },
 
-  -- Cargo: https://github.com/Saecki/crates.nvim
-  {
-    "saecki/crates.nvim",
-    tag = "stable",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    event = { "BufRead Cargo.toml" },
-    config = function()
-      require("crates").setup()
-    end,
-  },
-
   -- Bindings for Haskell hlint code refactoring
   -- https://github.com/mpickering/hlint-refactor-vim
   {
