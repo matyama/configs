@@ -338,21 +338,17 @@ return {
     end,
   },
 
-  -- TODO: upgrade to some recent version
   -- Standalone UI for nvim-lsp progress
+  -- https://github.com/j-hui/fidget.nvim/wiki/Known-compatible-LSP-servers
   {
     "j-hui/fidget.nvim",
-    tag = "legacy",
     config = function()
       require("fidget").setup({
-        text = {
-          spinner = "dots",
-        },
-        -- Ignore some LSP servers
-        -- https://github.com/j-hui/fidget.nvim/issues/17
-        sources = {
-          ["jdtls"] = { ignore = true },
-          ["elixirls"] = { ignore = true },
+        progress = {
+          -- List of LSP servers to ignore
+          ignore = {
+            "elixirls",
+          },
         },
       })
     end,
