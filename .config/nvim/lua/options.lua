@@ -14,11 +14,10 @@ g.mapleader = " "
 -- Options
 -------------------------------------------------------------------------------
 
--- TODO
 -- Never ever folding
--- o.foldenable = false
--- o.foldmethod = "manual"
--- o.foldlevelstart = 99
+o.foldenable = false
+o.foldmethod = "manual"
+o.foldlevelstart = 99
 
 -- Better display for messages
 o.cmdheight = 2
