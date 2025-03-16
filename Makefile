@@ -2053,6 +2053,18 @@ adb:
 	@echo ">>> Adding $(LOGNAME) to 'plugdev' group (requires new login)"
 	@sudo usermod -aG plugdev $(LOGNAME)
 
+.PHONY: google-chrome
+google-chrome: CHROME_PKG := google-chrome-stable_current_$(DIST_ARCH).deb
+google-chrome: net-tools
+ifneq ($(shell which google-chrome 2> /dev/null),)
+	@echo ">>> Google Chrome already installed"
+else
+	@echo ">>> Downloading and installing Google Chrome"
+	$(WGET) -O /tmp/$(CHROME_PKG) https://dl.google.com/linux/direct/$(CHROME_PKG)
+	sudo apt install -y /tmp/$(CHROME_PKG)
+endif
+	rm -rf /tmp/$(CHROME_PKG)
+
 .PHONY: fix-ssh-perms
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
 fix-ssh-perms:
