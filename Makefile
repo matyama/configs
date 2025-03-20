@@ -508,6 +508,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - libecpg-dev: Postgres instegrations
 #  - libimage-exiftool-perl: library and program to read and write meta
 #    information in multimedia files (https://exiftool.org)
+#  - libavdevice-dev: FFmpeg library for handling input and output devices
+#  - libavformat-dev: FFmpeg library with (de)muxers for multimedia containers
 #  - lldb-15: High-performance debugger (https://lldb.llvm.org)
 #  - neofetch: A command-line system information tool
 #    (https://github.com/dylanaraps/neofetch)
@@ -562,6 +564,8 @@ basic-tools: \
 		libecpg-dev \
 		libglpk-dev \
 		libimage-exiftool-perl \
+		libavdevice-dev \
+		libavformat-dev \
 		glpk-utils \
 		glpk-doc \
 		musl-tools \
