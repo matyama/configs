@@ -241,6 +241,7 @@ zinit lucid for \
 #  - kubectl                       adds completion & some aliases
 #  - minikube                      adds completion for minikube
 #  - nmap                          adds some useful aliases for Nmap
+#  - nvm                           adds completion for & lazily sources nvm
 #  - pip                           adds completion & some aliases
 #  - poetry                        adds completion & keeps it up to date
 #  - rust                          adds completion for rustc, rustup and cargo
@@ -276,6 +277,15 @@ zinit wait'0a' lucid for \
   has'kubectl' OMZP::kubectl \
   has'minikube' OMZP::minikube \
   has'nmap' OMZP::nmap \
+  if'[[ -d "${NVM_DIR}" ]]' \
+  atinit"
+    # Enable lazy startup & rc file autoload
+    #  - https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm
+    zstyle ':omz:plugins:nvm' lazy yes
+    zstyle ':omz:plugins:nvm' lazy-cmd \
+      eslint prettier typescript typescript-language-server
+    zstyle ':omz:plugins:nvm' autoload yes" \
+  OMZP::nvm \
   has'pip' OMZP::pip \
   has'pip' as'completion' OMZP::pip/_pip \
   has'poetry' OMZP::poetry \

@@ -44,7 +44,6 @@ BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
 BASE16_TMUX_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-tmux
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
-BYOBU_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/byobu
 RIPGREP_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/rg
 
 CARGO_HOME ?= $(XDG_DATA_HOME)/cargo
@@ -62,6 +61,8 @@ GHCUP_USE_XDG_DIRS ?= 1
 CABAL_DIR ?= $(XDG_CONFIG_HOME)/cabal
 CABAL_CONFIG ?= $(CABAL_DIR)/config
 STACK_ROOT ?= $(XDG_DATA_HOME)/stack
+
+NVM_DIR ?= $(XDG_DATA_HOME)/nvm
 
 SDKMAN_DIR ?= $(XDG_DATA_HOME)/sdkman
 
@@ -128,7 +129,6 @@ CACHE_DIRS := \
 	$(XDG_CACHE_HOME)/zsh
 
 CONFIG_DIRS := \
-	$(BYOBU_CONFIG_DIR) \
 	$(RIPGREP_CONFIG_HOME) \
 	$(XDG_CONFIG_HOME)/alacritty \
 	$(XDG_CONFIG_HOME)/bash \
@@ -155,11 +155,11 @@ CONFIG_DIRS := \
 
 DATA_DIRS := \
 	$(CARGO_HOME) \
+	$(NVM_DIR) \
 	$(STACK_ROOT) \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat \
-	$(XDG_DATA_HOME)/npm \
 	$(ZSH_COMPLETIONS) \
 	$(ZSH_FUNCTIONS)
 
@@ -1462,16 +1462,58 @@ endif
 	@gnome-extensions enable $(EXT_NAME) || \
 		echo ">>> Restart Gnome session (logout & login) and run this command again"
 
+# TODO: git install instead of curl bash script
+#
 # Resources:
-#  - https://github.com/vercel/install-node
+#  - https://github.com/nvm-sh/nvm#installing-and-updating
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
-# TODO: migrate to https://github.com/nvm-sh/nvm
+#
+# Notes
+#  - The nvm install script clones the nvm repo to `$XDG_CONFIG_HOME/nvm`
+#  - https://github.com/nvm-sh/nvm#additional-notes
+.PHONY: nvm
+nvm: NVM_URL := https://raw.githubusercontent.com/nvm-sh/nvm
+nvm: NVM_VERSION := 0.40.2
+nvm: net-tools $(NVM_DIR)
+	@echo ">>> Downloading and installing nvm ($(NVM_VERSION))"
+	PROFILE=/dev/null bash -c \
+		'curl -o- "$(NVM_URL)/v$(NVM_VERSION)/install.sh" | bash'
+	. "$(NVM_DIR)/nvm.sh"
+	@echo ">>> Using $@ $$($@ -v)"
+
+# TODO: install latest LTS NODE_VERSION by default
+#
+# Resources:
+#  - https://nodejs.org/en/download
+#  - https://wiki.archlinux.org/title/XDG_Base_Directory
 .PHONY: nodejs
-nodejs: VERSION := lts
-nodejs: $(XDG_DATA_HOME)/npm net-tools
-	@echo ">>> Installing nodejs (LTS)"
-	sudo curl -sL install-node.now.sh/$(VERSION) | \
-		sudo bash -s -- --prefix="$(XDG_DATA_HOME)/npm" -y
+nodejs: SHELL := /bin/bash
+nodejs: NODE_VERSION := 22
+nodejs: $(XDG_CONFIG_HOME)/npm nvm
+	@{ \
+		set -e;\
+		echo ">>> Initializing nvm";\
+		source $(NVM_DIR)/nvm.sh;\
+		echo ">>> Installing $@ $(NODE_VERSION)";\
+		nvm install $(NODE_VERSION);\
+	}
+	@echo ">>> Linking npm user config..."
+	@ln -svft $< $(CFG_CONFIG_HOME)/npm/*
+
+# Resources:
+#  - https://www.typescriptlang.org
+#  - https://github.com/typescript-language-server/typescript-language-server
+.PHONY: typescript
+typescript: SHELL := /bin/bash
+typescript: nodejs
+	@{ \
+		set -e;\
+		echo ">>> Initializing nvm";\
+		source $(NVM_DIR)/nvm.sh;\
+		echo ">>> Installing $@: https://www.typescriptlang.org";\
+		npm install -g $@ $@-language-server;\
+	}
+	@echo ">>> Using tsc $$(tsc --version)"
 
 .PHONY: lua-language-server
 lua-language-server: VERSION := $(shell gh_latest_release LuaLS/lua-language-server)

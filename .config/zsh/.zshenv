@@ -178,6 +178,7 @@ export GRADLE_USER_HOME=${XDG_DATA_HOME}/gradle
 export KSCRIPT_CACHE_DIR=${XDG_CACHE_HOME}/kscript
 
 # Node.js
+export NVM_DIR="${XDG_DATA_HOME}/nvm"
 export NPM_CONFIG_USERCONFIG="${XDG_CONFIG_HOME}/npm/npmrc"
 export NODE_REPL_HISTORY=${XDG_DATA_HOME}/node_repl_history
 
@@ -272,4 +273,3 @@ path+=("${GEM_BIN}")
 path+=("${KREW_BIN}")
 path+=("/usr/local/bin")
 path+=("${CABAL_DIR}/bin")
-path+=("${XDG_DATA_HOME}/npm/bin")

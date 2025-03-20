@@ -124,6 +124,9 @@ return {
       -- TOML LSP (https://taplo.tamasfe.dev)
       lspconfig.taplo.setup({})
 
+      -- TypeScript LSP (https://github.com/typescript-language-server/typescript-language-server)
+      lspconfig.ts_ls.setup({})
+
       -- Global mappings
       vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
       vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
