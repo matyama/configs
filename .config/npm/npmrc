@@ -1,5 +1,4 @@
 # Note: prefix is unsupported when installed by nvm
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
 cache=${XDG_CACHE_HOME}/npm
-tmp=${XDG_RUNTIME_DIR}/npm
 init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
