@@ -266,15 +266,25 @@ return {
   -- https://github.com/hrsh7th/nvim-cmp
   {
     "hrsh7th/nvim-cmp",
-
+    -- FIXME: https://github.com/hrsh7th/nvim-cmp/issues/2154
+    commit = "1e1900b",
     event = "InsertEnter",
 
     -- NOTE: dependencies are always lazy-loaded unless specified otherwise
     dependencies = {
       "neovim/nvim-lspconfig",
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
+      {
+        "hrsh7th/cmp-nvim-lsp",
+        commit = "99290b3",
+      },
+      {
+        "hrsh7th/cmp-buffer",
+        commit = "3022dbc",
+      },
+      {
+        "hrsh7th/cmp-path",
+        commit = "91ff86c",
+      },
       -- TODO: check out https://github.com/saadparwaiz1/cmp_luasnip
       -- NOTE: `*-vsip` inluded only because nvim-cmp requires snippets
       "hrsh7th/cmp-vsnip",
