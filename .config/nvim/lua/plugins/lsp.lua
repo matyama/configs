@@ -6,7 +6,7 @@ return {
     "neovim/nvim-lspconfig",
 
     dependencies = {
-      "lvimuser/lsp-inlayhints.nvim",
+      "chrisgrieser/nvim-lsp-endhints",
     },
 
     config = function()
@@ -94,7 +94,9 @@ return {
         end,
 
         settings = {
-          Lua = {},
+          Lua = {
+            hint = { enable = true },
+          },
         },
       })
 
@@ -170,11 +172,6 @@ return {
             return
           end
 
-          -- Attach inlay hints
-          if client.server_capabilities.inlayHintProvider then
-            require("lsp-inlayhints").on_attach(client, ev.buf)
-          end
-
           -- Disable semantics tokens (treesitter)
           -- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely
           client.server_capabilities.semanticTokensProvider = nil
@@ -244,47 +241,26 @@ return {
   },
 
   -- Inlay hints for the built-in LSP
-  -- https://github.com/lvimuser/lsp-inlayhints.nvim
+  -- https://github.com/chrisgrieser/nvim-lsp-endhints
   {
-    "lvimuser/lsp-inlayhints.nvim",
-    config = function()
-      -- Setup inlay hints
-      require("lsp-inlayhints").setup({
-        inlay_hints = { only_current_line = true },
-      })
-
-      -- Display inlay hints on cursor hover
-      vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-        callback = function()
-          require("lsp-inlayhints").show()
-        end,
-      })
-    end,
+    "chrisgrieser/nvim-lsp-endhints",
+    event = "LspAttach",
+    -- required, even if empty
+    opts = {},
   },
 
   -- Completion plugin coded in Lua, LSP client buffer, and path integration
   -- https://github.com/hrsh7th/nvim-cmp
   {
     "hrsh7th/nvim-cmp",
-    -- FIXME: https://github.com/hrsh7th/nvim-cmp/issues/2154
-    commit = "1e1900b",
     event = "InsertEnter",
 
     -- NOTE: dependencies are always lazy-loaded unless specified otherwise
     dependencies = {
       "neovim/nvim-lspconfig",
-      {
-        "hrsh7th/cmp-nvim-lsp",
-        commit = "99290b3",
-      },
-      {
-        "hrsh7th/cmp-buffer",
-        commit = "3022dbc",
-      },
-      {
-        "hrsh7th/cmp-path",
-        commit = "91ff86c",
-      },
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
       -- TODO: check out https://github.com/saadparwaiz1/cmp_luasnip
       -- NOTE: `*-vsip` inluded only because nvim-cmp requires snippets
       "hrsh7th/cmp-vsnip",
