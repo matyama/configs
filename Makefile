@@ -954,6 +954,8 @@ python-tools: pipx
 	pipx install --include-deps ansible
 	@echo ">>> Installing ansible-lint: https://github.com/ansible/ansible-lint"
 	pipx install ansible-lint
+	@echo ">>> Installing maturin: https://www.maturin.rs"
+	pipx install maturin
 	@echo ">>> Installing pipenv: https://pipenv.pypa.io"
 	pipx install pipenv
 	@echo ">>> Installing pre-commit hooks globally"
