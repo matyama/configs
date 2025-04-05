@@ -1156,7 +1156,7 @@ $(CARGO_EXTENSIONS_LOCKED):
 .PHONY: cargo-audit
 cargo-audit:
 	@echo ">>> Installing $@: https://crates.io/crates/$@"
-	cargo install $@ --features=fix
+	cargo install --locked $@ --features=fix
 
 # Cargo subcommand to easily use LLVM source-based code coverage.
 .PHONY: cargo-llvm-cov
