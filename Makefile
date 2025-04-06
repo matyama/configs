@@ -1333,10 +1333,11 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 
 # “Zero setup” cross compilation and “cross testing” of Rust crates
 #  - Requires: docker, binfmt-support (for testing)
+#  - Installing from git, because the latest release is ~2y old
 .PHONY: cross
 cross: rust binfmt-support
 	@echo ">>> Installing $@: https://github.com/cross-rs/cross"
-	cargo install --locked cross
+	cargo install --locked cross --git https://github.com/cross-rs/cross
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
