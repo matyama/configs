@@ -1522,6 +1522,20 @@ typescript: nodejs
 	}
 	@echo ">>> Using tsc $$(tsc --version)"
 
+# Resources:
+#  - https://github.com/rcjsuen/dockerfile-language-server
+#  - https://www.andersevenrud.net/neovim.github.io/lsp/configurations/dockerls
+.PHONY: typescript
+dockerls: SHELL := /bin/bash
+dockerls: nodejs
+	@{ \
+		set -e;\
+		echo ">>> Initializing nvm";\
+		source $(NVM_DIR)/nvm.sh;\
+		echo ">>> Installing $@";\
+		npm install -g dockerfile-language-server-nodejs;\
+	}
+
 .PHONY: lua-language-server
 lua-language-server: VERSION := $(shell gh_latest_release LuaLS/lua-language-server)
 lua-language-server: PLATFORM := linux-x64
