@@ -498,6 +498,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
+#  - fastfetch: A command-line system information tool
+#    (https://github.com/fastfetch-cli/fastfetch)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
 #  - heaptrack(-gui): A heap memory profiler for Linux
 #    (https://github.com/KDE/heaptrack)
@@ -511,8 +513,6 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - libavdevice-dev: FFmpeg library for handling input and output devices
 #  - libavformat-dev: FFmpeg library with (de)muxers for multimedia containers
 #  - lldb-15: High-performance debugger (https://lldb.llvm.org)
-#  - neofetch: A command-line system information tool
-#    (https://github.com/dylanaraps/neofetch)
 #  - tesseract-ocr: Tesseract Open Source OCR Engine
 #    (https://github.com/tesseract-ocr/tesseract)
 #  - tshark: Terminal version of wireshark
@@ -531,6 +531,7 @@ basic-tools: \
 	apt-utils \
 	wl-utils \
 	sysstat \
+	fastfetch \
 	fzf \
 	tmux \
 	neovim \
@@ -580,6 +581,13 @@ basic-tools: \
 		redis-tools \
 		sqlite3 \
 		wireguard
+
+.PHONY: fastfetch
+fastfetch:
+	@echo ">>> Installing $@"
+	sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
+	sudo apt update
+	sudo apt install -y $@
 
 .PHONY: pandoc
 pandoc: $(ZSH_COMPLETIONS)
