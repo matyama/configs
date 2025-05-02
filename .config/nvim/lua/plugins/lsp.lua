@@ -126,6 +126,17 @@ return {
       -- TOML LSP (https://taplo.tamasfe.dev)
       lspconfig.taplo.setup({})
 
+      -- YAML LSP (https://github.com/redhat-developer/yaml-language-server)
+      lspconfig.yamlls.setup({
+        settings = {
+          yaml = {
+            schemas = {
+              ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+            },
+          },
+        },
+      })
+
       -- TypeScript LSP (https://github.com/typescript-language-server/typescript-language-server)
       lspconfig.ts_ls.setup({})
 

@@ -1533,7 +1533,7 @@ typescript: nodejs
 # Resources:
 #  - https://github.com/rcjsuen/dockerfile-language-server
 #  - https://www.andersevenrud.net/neovim.github.io/lsp/configurations/dockerls
-.PHONY: typescript
+.PHONY: dockerls
 dockerls: SHELL := /bin/bash
 dockerls: nodejs
 	@{ \
@@ -1542,6 +1542,17 @@ dockerls: nodejs
 		source $(NVM_DIR)/nvm.sh;\
 		echo ">>> Installing $@";\
 		npm install -g dockerfile-language-server-nodejs;\
+	}
+
+.PHONY: yaml-language-server
+yaml-language-server: SHELL := /bin/bash
+yaml-language-server: nodejs
+	@{ \
+		set -e;\
+		echo ">>> Initializing nvm";\
+		source $(NVM_DIR)/nvm.sh;\
+		echo ">>> Installing $@";\
+		npm install -g $@;\
 	}
 
 .PHONY: lua-language-server
@@ -1582,6 +1593,13 @@ shfmt: golang pandoc $(XDG_MAN_HOME)/man1
 	@pandoc -s -t man \
 		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" \
 		| gzip -c > $(XDG_MAN_HOME)/man1/$@.1.gz
+
+# YAML formatter
+.PHONY: yamlfmt
+yamlfmt: YAMLFMT_TAG := latest
+yamlfmt: golang
+	@echo ">>> Installing $@: https://github.com/google/yamlfmt"
+	go install "github.com/google/yamlfmt/cmd/$@@$(YAMLFMT_TAG)"
 
 # Makefile linter
 #
