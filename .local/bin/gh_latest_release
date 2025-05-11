@@ -19,7 +19,7 @@ Dependencies:
 "
 
 usage() {
-	echo "$__USAGE"
+  echo "$__USAGE"
 }
 
 POSITIONAL_ARGS=()
@@ -28,29 +28,29 @@ JQ_QUERY='.tag_name'
 OPEN=false
 
 while [[ $# -gt 0 ]]; do
-	case "${1}" in
-		-h | --help)
-			usage
-			exit 0
-			;;
-		-u | --url)
-			JQ_QUERY='.url'
-			shift
-			;;
-		-t | --tar)
-			JQ_QUERY='.tarball_url'
-			shift
-			;;
-		-o | --open)
-			JQ_QUERY='.html_url'
-			OPEN=true
-			shift
-			;;
-		*)
-			POSITIONAL_ARGS+=("$1")
-			shift
-			;;
-	esac
+  case "${1}" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -u | --url)
+      JQ_QUERY='.url'
+      shift
+      ;;
+    -t | --tar)
+      JQ_QUERY='.tarball_url'
+      shift
+      ;;
+    -o | --open)
+      JQ_QUERY='.html_url'
+      OPEN=true
+      shift
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
 done
 
 # restore positional parameters
@@ -59,10 +59,10 @@ set -- "${POSITIONAL_ARGS[@]}"
 [[ $# -gt 0 ]] || (usage && exit 1)
 
 URL="https://api.github.com/repos/$1/releases/latest"
-RELEASE=$(curl --connect-timeout 5 -m 10 -sS "${URL}" | jq -re "${JQ_QUERY}")
+RELEASE=$(curl --connect-timeout 30 -m 60 -sS "${URL}" | jq -re "${JQ_QUERY}")
 
 if $OPEN; then
-	xdg-open "${RELEASE}"
+  xdg-open "${RELEASE}"
 else
-	echo "${RELEASE}"
+  echo "${RELEASE}"
 fi
