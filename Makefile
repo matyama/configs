@@ -1137,6 +1137,7 @@ CARGO_EXTENSIONS := \
 #  - check-external-types: verify which types from other libraries are allowed
 #    to be are exposed in their public API
 #  - deny: lint dependencies
+#  - insta: review tool for insta, a snapshot testing library for Rust
 #  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
 #  - udeps: find unused dependencies in Cargo.toml
@@ -1144,6 +1145,7 @@ CARGO_EXTENSIONS := \
 CARGO_EXTENSIONS_LOCKED := \
 	cargo-check-external-types \
 	cargo-deny \
+	cargo-insta \
 	cargo-outdated \
 	cargo-semver-checks \
 	cargo-show-asm \
