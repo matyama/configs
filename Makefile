@@ -567,6 +567,7 @@ basic-tools: \
 		libimage-exiftool-perl \
 		libavdevice-dev \
 		libavformat-dev \
+		lz4 \
 		glpk-utils \
 		glpk-doc \
 		musl-tools \
