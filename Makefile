@@ -605,6 +605,24 @@ tmux: $(XDG_CONFIG_HOME)/tmux
 	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
 	make -C $(CFG_DIR) tinted-$@
 
+# rsync for cloud storage
+.PHONY: rclone
+rclone: DOWNLOAD_URL := \
+	https://downloads.rclone.org/rclone-current-linux-$(DIST_ARCH).zip
+rclone: DOWNLOAD_DIR := $(shell mktemp -d)
+rclone: net-tools $(XDG_MAN_HOME)/man1
+	@echo ">>> Downloading $@: $(DOWNLOAD_URL)"
+	@curl -sSL "$(DOWNLOAD_URL)" > "$(DOWNLOAD_DIR)/$@.zip"
+	@echo ">>> Installing $@: https://rclone.org"
+	@unzip -j \
+		"$(DOWNLOAD_DIR)/$@.zip" \
+		$@-*-linux-$(DIST_ARCH)/$@* \
+		-d "$(DOWNLOAD_DIR)"
+	@mv "$(DOWNLOAD_DIR)/$@" $(XDG_BIN_HOME)
+	@gzip -c "$(DOWNLOAD_DIR)/$@.1" > $(XDG_MAN_HOME)/man1/$@.1.gz
+	@echo ">>> Using $$($@ -V)"
+	rm -rf "$(DOWNLOAD_DIR)"
+
 # Resources:
 #  - [Simple tutorial](https://phoenixnap.com/kb/ubuntu-install-kvm)
 #  - [Comprehensive guide](https://bit.ly/339BtPT)
