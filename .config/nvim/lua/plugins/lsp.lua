@@ -18,17 +18,28 @@ return {
           debounce_text_changes = 150,
         },
         settings = {
+          -- https://rust-analyzer.github.io/book/configuration.html
           ["rust-analyzer"] = {
             cargo = {
-              allFeatures = true,
+              -- Pass --all-features to cargo
+              features = "all",
+            },
+            check = {
+              command = "clippy",
             },
             imports = {
+              granularity = {
+                -- Merge imports from the same module into a single use stmt
+                group = "module",
+              },
               group = {
-                enable = false,
+                -- Group inserted imports in order: std, external, crate
+                enable = true,
               },
             },
             completion = {
               postfix = {
+                -- Don't show postfix snippets like dbg, if, not, etc.
                 enable = false,
               },
             },
@@ -209,7 +220,8 @@ return {
   -- Crates LSP: https://github.com/Saecki/crates.nvim
   {
     "saecki/crates.nvim",
-    tag = "stable",
+    -- FIXME: tag = "stable",
+    tag = "v0.7.1",
     event = { "BufRead Cargo.toml" },
     config = function()
       require("crates").setup({
