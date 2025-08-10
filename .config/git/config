@@ -68,6 +68,9 @@
 	ah = "!f() { git stash && git pull --rebase && git stash pop; }; f"
 	# https://github.com/o2sh/onefetch/wiki/getting-started
 	summary = "!which onefetch >/dev/null && onefetch"
+	# XXX: --autostash
+	pr = pull --rebase
+	pri = pull --rebase=interactive
 [ui "color"]
 	ui = always
 [color]
