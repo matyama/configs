@@ -489,7 +489,7 @@ endif
 neovim: $(XDG_CONFIG_HOME)/nvim/spell
 	@echo ">>> Installing $@"
 	sudo snap install --beta nvim --classic
-	touch $(XDG_CONFIG_HOME)/nvim/spell/en-utf-8.add
+	touch $(XDG_CONFIG_HOME)/nvim/spell/en.utf-8.add
 
 # Installed tools:
 #  - autoconf: automatic configure script builder
@@ -545,7 +545,6 @@ basic-tools: \
 		iotop \
 		iftop \
 		tshark \
-		neofetch \
 		mc \
 		tree \
 		entr \
@@ -954,8 +953,8 @@ cmake bash-language-server slack:
 #  - netron: visualizer for neural network, deep learning & ML models
 #    (https://github.com/lutzroeder/netron)
 #  - postman: API platform for building & using APIs (https://www.postman.com)
-.PHONY: dbeaver-ce gimp netron postman skype spotify zoom-client
-dbeaver-ce gimp netron postman skype spotify zoom-client:
+.PHONY: dbeaver-ce gimp netron postman spotify zoom-client
+dbeaver-ce gimp netron postman spotify zoom-client:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install $@
 
@@ -1194,6 +1193,7 @@ cargo-llvm-cov:
 	cargo install --locked $@
 	rustup component add llvm-tools-preview --toolchain nightly
 
+# TODO: archived, replace with either bacon or watchexec
 # Watches over project's source for changes & runs commands when they occur
 .PHONY: cargo-watch
 cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
@@ -1219,11 +1219,13 @@ cargo-tools: \
 	$(CARGO_EXTENSIONS) \
 	$(CARGO_EXTENSIONS_LOCKED)
 
+# TODO: replace click (unmaintained) with k9s
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
 #  - bitcli:  Simple CLI tool for URL shortening via Bitly
 #    (https://github.com/matyama/bitcli)
 #  - click: Command Line Interactive Controller for Kubernetes
+#    (https://github.com/databricks/click)
 #  - cross: “Zero setup” cross compilation and “cross testing” of Rust crates
 #    (https://github.com/cross-rs/cross)
 #  - eza: A modern, maintained replacement for 'ls'
@@ -1326,7 +1328,7 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing procs: https://github.com/dalance/procs"
 	cargo install procs
 	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
-	@echo ">>> Installing proximity-search: https://github.com/jonhoo/proximity-sort"
+	@echo ">>> Installing proximity-sort: https://github.com/jonhoo/proximity-sort"
 	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
 	cargo install click
