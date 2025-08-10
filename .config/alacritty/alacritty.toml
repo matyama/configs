@@ -30,6 +30,18 @@ style = "Regular"
 action = "ToggleFullscreen"
 key = "F11"
 
+[[keyboard.bindings]]
+mode = "Vi"
+action = "First"
+mods = "Shift"
+key = "h"
+
+[[keyboard.bindings]]
+mode = "Vi"
+action = "Last"
+mods = "Shift"
+key = "l"
+
 [scrolling]
 history = 0
 
