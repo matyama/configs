@@ -570,7 +570,10 @@ if [[ "${commands[$_zshrc_cmd]}" ]]; then
 fi
 
 # eza (https://eza.rocks)
-[[ "${commands[eza]}" ]] && alias l="eza -lahg@ --git"
+if [[ "${commands[eza]}" ]]; then
+  alias l="eza -lahg@ --git"
+  alias ll="eza -lahg@ --git --git-ignore --tree --level=3"
+fi
 
 # bat (https://github.com/sharkdp/bat)
 if [[ "${commands[bat]}" ]]; then
