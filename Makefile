@@ -214,6 +214,8 @@ install-fonts: $(XDG_FONTS_HOME)
 	curl -sSL "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
+	@echo ">>> Reloading fonts cache"
+	@fc-cache -f
 
 # Resources:
 #  - https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme#cli-installation
