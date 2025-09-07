@@ -133,6 +133,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/alacritty \
 	$(XDG_CONFIG_HOME)/bash \
 	$(XDG_CONFIG_HOME)/bitcli \
+	$(XDG_CONFIG_HOME)/btop \
 	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/fd \
@@ -496,6 +497,8 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 # Installed tools:
 #  - autoconf: automatic configure script builder
 #    (https://www.gnu.org/software/autoconf)
+#  - btop: command line resource monitor that shows usage and stats
+#    (https://github.com/aristocratos/btop)
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - entr: Run arbitrary commands when files change
@@ -533,6 +536,7 @@ basic-tools: \
 	apt-utils \
 	wl-utils \
 	sysstat \
+	btop \
 	fastfetch \
 	fzf \
 	tmux \
@@ -584,8 +588,30 @@ basic-tools: \
 		sqlite3 \
 		wireguard
 
+# TODO: use tinty and auto-update current theme
+.PHONY: btop
+btop: BASE16_BTOP_HOME := $(XDG_DATA_HOME)/base16-btop
+btop: BASE16_BTOP_REPO := https://git.sr.ht/~blueingreen/base16-btop
+btop: BASE16_THEME := gruvbox-dark-hard
+btop: $(XDG_CONFIG_HOME)/btop
+	@echo ">>> Installing $@"
+	sudo apt install -y $@
+ifeq ($(shell test -d $(BASE16_BTOP_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating base16-$@ repository in '$(BASE16_BTOP_HOME)'"
+	@git -C $(BASE16_BTOP_HOME) pull
+else
+	@echo ">>> Cloning base16-$@ repository to '$(BASE16_BTOP_HOME)'"
+	@git clone $(BASE16_BTOP_REPO) $(BASE16_BTOP_HOME)
+endif
+	@echo ">>> Setting $@ theme to $(BASE16_THEME)"
+	@ln -svf \
+		$(XDG_DATA_HOME)/base16-$@/colors/base16-$(BASE16_THEME).theme \
+		$(XDG_CONFIG_HOME)/$@/themes/base16.theme
+	@echo ">>> Linking $@ config"
+	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
+
 .PHONY: fastfetch
-fastfetch:
+fastfetch: $(XDG_DATA_HOME)/btop
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
 	sudo apt update
