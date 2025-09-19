@@ -517,6 +517,7 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #    information in multimedia files (https://exiftool.org)
 #  - libavdevice-dev: FFmpeg library for handling input and output devices
 #  - libavformat-dev: FFmpeg library with (de)muxers for multimedia containers
+#  - lld: LLD is a new, high-performance linker
 #  - lldb-15: High-performance debugger (https://lldb.llvm.org)
 #  - tesseract-ocr: Tesseract Open Source OCR Engine
 #    (https://github.com/tesseract-ocr/tesseract)
@@ -572,11 +573,12 @@ basic-tools: \
 		libimage-exiftool-perl \
 		libavdevice-dev \
 		libavformat-dev \
+		lld \
+		lldb-15 \
 		lz4 \
 		glpk-utils \
 		glpk-doc \
 		musl-tools \
-		lldb-15 \
 		heaptrack \
 		heaptrack-gui \
 		coz-profiler \
