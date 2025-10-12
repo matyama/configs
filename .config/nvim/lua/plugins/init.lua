@@ -57,19 +57,6 @@ return {
   -- Better syntax support
   "sheerun/vim-polyglot",
 
-  -- Rust: https://github.com/rust-lang/rust.vim#features
-  {
-    "rust-lang/rust.vim",
-    ft = { "rust" },
-    config = function()
-      local g = vim.g
-      g.rustfmt_autosave = 1
-      g.rustfmt_emit_files = 1
-      g.rustfmt_fail_silently = 0
-      g.rust_clip_command = "wl-copy"
-    end,
-  },
-
   -- Bindings for Haskell hlint code refactoring
   -- https://github.com/mpickering/hlint-refactor-vim
   {
