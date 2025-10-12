@@ -10,13 +10,8 @@ return {
     },
 
     config = function()
-      local lspconfig = require("lspconfig")
-
       -- Rust: https://rust-analyzer.github.io/manual.html#nvim-lsp
-      lspconfig.rust_analyzer.setup({
-        flags = {
-          debounce_text_changes = 150,
-        },
+      vim.lsp.config.rust_analyzer = {
         settings = {
           -- https://rust-analyzer.github.io/book/configuration.html
           ["rust-analyzer"] = {
@@ -26,6 +21,8 @@ return {
             },
             check = {
               command = "clippy",
+              -- Pass --all-features to cargo
+              features = "all",
             },
             imports = {
               granularity = {
@@ -45,25 +42,29 @@ return {
             },
           },
         },
-      })
+      }
+
+      vim.lsp.enable("rust_analyzer")
 
       -- TODO: consider haskell-tools.nvim instead of lspconfig
       -- Haskell: https://haskell-language-server.readthedocs.io/en/latest/configuration.html
       -- fourmolu: https://github.com/fourmolu/fourmolu
-      lspconfig.hls.setup({
+      vim.lsp.config.hls = {
         filetypes = { "haskell", "lhaskell", "cabal" },
         settings = {
           haskell = {
             formattingProvider = "fourmolu",
           },
         },
-      })
+      }
+
+      vim.lsp.enable("hls")
 
       -- Setup pylsp
       -- https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md
       -- https://github.com/python-lsp/pylsp-mypy#configuration
       -- https://github.com/python-lsp/python-lsp-ruff#configuration
-      lspconfig.pylsp.setup({
+      vim.lsp.config.pylsp = {
         settings = {
           pylsp = {
             plugins = {
@@ -77,14 +78,21 @@ return {
             },
           },
         },
-      })
+      }
+
+      vim.lsp.enable("pylsp")
 
       -- Lua LSP (https://luals.github.io)
-      lspconfig.lua_ls.setup({
+      vim.lsp.config.lua_ls = {
         on_init = function(client)
-          local path = client.workspace_folders[1].name
-          if vim.loop.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
-            return
+          if client.workspace_folders then
+            local path = client.workspace_folders[1].name
+            if
+              path ~= vim.fn.stdpath("config")
+              and (vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc"))
+            then
+              return
+            end
           end
 
           local settings = client.config.settings
@@ -93,6 +101,10 @@ return {
             -- Tell the language server which version of Lua we're using
             runtime = {
               version = "LuaJIT",
+              path = {
+                "lua/?.lua",
+                "lua/?/init.lua",
+              },
             },
             -- Make the server aware of Neovim runtime files
             workspace = {
@@ -109,50 +121,26 @@ return {
             hint = { enable = true },
           },
         },
-      })
+      }
+
+      vim.lsp.enable("lua_ls")
 
       -- Bash LSP (https://github.com/bash-lsp/bash-language-server)
-      -- FIXME: https://github.com/neovim/nvim-lspconfig/issues/3453
-      local configs = require("lspconfig.configs")
-
-      if not configs.bash_lsp and vim.fn.executable("bash-language-server") == 1 then
-        configs.bash_lsp = {
-          default_config = {
-            cmd = { "bash-language-server", "start" },
-            filetypes = { "sh" },
-            root_dir = require("lspconfig").util.find_git_ancestor,
-            init_options = {
-              settings = {
-                args = {},
-              },
-            },
-          },
-        }
-      end
-
-      if configs.bash_lsp then
-        lspconfig.bash_lsp.setup({})
+      if vim.fn.executable("bash-language-server") == 1 then
+        vim.lsp.enable("bashls")
       end
 
       -- TOML LSP (https://taplo.tamasfe.dev)
-      lspconfig.taplo.setup({})
+      vim.lsp.enable("taplo")
 
       -- YAML LSP (https://github.com/redhat-developer/yaml-language-server)
-      lspconfig.yamlls.setup({
-        settings = {
-          yaml = {
-            schemas = {
-              ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
-            },
-          },
-        },
-      })
+      vim.lsp.enable("yamlls")
 
       -- TypeScript LSP (https://github.com/typescript-language-server/typescript-language-server)
-      lspconfig.ts_ls.setup({})
+      vim.lsp.enable("ts_ls")
 
       -- Docker LSP (https://github.com/rcjsuen/dockerfile-language-server)
-      lspconfig.dockerls.setup({})
+      vim.lsp.enable("dockerls")
 
       -- Global mappings
       vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
