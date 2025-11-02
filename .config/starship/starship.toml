@@ -1,0 +1,257 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# https://starship.rs/config
+# https://www.nerdfonts.com/cheat-sheet
+
+# TODO: transient prompt (zsh)
+#  - https://github.com/starship/starship/discussions/5950
+#  - https://gist.github.com/abomhold/1fb6a1768c09bd4cb1f06dc939a5f52f
+
+# TODO: right side separators from p10k.zsh (segments after fill)
+#  - left end of right prompt: \uE0BA
+#  - Separaor between different-color segments on the right: \uE0BA
+# TODO: left end of right side only displayed if there is a right-hand segment
+# TODO: unicode symbols
+# TODO: customize git status
+#  - https://starsip.rs/config/#git-commit
+#  - https://starsip.rs/config/#git-state (maybe)
+#  - https://starsip.rs/config/#git-metrics
+
+# configure the format of the prompt
+format = """
+$os\
+$hostname\
+$username\
+[\uE0BC](bg:color_yellow fg:color_orange)\
+$directory\
+[\uE0BC](fg:color_yellow bg:color_aqua)\
+$git_branch\
+$git_status\
+[\uE0BC](fg:color_aqua)\
+$fill\
+$status\
+$cmd_duration\
+$jobs\
+$direnv\
+$docker_context\
+$kubernetes\
+$terraform\
+$haskell\
+$lua\
+$nodejs\
+$python\
+$c\
+$rust\
+$java\
+$kotlin\
+$line_break\
+$character
+"""
+
+# XXX: remove
+# Right
+#right_format = """
+#$cmd_duration
+#"""
+
+# inserts blank line between shell prompts
+# disabled, see https://github.com/sharship/starship/issues/560
+add_newline = false
+
+# ////////////////////////////////////////////////
+# COLORS
+# ////////////////////////////////////////////////
+
+palette = 'gruvbox_dark'
+
+[palettes.gruvbox_dark]
+color_fg0 = '#fbf1c7'
+color_bg1 = '#3c3836'
+color_bg3 = '#665c54'
+color_blue = '#458588'
+color_aqua = '#689d6a'
+color_green = '#98971a'
+color_orange = '#d65d0e'
+color_purple = '#b16286'
+color_red = '#cc241d'
+color_yellow = '#d79921'
+
+# ////////////////////////////////////////////////
+# LINE 1
+# ////////////////////////////////////////////////
+
+# fills any extra space on the line with a symbol
+[fill]
+symbol = " "
+style = "fg:color_fg"
+disabled = false
+
+# shows the current operating system
+[os]
+style = "bg:color_orange fg:color_fg0"
+disabled = false
+
+[os.symbols]
+Alpine = "  "
+Amazon = "  "
+Android = "  "
+Arch = "  "
+CentOS = "  "
+Debian = "  "
+Fedora = "  "
+FreeBSD = "  "
+Gentoo = "  "
+Linux = "  "
+Macos = "  "
+Manjaro = "  "
+Mint = "  "
+NixOS = "  "
+Raspbian = "  "
+Redhat = "  "
+RedHatEnterprise = "  "
+SUSE = "  "
+Ubuntu = "  "
+Windows = "  "
+
+# shows active user's username (root/not-logged-in/ssh/detect_env_vars)
+[username]
+style_root = "bg:color_orange fg:color_fg0"
+style_user = "bg:color_orange fg:color_fg0"
+format = '[ $user ]($style)'
+show_always = false
+
+# shows the path (possibly truncated or shortened) to the current directory
+[directory]
+truncation_length = 8
+truncate_to_repo = false
+fish_style_pwd_dir_length = 1
+style = "fg:color_fg0 bg:color_yellow"
+format = "[ $path ]($style)"
+
+# shows the active branch of the repo in current directory
+[git_branch]
+symbol = ""
+style = "bg:color_aqua"
+format = '[[ $symbol $branch ](fg:color_fg0 bg:color_aqua)]($style)'
+
+# shows symbols representing the state of the repo in current directory
+[git_status]
+style = "bg:color_aqua"
+# TODO: "+58 !2 ?6"
+format = '[[($all_status$ahead_behind )](fg:color_fg0 bg:color_aqua)]($style)'
+
+# ////////////////////////////////////////////////
+# MODULES RIGHT
+# ////////////////////////////////////////////////
+
+# TODO: symbols from nf
+# TODO: configure
+# displays the exit code of the previous command
+[status]
+style = 'bg:color_blue'
+#format = '[\[$symbol$common_meaning$signal_name$maybe_int\]]($style) '
+#map_symbol = true
+disabled = false
+
+# shows how long the last command took to execute
+[cmd_duration]
+#style = "fg:color_fg"
+style = "bg:color_bg1"
+format = "[  $duration ]($style)"
+
+# shows the current number of jobs running (if any)
+[jobs]
+style = 'bg:color_blue'
+
+# Environments
+
+# TODO: aws, helm?
+[direnv]
+symbol = " "
+style = "bg:color_orange"
+format = "[ $symbol$loaded/$allowed]($style) "
+disabled = false
+
+[docker_context]
+symbol = " "
+style = "bg:color_bg3"
+format = '[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)'
+
+[kubernetes]
+symbol = "☸ "
+style = "bg:color_blue"
+
+[terraform]
+symbol = " "
+
+# Virtual Environments
+[haskell]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[lua]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+[nodejs]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+[python]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+
+### Language toolchains
+
+[c]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+[golang]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+[java]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+[kotlin]
+symbol = "🅺 "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+[rust]
+symbol = " "
+style = "bg:color_blue"
+format = '[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)'
+disabled = true
+
+# ////////////////////////////////////////////////
+# LINE 2
+# ////////////////////////////////////////////////
+
+# separates the prompt into two lines
+[line_break]
+disabled = false
+
+# shows a character beside where the text is entered in terminal
+[character]
+success_symbol = '[❯](bold fg:color_green)'
+error_symbol = '[❯](bold fg:color_red)'
+vimcmd_symbol = '[❮](bold fg:color_green)'
+vimcmd_replace_one_symbol = '[▶](bold fg:color_purple)'
+vimcmd_replace_symbol = '[▶](bold fg:color_purple)'
+vimcmd_visual_symbol = '[V](bold fg:color_yellow)'
+disabled = false

@@ -149,6 +149,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/nvim/spell \
 	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
+	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \

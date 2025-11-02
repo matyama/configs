@@ -6,8 +6,8 @@ export DEFAULT_USER=matyama
 export skip_global_compinit=1
 
 # Select prompt theme
-ZSH_THEME=romkatv/powerlevel10k
-#ZSH_THEME=starship/starship
+#ZSH_THEME=romkatv/powerlevel10k
+ZSH_THEME=starship/starship
 
 ########################################################
 ##### PROFILING START
@@ -163,6 +163,13 @@ zinit wait'!' lucid \
   from'gh-r' lbin'!' src'starship.zsh' reset \
   atclone'./starship init zsh > starship.zsh' \
   atpull'%atclone' \
+  atinit'!
+  export STARSHIP_CONFIG=${XDG_CONFIG_HOME}/starship/starship.toml
+
+  # Add a newline between commands
+  # https://github.com/starship/starship/issues/560
+  precmd() { precmd() { echo "" } }
+  alias clear="precmd() { precmd() { echo } } && clear"' \
   for "${ZSH_THEME}"
 
 ########################################################
