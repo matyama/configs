@@ -1,7 +1,8 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    # v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c
     hooks:
       - id: check-added-large-files
       - id: check-executables-have-shebangs
@@ -14,24 +15,28 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.9.0
+    # v0.11.0
+    rev: 99470f5e12208ff0fb17ab81c3c494f7620a1d8d
     hooks:
       - id: shellcheck
         args: ["--norc", "--severity=warning"]
 
   - repo: https://github.com/JohnnyMorganz/StyLua
-    rev: v2.0.2
+    # v2.3.1
+    rev: 9c323db146963b04b919c83276d43ca7817da5e2
     hooks:
       - id: stylua-system
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 3.2.0
+    # 3.4.1
+    rev: 62dcf364a52192458d66c0dba3a0a1fdb78e4fbe
     hooks:
       - id: editorconfig-checker
         alias: ec
 
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
+  - repo: https://github.com/adrienverge/yamllint
+    # v1.37.1
+    rev: 79a6b2b1392eaf49cdd32ac4f14be1a809bbd8f7
     hooks:
       - id: yamllint
         args: ["--strict"]
