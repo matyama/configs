@@ -38,7 +38,7 @@ BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
-BASE16_ALACRITTY_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-alacritty
+BASE16_TERMINAL_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-terminal
 BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-fzf
 BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
 BASE16_TMUX_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-tmux
@@ -292,6 +292,19 @@ ifeq ($(shell test -d $(BASE16_TMUX_HOME) && echo -n yes 2> /dev/null),yes)
 else
 	@echo ">>> Cloning $@ repository to '$(BASE16_TMUX_HOME)'"
 	@git clone $(BASE16_TMUX_REPO) $(BASE16_TMUX_HOME)
+endif
+
+# Base16 and Base24 themes various terminal emulators
+# https://github.com/tinted-theming/tinted-terminal
+.PHONY: tinted-terminal
+tinted-terminal: URL := https://github.com/tinted-theming/tinted-terminal
+tinted-terminal:
+ifeq ($(shell test -d $(BASE16_TERMINAL_HOME) && echo -n yes 2> /dev/null),yes)
+	@echo ">>> Updating $@ repository in '$(BASE16_TERMINAL_HOME)'"
+	@git -C $(BASE16_TERMINAL_HOME) pull
+else
+	@echo ">>> Cloning $@ repository to '$(BASE16_TERMINAL_HOME)'"
+	@git clone $(URL) $(BASE16_TERMINAL_HOME)
 endif
 
 # Notes:
@@ -1447,7 +1460,7 @@ alacritty: \
 	$(ZSH_COMPLETIONS) \
 	net-tools \
 	rust \
-	tinted-alacritty
+	tinted-terminal
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
 	@sudo apt install -y \
@@ -1482,23 +1495,10 @@ endif
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
 	@echo ">>> Configuring $@ colors theme"
 	@ln -svf \
-		"$(BASE16_ALACRITTY_HOME)/colors-256/base16-$(BASE16_THEME).toml" \
+		"$(BASE16_TERMINAL_HOME)/themes/$@/base16-$(BASE16_THEME).toml" \
 		"$(XDG_CONFIG_HOME)/$@/colors.toml"
 	@echo ">>> Finish $@ completion setup by reloading zsh"
 	@rm -rf $(DOWNLOAD_DIR)
-
-# Base16 and Base24 themes for Alacritty
-# https://github.com/tinted-theming/tinted-alacritty
-.PHONY: tinted-alacritty
-tinted-alacritty: URL := https://github.com/tinted-theming/tinted-alacritty.git
-tinted-alacritty:
-ifeq ($(shell test -d $(BASE16_ALACRITTY_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(BASE16_ALACRITTY_HOME)'"
-	@git -C $(BASE16_ALACRITTY_HOME) pull
-else
-	@echo ">>> Cloning $@ repository to '$(BASE16_ALACRITTY_HOME)'"
-	@git clone $(URL) $(BASE16_ALACRITTY_HOME)
-endif
 
 # Notes:
 #  - Configures the toggle button to be F1
