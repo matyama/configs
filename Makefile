@@ -1200,17 +1200,21 @@ CARGO_EXTENSIONS := \
 #    to be are exposed in their public API
 #  - deny: lint dependencies
 #  - insta: review tool for insta, a snapshot testing library for Rust
+#  - machete: find unused dependencies
 #  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
+#  - sort:  check if tables and items in a .toml file are lexically sorted
 #  - udeps: find unused dependencies in Cargo.toml
 #  - vet: supply-chain security for Rust
 CARGO_EXTENSIONS_LOCKED := \
 	cargo-check-external-types \
 	cargo-deny \
 	cargo-insta \
+	cargo-machete \
 	cargo-outdated \
 	cargo-semver-checks \
 	cargo-show-asm \
+	cargo-sort \
 	cargo-udeps \
 	cargo-vet
 
