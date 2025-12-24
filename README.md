@@ -95,50 +95,9 @@ target.
     installed
  2. Follow [these instructions](https://bit.ly/33QDcdB)
 
-### Powerlevel10k
-This configuration is actually stored as `.config/zsh/p10k.zsh` and
-automatically symlinked to `$POWERLEVEL9K_CONFIG_FILE`.
-
-It is important to note that `$POWERLEVEL9K_CONFIG_FILE` is set in
-`.zshrc` and uses `$XDG_CONFIG_HOME`. Additionally, `.zshrc` disables
-the `p10k configure` configuration wizard.
-
-Therefore, if one deliberately wants to run it, the wizard must be
-re-enabled with
-```bash
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=false p10k configure
-```
-
-Also the XDG specification, respectively `$POWERLEVEL9K_CONFIG_FILE`,
-should be respected if `p10k.zsh` ought to be rewritten by the wizard.
-
-Generally, there are two setups which, according to the p10k
-documentation, respect terminal's color palette (and hence Base16):
- - *Lean* prompt style with *8 colors*
- - *Rainbow* prompt style which currently does not offer an option to
-   select between 8 and 256 colors (empirically 256)
-
-Some settings used in `p10k configure` when `p10k.zsh` was originally
-created include:
- 1. Prompt Style: *Rainbow* or *Lean*
- 1. Character Set: Unicode
- 1. Prompt Separators: Slanted (only relevant to *Rainbow*)
- 1. Prompt Heads: Slanted (only relevant to *Rainbow*)
- 1. Prompt Tails: Flat (only relevant to *Rainbow*)
- 1. Prompt Colors: 256 colors (only relevant to *Lean*)
- 1. Show current time?: 24-hour format
- 1. Prompt Height: Two lines
- 1. Prompt Connection: Disconnected
- 1. Prompt Frame: No frame
- 1. Prompt Spacing: Sparse
- 1. Icons: Many icons
- 1. Prompt Flow: Concise
- 1. Enable Transient Prompt?: same-dir
- 1. Instant Prompt Mode: quiet
-
-Additionally one can download
-[Meslo Nerd Fonts](https://bit.ly/3uZhBeH) and configure terminals as
-instructed. The font download is part of `make fonts`.
+### Install Nerd Fonts
+Download [Meslo Nerd Fonts](https://bit.ly/3uZhBeH) and configure
+terminals as instructed. The font download is part of `make fonts`.
 
 ### Base16 colors
 

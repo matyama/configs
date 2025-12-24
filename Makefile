@@ -207,11 +207,12 @@ snap:
 	sudo snap set system refresh.timer=sun,18:00~20:00/2
 	sudo snap set core experimental.refresh-app-awareness=true
 
+# TODO: download fonts from nerdfonts.com instead
 .PHONY: install-fonts
-install-fonts: P10K_URL := https://github.com/romkatv/powerlevel10k-media/raw/master
+install-fonts: URL := https://github.com/romkatv/powerlevel10k-media/raw/master
 install-fonts: $(XDG_FONTS_HOME)
-	@echo ">>> Downloading Meslo Nerd Font for Powerlevel10k"
-	curl -sSL "$(P10K_URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
+	@echo ">>> Downloading Meslo Nerd Font"
+	curl -sSL "$(URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
 		-o $</"MesloLGS NF #1.ttf"
 	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
 	@echo ">>> Reloading fonts cache"

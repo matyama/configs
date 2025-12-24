@@ -5,10 +5,6 @@ export DEFAULT_USER=matyama
 # Skip the not really helping Ubuntu global compinit (https://bit.ly/41dLFV8)
 export skip_global_compinit=1
 
-# Select prompt theme
-#ZSH_THEME=romkatv/powerlevel10k
-ZSH_THEME=starship/starship
-
 ########################################################
 ##### PROFILING START
 ########################################################
@@ -26,16 +22,7 @@ fi
 ##### INSTANT PROMPT
 ########################################################
 
-# Enable Powerlevel10k instant prompt.
-#
-# Should stay close to the top of zshrc. Initialization code that may require
-# console input ( password prompts, [y/n] confirmations, etc.) must go above
-# this block, everything else may go below.
-if [[ "${ZSH_THEME}" = */powerlevel10k ]] && [[ -n "${functions[p10k]}" ]] &&
-  [[ -r "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh" ]]; then
-  # shellcheck disable=SC1090
-  source "${XDG_CACHE_HOME}/p10k-instant-prompt-${USER}.zsh"
-fi
+PS1="%F{#d65d0e}[%n@%m]%f %F{#458588}%5~%f %F{#3c3836}|%f "
 
 ########################################################
 ##### UPDATE FPATH
@@ -134,32 +121,9 @@ zinit light-mode lucid for \
 # Reevaluate the prompt string each time zsh wants to display a prompt
 setopt prompt_subst
 
-# Prompt: Powerlevel10k
-#  - Customize via `p10k configure` or edit `POWERLEVEL9K_CONFIG_FILE`
-#  - Instant prompt requires this to be load/light, not a wait
-zinit light-mode lucid nocd depth'1' \
-  if'[[ "${ZSH_THEME}" = */powerlevel10k ]]' \
-  atinit"!
-    # Disable p10k configuration wizard
-    POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" \
-  atload"!
-    # Set p10k configuration file
-    case ${TERM_PROGRAM:-$TERM} in
-      # Rainbow prompt style does now display correctly in vscode terminal, so
-      # use p10k-vscode.zsh there instead.
-      vscode)
-        POWERLEVEL9K_CONFIG_FILE=${XDG_CONFIG_HOME}/zsh/p10k-vscode.zsh
-        ;;
-      *)
-        POWERLEVEL9K_CONFIG_FILE=${XDG_CONFIG_HOME}/zsh/p10k.zsh
-        ;;
-    esac
-    source \${POWERLEVEL9K_CONFIG_FILE}" \
-  for "${ZSH_THEME}"
-
 # Prompt: Starship
 zinit wait'!' lucid \
-  if'[[ "${ZSH_THEME}" = */starship ]] && [[ "${commands[starship]}" ]]' \
+  has'starship' \
   from'gh-r' lbin'!' src'starship.zsh' reset \
   atclone'./starship init zsh > starship.zsh' \
   atpull'%atclone' \
@@ -170,7 +134,7 @@ zinit wait'!' lucid \
   # https://github.com/starship/starship/issues/560
   precmd() { precmd() { echo "" } }
   alias clear="precmd() { precmd() { echo } } && clear"' \
-  for "${ZSH_THEME}"
+  for starship/starship
 
 ########################################################
 ##### ZINIT PLUGINS, SNIPPETS, AND COMPLETIONS
