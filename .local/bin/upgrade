@@ -192,7 +192,7 @@ if [[ "$(command -v uv)" ]] && [[ $RUN_UV -gt 0 ]]; then
     make -f "${CONF_MK}" uv
   fi
   echo "Upgrading uv tools..."
-  uv tool upgrade --compile-bytecode
+  uv tool upgrade --compile-bytecode --all
 fi
 
 if [[ "$(command -v rustup)" ]] && [[ $RUN_RUST -gt 0 ]]; then
