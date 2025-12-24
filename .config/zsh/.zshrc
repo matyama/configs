@@ -503,17 +503,6 @@ alias pdfconcat="gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dAutoRotatePages=/No
 # shellcheck disable=SC2142
 alias pdfextract='pdfext() { gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sPageList="$1" -sOutputFile=%stdout "$2" ; }; pdfext'
 
-# Git
-alias gah="git stash && git pull --rebase && git stash pop"
-[[ "${commands[gitui]}" ]] && alias gui="gitui --watcher"
-[[ "${commands[lazygit]}" ]] && alias lg="lazygit"
-
-# make
-alias m="make"
-
-# just
-[[ "${commands[just]}" ]] && alias j="just"
-
 # Ansible
 # NOTE: must use local variable, otherwise shfmt breaks it into "<lhs> - <rhs>"
 _zshrc_cmd="ansible-lint"
@@ -572,11 +561,6 @@ if [[ "${commands[newsboat]}" ]]; then
   alias news="newsboat -q"
   alias podcasts="podboat -a"
 fi
-
-# Python
-alias py="python3"
-alias wp="which python"
-alias jl="jupyter lab --ContentsManager.allow_hidden=True"
 
 # Haskell
 if [[ "${commands[ghc]}" ]]; then

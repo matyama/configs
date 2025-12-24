@@ -138,7 +138,6 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/fd \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/gtk-3.0 \
-	$(XDG_CONFIG_HOME)/lazygit \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
@@ -459,22 +458,6 @@ endif
 	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
 	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN_HOME)/man1/sk.1.gz
 	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN_HOME)/man1/sk-tmux.1.gz
-
-.PHONY: gitui
-gitui: rust
-	@echo ">>> Installing $@"
-	cargo install --locked $@
-
-# TODO: deprecate with gitui 1.0 (interactive rebase, branch structure)
-.PHONY: lazygit
-lazygit: TAG := latest
-lazygit: $(XDG_CONFIG_HOME)/lazygit golang
-	@echo ">>> Installing $@: https://github.com/jesseduffield/lazygit"
-	go install "github.com/jesseduffield/$@@$(TAG)"
-	@echo ">>> Configuring $@"
-	@ln -svf \
-		"$(CFG_CONFIG_HOME)/$@/config.yml" \
-		"$(XDG_CONFIG_HOME)/$@/config.yml"
 
 # lesspipe.sh: display more with less (https://github.com/wofr06/lesspipe)
 #  - Note: lesspipe.sh is installed system-wide and thus requires sudo
