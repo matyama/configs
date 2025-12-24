@@ -542,6 +542,7 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - redis-tools: Redis command line client and other tools
 #  - sqlite3: Command line interface for SQLite 3 (https://www.sqlite.org)
 #  - wireguard: fast, modern, secure VPN tunnel (https://www.wireguard.com)
+#  - zathura: document viewer (https://pwmt.org/projects/zathura)
 .PHONY: basic-tools
 basic-tools: \
 	linux-tools \
@@ -602,7 +603,8 @@ basic-tools: \
 		protobuf-compiler \
 		redis-tools \
 		sqlite3 \
-		wireguard
+		wireguard \
+		zathura
 
 # TODO: use tinty and auto-update current theme
 .PHONY: btop
@@ -1898,7 +1900,6 @@ endif
 # https://wiki.archlinux.org/title/GNOME
 .PHONY: gnome
 gnome: \
-	evince \
 	nautilus \
 	com.ubuntu.update-notifier \
 	org.gnome.calculator \
@@ -1973,35 +1974,10 @@ org.gnome.system:
 	@gsettings set $@.locale region 'en_GB.UTF-8'
 	@gsettings set $@.location enabled false
 
-# XXX: set metadata:envince:xyz on pdf files
-#  — https://unix.stackexchange.com/a/398111
-#
-# Resources:
-#  - List current settings `gsettings list-recursively org.gnome.Evince`
-.PHONY: evince
-evince: org.gnome.Evince.Default
-
-.PHONY: org.gnome.Evince.Default
-org.gnome.Evince.Default:
-	@echo ">>> Configuring $@"
-	@gsettings set $@ continuous true
-	@gsettings set $@ dual-page false
-	@gsettings set $@ dual-page-odd-left false
-	@gsettings set $@ inverted-colors false
-	@gsettings set $@ show-sidebar true
-	@gsettings set $@ sidebar-page 'links'
-	@gsettings set $@ sidebar-size 216
-	@gsettings set $@ sizing-mode 'automatic'
-	@gsettings set $@ window-ratio "(2.0, 1.0)"
-	@gsettings set $@ zoom 1.0
-
 # XXX: load in bulk from an .ini file (persisted in this repo)
 # - dconf dump /org/gnome/nautilus/ > nautilus.ini
 # - dconf load /org/gnome/nautilus/ < nautilus.ini
 # - possible issue: dconf ignores schema, so it's blind to defaults
-#
-# TODO: custom script to add metadata:evince to .pdf files
-#  - https://wiki.archlinux.org/title/GNOME/Files
 #
 # Resources:
 #  - https://wiki.archlinux.org/title/GNOME/Files

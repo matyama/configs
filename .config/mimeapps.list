@@ -1,4 +1,7 @@
 [Default Applications]
+application/pdf=org.pwmt.zathura.desktop
+application/xps=org.pwmt.zathura.desktop
+application/vnd.ms-xpsdocument=org.pwmt.zathura.desktop
 audio/x-vorbis+ogg=org.gnome.Rhythmbox3.desktop
 audio/vorbis=org.gnome.Rhythmbox3.desktop
 audio/x-vorbis=org.gnome.Rhythmbox3.desktop
