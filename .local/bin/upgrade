@@ -6,7 +6,7 @@ set -e
 #  - with "RUN" tools here as configurable plugins
 #  - with an (optional) user config (TOML/YAML) specifying these plugins
 
-__USAGE="Upgrade programs and libraries managed by apt, pipx, rustup and other.
+__USAGE="Upgrade programs and libraries managed by apt, uv, rustup and other.
 
 USAGE:
 	$(basename $0) [-h|--help] [-p|--prompt] [-s|--skip SKIP] [RUN]...
@@ -14,7 +14,7 @@ USAGE:
 SKIP: Skip selected tool(s), overrides RUN.
 	apt          Skip apt upgrade
 	snap         Skip snap refresh
-	pipx         Skip pipx upgrade
+	uv           Skip uv upgrade
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
 	sdk          Skip sdk upgrade
@@ -25,7 +25,7 @@ SKIP: Skip selected tool(s), overrides RUN.
 RUN: Run only selected tool(s), can be overridden by SKIP.
 	apt          Run only apt upgrade
 	snap         Run only snap refresh
-	pipx         Run only pipx upgrade
+	uv           Run only uv upgrade
 	rust         Run only rustup update
 	binenv       Run only binenv upgrade
 	sdk          Run only sdk upgrade
@@ -41,7 +41,7 @@ PROMPT=1
 
 RUN_APT=0
 RUN_SNAP=0
-RUN_PIPX=0
+RUN_UV=0
 RUN_RUST=0
 RUN_BINENV=0
 RUN_SDK=0
@@ -68,8 +68,8 @@ while [[ $# -gt 0 ]]; do
         snap)
           RUN_SNAP=$((RUN_SNAP - 2))
           ;;
-        pipx)
-          RUN_PIPX=$((RUN_PIPX - 2))
+        uv)
+          RUN_UV=$((RUN_UV - 2))
           ;;
         rust)
           RUN_RUST=$((RUN_RUST - 2))
@@ -88,7 +88,7 @@ while [[ $# -gt 0 ]]; do
           ;;
         extras)
           RUN_SNAP=$((RUN_SNAP - 2))
-          RUN_PIPX=$((RUN_PIPX - 2))
+          RUN_UV=$((RUN_UV - 2))
           RUN_RUST=$((RUN_RUST - 2))
           RUN_BINENV=$((RUN_BINENV - 2))
           RUN_SDK=$((RUN_SDK - 2))
@@ -124,7 +124,7 @@ set -- "${POSITIONAL_ARGS[@]}"
 if [[ $# -eq 0 ]]; then
   RUN_APT=$((RUN_APT + 1))
   RUN_SNAP=$((RUN_SNAP + 1))
-  RUN_PIPX=$((RUN_PIPX + 1))
+  RUN_UV=$((RUN_UV + 1))
   RUN_RUST=$((RUN_RUST + 1))
   RUN_BINENV=$((RUN_BINENV + 1))
   RUN_SDK=$((RUN_SDK + 1))
@@ -141,8 +141,8 @@ else
         RUN_SNAP=$((RUN_SNAP + 1))
         shift
         ;;
-      pipx)
-        RUN_PIPX=$((RUN_PIPX + 1))
+      uv)
+        RUN_UV=$((RUN_UV + 1))
         shift
         ;;
       rust)
@@ -202,13 +202,13 @@ if [[ $RUN_SNAP -gt 0 ]]; then
   sudo snap refresh
 fi
 
-if [[ "$(command -v pipx)" ]] && [[ $RUN_PIPX -gt 0 ]]; then
+if [[ "$(command -v uv)" ]] && [[ $RUN_UV -gt 0 ]]; then
   if [[ -f "${CONF_MK}" ]]; then
-    echo "Upgrading pipx..."
-    make -f "${CONF_MK}" pipx
+    echo "Upgrading uv..."
+    make -f "${CONF_MK}" uv
   fi
-  echo "Upgrading pipx tools..."
-  pipx upgrade-all --include-injected
+  echo "Upgrading uv tools..."
+  uv tool upgrade --compile-bytecode
 fi
 
 if [[ "$(command -v rustup)" ]] && [[ $RUN_RUST -gt 0 ]]; then

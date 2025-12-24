@@ -54,7 +54,7 @@
 	diff-last = diff HEAD^
 	dl = diff-last
 	cl = log -p -- ':(exclude)Cargo.lock'
-	pl = log -p -- ':(exclude)poetry.lock'
+	pl = log -p -- ':(exclude)uv.lock'
 	f = push --force-with-lease
 	# https://stackoverflow.com/questions/3103589
 	fixup = !sh -c 'git commit --fixup=$1' -

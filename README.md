@@ -195,14 +195,6 @@ and then check the theme is available via:
 bat --list-themes
 ```
 
-### Visual Studio Code
-Unless the [Base16 extension](https://github.com/golf1052/base16-vscode)
-is properly synced, install it and follow the instructions.
-
-### Poetry
-Finish Poetry setup by manually
-[configuring auth tokens](https://bit.ly/3fdpMNR).
-
 ### Semantic language support for Neovim
 Nvim uses its built-in LSP support and leverages
 [`nvim-lspconfig`][lspconfig] to configure individual LSPs. In order to
@@ -507,22 +499,6 @@ usage notes:
 ```bash
 sdk-refresh-completion-files
 ```
-
-### Reinstall `pipx` for new Python
-According to this [issue comment](https://bit.ly/4iR72Uq) once should be
-able to fix `pipx` installations as follows:
-```bash
-pipx reinstall-all
-```
-
-Alternatively, one can reinstall `pipx` and the tools manually
-(mentioned in the same issue that was referenced above):
- 1. Uninstall python tools: `pipx uninstall-all`
- 1. Uninstall `pipx` and remove `$XDG_BIN_HOME/pipx` and `~/.local/pipx`
- 1. Re-install `pipx` and tools using `make python-tools`
-
-An indication for issues with `pipx` might be an error log mentioning
-> No module named pip
 
 ### Profiling tools need additional support from the system
 

@@ -231,7 +231,6 @@ zinit lucid for \
 
 # FIXME: aws completions (`aws_completer` not installed)
 # TODO: deprecate OMZP::minikube (resp., generate as completions)
-# TODO: deprecate OMZP::poetry (resp., generate as completions)
 # XXX: OMZ::git -> gitfast (zinit svn snippet for OMZP::gitfast)
 #
 # OMZ plugins/snippets/completions
@@ -250,7 +249,6 @@ zinit lucid for \
 #  - nmap                          adds some useful aliases for Nmap
 #  - nvm                           adds completion for & lazily sources nvm
 #  - pip                           adds completion & some aliases
-#  - poetry                        adds completion & keeps it up to date
 #  - rust                          adds completion for rustc, rustup and cargo
 #  - sdk                           adds auto-completion for sdk
 #  - terraform                     adds completion, aliases & a prompt function
@@ -295,7 +293,6 @@ zinit wait'0a' lucid for \
   OMZP::nvm \
   has'pip' OMZP::pip \
   has'pip' as'completion' OMZP::pip/_pip \
-  has'poetry' OMZP::poetry \
   has'rustc' as'completion' OMZP::rust/_rustc \
   has'rustup' has'cargo' OMZP::rust \
   OMZP::sdk \

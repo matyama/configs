@@ -134,7 +134,6 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/bash \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/btop \
-	$(XDG_CONFIG_HOME)/direnv \
 	$(XDG_CONFIG_HOME)/environment.d \
 	$(XDG_CONFIG_HOME)/fd \
 	$(XDG_CONFIG_HOME)/git \
@@ -147,7 +146,6 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
 	$(XDG_CONFIG_HOME)/nvim/spell \
-	$(XDG_CONFIG_HOME)/pypoetry \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
@@ -1002,69 +1000,56 @@ dbeaver-ce gimp netron postman spotify zoom-client:
 	@echo ">>> Installing $@: https://snapcraft.io/$@"
 	sudo snap install $@
 
-.PHONY: pipx
-pipx: $(ZSH_COMPLETIONS) python
-ifneq ($(shell which pipx 2> /dev/null),)
-	@echo ">>> $@ already installed (v$$($@ --version))"
+.PHONY: uv
+uv: $(ZSH_COMPLETIONS)
+ifneq ($(shell which uv 2> /dev/null),)
+	@echo ">>> Updating $@"
+	@env UV_NO_MODIFY_PATH=1 $@ self update
 else
 	@echo ">>> Installing $@"
-	sudo apt update
-	sudo apt -y install $@
-	$@ ensurepath
+	@curl -LsSf https://astral.sh/uv/install.sh | sh
 endif
 	@echo ">>> Setting up $@ completions"
-	@register-python-argcomplete $@ > $</_$@
+	@$@ generate-shell-completion zsh > $</_$@
+	@echo ">>> Setting up $@x completions"
+	@$@x --generate-shell-completion zsh > $</_$@x
 
 .PHONY: python-tools
-python-tools: OPS :=
-python-tools: pipx
-	@echo ">>> Installing Python virtual environment"
-	pipx install virtualenv $(OPS)
-	@echo ">>> Installing Ansible: https://www.ansible.com"
-	pipx install --include-deps ansible
-	@echo ">>> Installing ansible-lint: https://github.com/ansible/ansible-lint"
-	pipx install ansible-lint
-	@echo ">>> Installing maturin: https://www.maturin.rs"
-	pipx install maturin
-	@echo ">>> Installing pipenv: https://pipenv.pypa.io"
-	pipx install pipenv
-	@echo ">>> Installing pre-commit hooks globally"
-	pipx install pre-commit $(OPS)
-	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
-	@echo ">>> Installing pycobertura: https://github.com/aconrad/pycobertura"
-	pipx install pycobertura
-	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
-	pipx install sqlfluff
+python-tools: uv
+	@echo ">>> Installing ansible with ansible-lint: https://www.ansible.com"
+	uv tool install \
+		--compile-bytecode \
+		--with-executables-from ansible-lint \
+		ansible
 	@echo ">>> Installing gdbgui: https://www.gdbgui.com"
-	pipx install gdbgui
+	uv tool install --compile-bytecode gdbgui
+	@echo ">>> Installing maturin: https://www.maturin.rs"
+	uv tool install --compile-bytecode maturin
+	@echo ">>> Installing pre-commit hooks globally"
+	uv tool install --compile-bytecode pre-commit
+	@pre-commit init-templatedir $(GIT_TEMPLATE_DIR)
+	@echo ">>> Installing ruff: https://docs.astral.sh/ruff"
+	uv tool install --compile-bytecode ruff
+	@echo ">>> Installing sqlfluff: https://github.com/sqlfluff/sqlfluff"
+	uv tool install --compile-bytecode sqlfluff
+	@echo ">>> Installing ty: https://docs.astral.sh/ty"
+	uv tool install --compile-bytecode ty
 	@echo ">>> Installing yamllint: https://github.com/adrienverge/yamllint"
-	pipx install yamllint
+	uv tool install --compile-bytecode yamllint
 
+# Additional plugins
+#  - https://github.com/python-lsp/pylsp-mypy
+#  - https://github.com/python-lsp/python-lsp-ruff
+#  - https://github.com/python-lsp/python-lsp-black
+#  - https://github.com/python-rope/pylsp-rope
 .PHONY: python-lsp-server
-python-lsp-server: pipx
+python-lsp-server: uv
 	@echo ">>> Installing $@: https://github.com/python-lsp/python-lsp-server"
-	pipx install --include-deps "$@[all]"
-	@echo ">>> Installing pylsp-mypy: https://github.com/python-lsp/pylsp-mypy"
-	pipx inject --include-deps $@ pylsp-mypy
-	@echo ">>> Installing python-lsp-ruff: https://github.com/python-lsp/python-lsp-ruff"
-	pipx inject --include-deps $@ python-lsp-ruff
-	@echo ">>> Installing python-lsp-black: https://github.com/python-lsp/python-lsp-black"
-	pipx inject --include-deps $@ python-lsp-black
-	@echo ">>> Installing pylsp-rope: https://github.com/python-rope/pylsp-rope"
-	pipx inject --include-deps $@ pylsp-rope
-
-# Installation resources:
-#  - https://python-poetry.org/docs/#installation
-.PHONY: poetry
-poetry: pipx
-ifneq ($(shell which poetry 2> /dev/null),)
-	@echo ">>> $$($@ --version) already installed, upgrading instead..."
-	pipx upgrade poetry
-else
-	@echo ">>> Installing Poetry: https://python-poetry.org/docs"
-	pipx install $@
-endif
-	@echo ">>> Using $$($@ --version)"
+	uv tool install \
+		--compile-bytecode \
+		--with pylsp-mypy,python-lsp-black,pylsp-rope \
+		--with git+https://github.com/python-lsp/python-lsp-ruff \
+		"$@[all]"
 
 # Installation resources:
 #  - https://sdkman.io/install
