@@ -214,7 +214,6 @@ zinit lucid for \
 #  - nvm                           adds completion for & lazily sources nvm
 #  - pip                           adds completion & some aliases
 #  - rust                          adds completion for rustc, rustup and cargo
-#  - sdk                           adds auto-completion for sdk
 #  - terraform                     adds completion, aliases & a prompt function
 #  - zsh-interactive-cd            provides fish-like interactive cd completion
 #
@@ -259,7 +258,6 @@ zinit wait'0a' lucid for \
   has'pip' as'completion' OMZP::pip/_pip \
   has'rustc' as'completion' OMZP::rust/_rustc \
   has'rustup' has'cargo' OMZP::rust \
-  OMZP::sdk \
   has'terraform' OMZP::terraform \
   has'terraform' as'completion' OMZP::terraform/_terraform \
   OMZP::zsh-interactive-cd
@@ -307,20 +305,6 @@ zinit wait'0a' lucid \
     export MCFLY_RESULTS=20
     export MCFLY_HISTORY_LIMIT=10000' \
   for zdharma-continuum/null
-
-# XXX: maybe even install sdk here
-# https://zdharma-continuum.github.io/zinit/wiki/GALLERY/#programs
-#
-# zsh-sdkman: adds aliases and completion scripts for sdk
-# https://github.com/matthieusb/zsh-sdkman
-#
-# NOTE: Make sure to `sdk config` and set `sdkman_auto_complete=false` to
-# prevent additional conmpinit calls which would slow down shell startup.
-zinit wait'0a' lucid for \
-  if'[[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]]' \
-  atpull'sdk selfupdate' \
-  atinit"source ${SDKMAN_DIR}/bin/sdkman-init.sh" \
-  matthieusb/zsh-sdkman
 
 # Resources
 #  - zsh-autosuggestions: provides fish-like autosuggestions

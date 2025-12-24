@@ -151,12 +151,6 @@ export GEM_HOME=${XDG_DATA_HOME}/gem
 export GEM_SPEC_CACHE=${XDG_CACHE_HOME}/gem
 export GEM_BIN=${GEM_HOME}/bin
 
-# SDKMAN: JVM ecosystem
-#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
-#  - https://github.com/sdkman/sdkman-cli/issues/659
-#  - https://sdkman.io/install
-export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
-
 # Java
 #  - Workaround to support XDG and move `~/.java` out of `HOME`
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -164,18 +158,6 @@ export SDKMAN_DIR=${XDG_DATA_HOME}/sdkman
 #  - https://stackoverflow.com/a/30305597/15112035
 export JDK_JAVA_OPTIONS="-Djava.util.prefs.userRoot=${XDG_CONFIG_HOME}/java"
 export JAVA_OPTS="-Djava.util.prefs.userRoot=${XDG_CONFIG_HOME}/java"
-
-# Gradle
-#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
-#  - https://github.com/gradle/gradle/issues/17756
-#  - According to the issue: "gradle still puts some stuff under
-#    `~/.gradle/daemon` even with `GRADLE_USER_HOME` pointing elsewhere"
-export GRADLE_USER_HOME=${XDG_DATA_HOME}/gradle
-
-# kscript
-#  - Note: Out-of-the-box XDG support is still an open issue, monitor.
-#  - https://github.com/holgerbrandl/kscript/issues/323
-export KSCRIPT_CACHE_DIR=${XDG_CACHE_HOME}/kscript
 
 # Node.js
 export NVM_DIR="${XDG_DATA_HOME}/nvm"
@@ -222,16 +204,6 @@ alias nvidia-settings="nvidia-settings --config ${NVIDIA_SETTINGS_RC}"
 #  - Uncomment `WGETRC` if it's present and should be used
 #export WGETRC=${XDG_CONFIG_HOME}/wgetrc
 alias wget="wget --hsts-file=${XDG_CACHE_HOME}/wget-hsts"
-
-# Maven
-#  - `mvn -gs` is a workaround to make maven XDG compliant
-#  - See: https://issues.apache.org/jira/browse/MNG-6603
-#  - Note that this relies on custom `settings.xml` which is symlinked so any
-#    further modifications should go there
-#  - Despite the fact it's not recommended to override command behavior in
-#    `.envrc` (since it's always loaded, even for non-interactive shells), here
-#    we actually want to prevent all executions from creating `~/.m2`
-alias mvn="mvn -gs ${XDG_CONFIG_HOME}/maven/settings.xml"
 
 # Python
 #  - Sets path to custom startup file for interactive Python:

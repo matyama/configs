@@ -2,10 +2,6 @@
 
 set -e
 
-# TODO: make this into a meta-manager CLI tool (Rust, with [RUN] as plugins)
-#  - with "RUN" tools here as configurable plugins
-#  - with an (optional) user config (TOML/YAML) specifying these plugins
-
 __USAGE="Upgrade programs and libraries managed by apt, uv, rustup and other.
 
 USAGE:
@@ -17,7 +13,6 @@ SKIP: Skip selected tool(s), overrides RUN.
 	uv           Skip uv upgrade
 	rust         Skip rustup update
 	binenv       Skip binenv upgrade
-	sdk          Skip sdk upgrade
 	zsh          Skip zsh update
 	vim          Skip (neo)vim updates (vim-plug, coc)
 	extras       Skip all but apt upgrade
@@ -28,7 +23,6 @@ RUN: Run only selected tool(s), can be overridden by SKIP.
 	uv           Run only uv upgrade
 	rust         Run only rustup update
 	binenv       Run only binenv upgrade
-	sdk          Run only sdk upgrade
 	zsh          Run only zsh update
 	vim          Run only (neo)vim updates (vim-plug, coc)
 "
@@ -44,7 +38,6 @@ RUN_SNAP=0
 RUN_UV=0
 RUN_RUST=0
 RUN_BINENV=0
-RUN_SDK=0
 RUN_ZSH=0
 RUN_VIM=0
 
@@ -77,9 +70,6 @@ while [[ $# -gt 0 ]]; do
         binenv)
           RUN_BINENV=$((RUN_BINENV - 2))
           ;;
-        sdk)
-          RUN_SDK=$((RUN_SDK - 2))
-          ;;
         zsh)
           RUN_ZSH=$((RUN_ZSH - 2))
           ;;
@@ -91,7 +81,6 @@ while [[ $# -gt 0 ]]; do
           RUN_UV=$((RUN_UV - 2))
           RUN_RUST=$((RUN_RUST - 2))
           RUN_BINENV=$((RUN_BINENV - 2))
-          RUN_SDK=$((RUN_SDK - 2))
           RUN_ZSH=$((RUN_ZSH - 2))
           RUN_VIM=$((RUN_VIM - 2))
           ;;
@@ -127,7 +116,6 @@ if [[ $# -eq 0 ]]; then
   RUN_UV=$((RUN_UV + 1))
   RUN_RUST=$((RUN_RUST + 1))
   RUN_BINENV=$((RUN_BINENV + 1))
-  RUN_SDK=$((RUN_SDK + 1))
   RUN_ZSH=$((RUN_ZSH + 1))
   RUN_VIM=$((RUN_VIM + 1))
 else
@@ -151,10 +139,6 @@ else
         ;;
       binenv)
         RUN_BINENV=$((RUN_BINENV + 1))
-        shift
-        ;;
-      sdk)
-        RUN_SDK=$((RUN_SDK + 1))
         shift
         ;;
       zsh)
@@ -284,39 +268,6 @@ if [[ "$(command -v binenv)" ]] && [[ $RUN_BINENV -gt 0 ]]; then
     binenv_upgrade "${binenv_dist}"
     binenv_clean "${binenv_dist}"
   done <<<"$(binenv versions | grep default | grep -v binenv)"
-fi
-
-# Include `sdkman-init.sh` to make `sdk` command available
-[[ $RUN_SDK -gt 0 ]] &&
-  [[ -s "${SDKMAN_DIR}/bin/sdkman-init.sh" ]] &&
-  source "${SDKMAN_DIR}/bin/sdkman-init.sh"
-
-if [[ "$(command -v sdk)" ]] && [[ $RUN_SDK -gt 0 ]]; then
-  echo "Updating sdk..."
-  sdk selfupdate
-  echo "Updating sdk candidates..."
-  sdk update
-  echo "Upgrading sdk candidates..."
-  CANDIDATES=$(
-    # make this non-interactive and don't run any upgrade
-    yes n |
-      head -1 |
-      # list upgradable candidates
-      sdk ug |
-      # strip irrelevant output and keep only lines with candidates
-      grep local |
-      # skipping automatic java upgrade because it breaks apps
-      grep -v java |
-      # grep candidate name
-      cut -d ' ' -f 1 |
-      # remove colors from the output
-      sed -r 's|\x1b\[[0-9;]*m||g'
-  )
-  for candidate in $CANDIDATES; do
-    yes Y | head -1 | sdk upgrade "${candidate}"
-  done
-  echo "Flushing sdk's local state..."
-  sdk flush
 fi
 
 if [[ "$(command -v zsh)" ]] && [[ $RUN_ZSH -gt 0 ]]; then

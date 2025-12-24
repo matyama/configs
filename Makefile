@@ -139,7 +139,6 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/gtk-3.0 \
 	$(XDG_CONFIG_HOME)/lazygit \
-	$(XDG_CONFIG_HOME)/maven \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
@@ -513,12 +512,13 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - btop: command line resource monitor that shows usage and stats
 #    (https://github.com/aristocratos/btop)
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
-#  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
+#  - default-jdk: Standard Java or Java compatible Development Kit
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
 #  - fastfetch: A command-line system information tool
 #    (https://github.com/fastfetch-cli/fastfetch)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
+#  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - heaptrack(-gui): A heap memory profiler for Linux
 #    (https://github.com/KDE/heaptrack)
 #  - chafa: Image visualization for terminal (https://hpjansson.org/chafa/)
@@ -580,6 +580,7 @@ basic-tools: \
 		direnv \
 		graphviz \
 		kcat \
+		default-jdk \
 		libzstd-dev \
 		libecpg-dev \
 		libglpk-dev \
@@ -1051,38 +1052,6 @@ python-lsp-server: uv
 		--with pylsp-mypy,python-lsp-black,pylsp-rope \
 		--with git+https://github.com/python-lsp/python-lsp-ruff \
 		"$@[all]"
-
-# Installation resources:
-#  - https://sdkman.io/install
-#  - Note: Installation won't update rc files since we're using custom `.zshrc`
-#    and `.zshenv`
-.PHONY: sdk
-sdk: SHELL := /bin/bash
-sdk: net-tools
-	@echo ">>> Installing SDKMAN: https://sdkman.io/"
-	curl -s "https://get.sdkman.io?rcupdate=false" | bash
-	source $(SDKMAN_DIR)/bin/sdkman-init.sh
-
-.PHONY: jvm-tools
-jvm-tools: SHELL := /bin/bash
-jvm-tools: JAVA_VERSION := 22.0.1-open
-jvm-tools: $(SDKMAN_DIR)/bin/sdkman-init.sh
-	@{ \
-		set -e;\
-		source $<;\
-		echo ">>> Installing Java";\
-		sdk install java $(JAVA_VERSION);\
-		echo ">>> Installing Maven";\
-		sdk install maven;\
-		echo ">>> Installing Gradle";\
-		sdk install gradle;\
-		echo ">>> Installing Kotlin";\
-		sdk install kotlin;\
-		echo ">>> Installing kscript";\
-		sdk install kscript;\
-		echo ">>> Installing VisualVM";\
-		sdk install visualvm;\
-	}
 
 # Haskell toolchain and project builder
 #  - [ghcup](https://www.haskell.org/ghcup/)
