@@ -28,8 +28,8 @@ repos:
       - id: stylua-system
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    # 3.4.1
-    rev: 62dcf364a52192458d66c0dba3a0a1fdb78e4fbe
+    # 3.6.0
+    rev: 11ea70506fd878d26129b2b87746fd1a1f6b561b
     hooks:
       - id: editorconfig-checker
         alias: ec
