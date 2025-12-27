@@ -863,18 +863,6 @@ else
 endif
 	@rm -rf $(DOWNLOAD_DIR)
 
-# Installed tools:
-#  - duf: Disk Usage/Free Utility - a better 'df' alternative
-#    (https://github.com/muesli/duf)
-.PHONY: binenv-tools
-binenv-tools: DUF_URL := https://github.com/muesli/duf/archive/refs/tags
-binenv-tools: binenv $(XDG_MAN_HOME)/man1
-	@echo ">>> Installing duf: https://github.com/muesli/duf"
-	binenv install duf
-	@curl -sSL "$(DUF_URL)/v$$(duf -version | cut -d ' ' -f2).tar.gz" \
-		| tar -xzf - --strip-components=1 --wildcards '*/duf.1' --to-command=gzip \
-		> $(XDG_MAN_HOME)/man1/duf.1.gz
-
 .PHONY: zsh
 zsh: $(XDG_CACHE_HOME)/zsh $(ZSH_COMPLETIONS) core-utils net-tools
 ifneq ($(shell which zsh 2> /dev/null),)
