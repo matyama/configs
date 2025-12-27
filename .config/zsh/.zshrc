@@ -405,6 +405,42 @@ function fzf_prog() {
 }
 export fzf_prog
 
+# NOTE: required for tinted-fzf
+#  - https://github.com/tinted-theming/tinty/blob/main/USAGE.md
+#
+# Tinty isn't able to apply environment variables to your shell due to
+# the way shell sub-processes work. This is a work around by running
+# Tinty through a function and then executing the shell scripts.
+tinty_source_shell_theme() {
+  newer_file=$(mktemp)
+  tinty "$@"
+  subcommand="$1"
+
+  if [ "$subcommand" = "apply" ] || [ "$subcommand" = "init" ]; then
+    while read -r script; do
+      # shellcheck disable=SC1090
+      . "$script"
+    done < <(
+      find "${XDG_DATA_HOME:-$HOME/.local/share}/tinted-theming/tinty" \
+        -maxdepth 1 \
+        -type f \
+        -o \
+        -type l \
+        -name "*.sh" \
+        -newer "$newer_file"
+    )
+  fi
+
+  unset subcommand
+}
+
+if [ -n "$(command -v 'tinty')" ]; then
+  tinty_source_shell_theme init >/dev/null
+
+  # FIXME: unfortunately, this currently breaks tinty auto-completion
+  alias tinty=tinty_source_shell_theme
+fi
+
 # set default fuzzy finder
 fzf_prog fzf
 
@@ -412,21 +448,9 @@ fzf_prog fzf
 export TINTED_SHELL_ENABLE_VARS=1
 export TINTED_SHELL_ENABLE_BASE16_VARS=1
 
-# TODO: zinit/tinty
-# Tinted shell (https://github.com/tinted-theming/tinted-shell)
-[[ -s "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh" ]] &&
-  source "${BASE16_SHELL_PATH}/base16-shell.plugin.zsh"
-
 # Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
 #export TINTED_TMUX_OPTION_ACTIVE=1
 export TINTED_TMUX_OPTION_STATUSBAR=1
-
-# Tinted fzf (https://github.com/tinted-theming/tinted-fzf)
-BASE16_FZF_HOME="${BASE16_FZF_HOME:-${XDG_CONFIG_HOME}/tinted-theming/tinted-fzf}"
-# shellcheck disable=SC1090
-[[ ! -d "$BASE16_FZF_HOME" ]] ||
-  [[ "$FZF_DEFAULT_OPTS" == *"--color"* ]] ||
-  source "${BASE16_FZF_HOME}/sh/base16-${BASE16_THEME}.sh"
 
 # skim: reuse FZF_DEFAULT_OPTS for `--color` options set by base16-fzf above
 export SKIM_DEFAULT_OPTIONS="--multi $FZF_DEFAULT_OPTS"

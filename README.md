@@ -101,26 +101,20 @@ terminals as instructed. The font download is part of `make fonts`.
 
 ### Base16 colors
 
-#### Tinted Shell
-[Tinted Shell][tinted-shell] can be installed with `make tinted-shell`.
-One can then manually switch themes with `base16_<theme>` which creates
-and/or updates a link `$HOME/.config/tinted-theming/base16_shell_theme`.
+#### Tinty
+[Tinty][tinty] is a color scheme manager which can be installed with
+`make tinty`.
+One can then manually switch themes with `tinty apply <theme>` which
+updates all managed configurations (shell, tmux, fzf, etc.) with the
+provided `<theme>` (note: list available themes via `tinty list`).
 
-Note that the shell hook is already added to and liked the oh-my-zsh
-plugin `tinted-shell`, so after installation with `make` one just needs
-to reload zsh and pick a theme:
-```bash
-omz reload
-base16_gruvbox-dark-hard
-```
+[tinty]: https://github.com/tinted-theming/tinty
 
-The default theme is set in `.zshenv` to
-`BASE16_THEME_DEFAULT=gruvbox-dark-hard`.
-
-One can also [test](https://bit.ly/49WNREG) the themes with included
-`colortest` tool.
-
-[tinted-shell]: https://github.com/tinted-theming/tinted-shell
+#### fzf
+Because `fzf` can only be themed via environment variables, there is a
+necessary workaround in `.zshrc` to run `tinty` (and transitively
+`tinted-shell`) in a shell sub-process to export relevant environment
+variables.
 
 #### Alacritty terminal
 Note that `alacritty.yml` automatically imports set color schemes:
@@ -129,9 +123,7 @@ import = ["~/.config/alacritty/colors.toml"]
 ```
 
 The `colors.toml` is a symlink created by `make alacritty` which points
-to a [tinted-alacritty][tinted-alacritty] theme. Note that currently the
-theme is selected just once before the installation and further changes
-won't be automatically picked up.
+to a [tinted-alacritty][tinted-alacritty] theme.
 
 [tinted-alacritty]: https://github.com/tinted-theming/tinted-alacritty
 

@@ -1,0 +1,46 @@
+# Global settings
+shell = "zsh -c '{}'"
+defualt-scheme = "base16-gruvbox-dark-hard"
+
+# Item configuration
+[[items]]
+name = "tinted-shell"
+path = "https://github.com/tinted-theming/tinted-shell"
+themes-dir = "scripts"
+hook = "source %f"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "tinted-tmux"
+path = "https://github.com/tinted-theming/tinted-tmux"
+themes-dir = "colors"
+# Check if tmux is in use and if it is, reload the config file
+hook = "tmux run 2> /dev/null && tmux source-file %f"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "tinted-fzf"
+path = "https://github.com/tinted-theming/tinted-fzf"
+themes-dir = "sh"
+hook = ". %f"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "tinted-terminal"
+path = "https://github.com/tinted-theming/tinted-terminal"
+themes-dir = "themes/alacritty"
+hook = "mkdir -p ~/.config/alacritty && ln -sf %f ~/.config/alacritty/colors.toml"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "tinted-delta"
+path = "https://github.com/tinted-theming/tinted-delta"
+themes-dir = "configs"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "base16-btop"
+path = "https://git.sr.ht/~blueingreen/base16-btop"
+themes-dir = "colors"
+hook = "mkdir -p ~/.config/btop/themes && ln -sf %f ~/.config/btop/themes/base16.theme"
+supported-systems = ["base16"]

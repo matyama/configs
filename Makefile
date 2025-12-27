@@ -38,11 +38,6 @@ BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
-BASE16_TERMINAL_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-terminal
-BASE16_FZF_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-fzf
-BASE16_SHELL_PATH ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-shell
-BASE16_TMUX_HOME ?= $(XDG_CONFIG_HOME)/tinted-theming/tinted-tmux
-
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 RIPGREP_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/rg
 
@@ -147,6 +142,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
+	$(XDG_CONFIG_HOME)/tinted-theming/tinty \
 	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \
 	$(ZDOTDIR)
@@ -246,63 +242,6 @@ endif
 	@echo ">>> Linking Gruvbox icons..."
 	@ln -svft $(XDG_ICONS_HOME) "$(GRUVBOX_GTK_THEME_DIR)"/icons/Gruvbox-Dark
 	@ln -svft $(XDG_ICONS_HOME) "$(GRUVBOX_GTK_THEME_DIR)"/icons/Gruvbox-Light
-
-# Resources:
-#  - [Tinted Shell](https://github.com/tinted-theming/tinted-shell)
-.PHONY: tintted-shell
-tinted-shell: BASE16_SHELL_REPO := https://github.com/tinted-theming/tinted-shell
-tinted-shell: BASE16_THEME_DEFAULT := gruvbox-dark-hard
-tinted-shell: BASE16_THEME := gruvbox-dark-hard
-tinted-shell: zsh
-ifeq ($(shell test -d $(BASE16_SHELL_PATH) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(BASE16_SHELL_PATH)'"
-	@git -C $(BASE16_SHELL_PATH) pull
-else
-	@echo ">>> Cloning $@ repository to '$(BASE16_SHELL_PATH)'"
-	@git clone $(BASE16_SHELL_REPO) $(BASE16_SHELL_PATH)
-endif
-	@echo ">>> Testing default color scheme"
-	@$(BASE16_SHELL_PATH)/colortest
-	@echo ">>> Select color scheme by running: 'base16_$(BASE16_THEME)'"
-
-# Resources:
-#  - [tinted-fzf](https://github.com/tinted-theming/tinted-fzf)
-.PHONY: tinted-fzf
-tinted-fzf: BASE16_FZF_REPO := https://github.com/tinted-theming/tinted-fzf
-tinted-fzf:
-ifeq ($(shell test -d $(BASE16_FZF_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(BASE16_FZF_HOME)'"
-	@git -C $(BASE16_FZF_HOME) pull
-else
-	@echo ">>> Cloning $@ repository to '$(BASE16_FZF_HOME)'"
-	@git clone $(BASE16_FZF_REPO) $(BASE16_FZF_HOME)
-endif
-
-# Resources:
-#  - [tinted-tmux](https://github.com/tinted-theming/tinted-tmux)
-.PHONY: tinted-tmux
-tinted-tmux: BASE16_TMUX_REPO := https://github.com/tinted-theming/tinted-tmux
-tinted-tmux:
-ifeq ($(shell test -d $(BASE16_TMUX_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(BASE16_TMUX_HOME)'"
-	@git -C $(BASE16_TMUX_HOME) pull
-else
-	@echo ">>> Cloning $@ repository to '$(BASE16_TMUX_HOME)'"
-	@git clone $(BASE16_TMUX_REPO) $(BASE16_TMUX_HOME)
-endif
-
-# Base16 and Base24 themes various terminal emulators
-# https://github.com/tinted-theming/tinted-terminal
-.PHONY: tinted-terminal
-tinted-terminal: URL := https://github.com/tinted-theming/tinted-terminal
-tinted-terminal:
-ifeq ($(shell test -d $(BASE16_TERMINAL_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(BASE16_TERMINAL_HOME)'"
-	@git -C $(BASE16_TERMINAL_HOME) pull
-else
-	@echo ">>> Cloning $@ repository to '$(BASE16_TERMINAL_HOME)'"
-	@git clone $(URL) $(BASE16_TERMINAL_HOME)
-endif
 
 # Notes:
 #  - git-core/templates added because the linked git config references it and
@@ -540,11 +479,13 @@ basic-tools: \
 	tmux \
 	neovim \
 	pandoc \
+	$(XDG_CONFIG_HOME)/btop \
 	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		autoconf \
 		git-lfs \
+		btop \
 		htop \
 		iotop \
 		iftop \
@@ -589,30 +530,8 @@ basic-tools: \
 		wireguard \
 		zathura
 
-# TODO: use tinty and auto-update current theme
-.PHONY: btop
-btop: BASE16_BTOP_HOME := $(XDG_DATA_HOME)/base16-btop
-btop: BASE16_BTOP_REPO := https://git.sr.ht/~blueingreen/base16-btop
-btop: BASE16_THEME := gruvbox-dark-hard
-btop: $(XDG_CONFIG_HOME)/btop
-	@echo ">>> Installing $@"
-	sudo apt install -y $@
-ifeq ($(shell test -d $(BASE16_BTOP_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating base16-$@ repository in '$(BASE16_BTOP_HOME)'"
-	@git -C $(BASE16_BTOP_HOME) pull
-else
-	@echo ">>> Cloning base16-$@ repository to '$(BASE16_BTOP_HOME)'"
-	@git clone $(BASE16_BTOP_REPO) $(BASE16_BTOP_HOME)
-endif
-	@echo ">>> Setting $@ theme to $(BASE16_THEME)"
-	@ln -svf \
-		$(XDG_DATA_HOME)/base16-$@/colors/base16-$(BASE16_THEME).theme \
-		$(XDG_CONFIG_HOME)/$@/themes/base16.theme
-	@echo ">>> Linking $@ config"
-	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
-
 .PHONY: fastfetch
-fastfetch: $(XDG_DATA_HOME)/btop
+fastfetch:
 	@echo ">>> Installing $@"
 	sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
 	sudo apt update
@@ -1250,6 +1169,8 @@ cargo-tools: \
 #    (https://github.com/JohnnyMorganz/StyLua)
 #  - tealdeer: A very fast implementation of tldr in Rust
 #    (https://github.com/dbrgn/tealdeer)
+#  - tinty: A base16 and base24 color scheme manager
+#    (https://github.com/tinted-theming/tinty)
 #  - tokio-console: A debugger for async Rust
 #    (https://github.com/tokio-rs/console)
 #  - xh: Friendly and fast tool for sending HTTP requests
@@ -1336,6 +1257,7 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@sqlx completions zsh > "$(ZSH_COMPLETIONS)/_sqlx"
 	@echo ">>> Installing stylua: https://github.com/JohnnyMorganz/StyLua"
 	cargo install stylua
+	make -C $(CFG_DIR) tinty
 	make -C $(CFG_DIR) tldr
 	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
 	cargo install --locked tokio-console
@@ -1363,6 +1285,20 @@ cross: rust binfmt-support
 taplo: rust
 	@echo ">>> Installing $@ CLI & LSP: https://github.com/tamasfe/taplo"
 	cargo install --features lsp --locked taplo-cli
+
+# Base16 and base24 color scheme manager
+.PHONY: tinty
+tinty: BASE16_THEME_DEFAULT ?= gruvbox-dark-hard
+tinty: BASE16_THEME ?= $(BASE16_THEME_DEFAULT)
+tinty: $(XDG_CONFIG_HOME)/tinted-theming/tinty rust
+	@echo ">>> Installing $@: https://github.com/tinted-theming/tinty"
+	cargo install --locked $@
+	@echo ">>> Configuring $$($@ -V)"
+	@ln -svft $< $(CFG_CONFIG_HOME)/tinted-theming/$@/*
+	@echo ">>> Synchronizing managed configurations"
+	@tinty sync
+	@echo ">>> Applying color scheme: $(BASE16_THEME)"
+	@tinty apply base16-$(BASE16_THEME)
 
 .PHONY: tldr
 tldr: DOWNLOAD_URL := https://github.com/tealdeer-rs/tealdeer/releases/download
@@ -1394,7 +1330,6 @@ bluetui: rust
 .PHONY: alacritty
 alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
 alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
-alacritty: BASE16_THEME := gruvbox-dark-hard
 alacritty: \
 	$(XDG_APPS_HOME) \
 	$(XDG_CONFIG_HOME)/alacritty \
@@ -1404,7 +1339,7 @@ alacritty: \
 	$(ZSH_COMPLETIONS) \
 	net-tools \
 	rust \
-	tinted-terminal
+	tinty
 ifeq ($(shell which alacritty 2> /dev/null),)
 	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
 	@sudo apt install -y \
@@ -1437,10 +1372,6 @@ endif
 	@mv "$(DOWNLOAD_DIR)/$@"*.5.gz $(XDG_MAN_HOME)/man5
 	@echo ">>> Configuring $@ zsh completions"
 	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
-	@echo ">>> Configuring $@ colors theme"
-	@ln -svf \
-		"$(BASE16_TERMINAL_HOME)/themes/$@/base16-$(BASE16_THEME).toml" \
-		"$(XDG_CONFIG_HOME)/$@/colors.toml"
 	@echo ">>> Finish $@ completion setup by reloading zsh"
 	@rm -rf $(DOWNLOAD_DIR)
 
