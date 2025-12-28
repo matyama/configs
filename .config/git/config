@@ -72,6 +72,10 @@
 	# XXX: --autostash
 	pr = pull --rebase
 	pri = pull --rebase=interactive
+	# aliases for working with submodules
+	smu = submodule update --init --recursive
+	sms = submodule status
+	sma = submodule add
 [ui "color"]
 	ui = always
 [color]
