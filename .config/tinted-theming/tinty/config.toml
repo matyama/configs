@@ -32,6 +32,12 @@ themes-dir = "themes/alacritty"
 hook = "mkdir -p ~/.config/alacritty && ln -sf %f ~/.config/alacritty/colors.toml"
 supported-systems = ["base16", "base24"]
 
+#[[items]]
+#name = "tinted-nvim"
+#path = "~/.local/share/nvim/lazy/tinted-nvim"
+#themes-dir = "colors"
+#supported-systems = ["base16", "base24"]
+
 [[items]]
 name = "tinted-delta"
 path = "https://github.com/tinted-theming/tinted-delta"
