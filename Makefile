@@ -1117,8 +1117,10 @@ cargo-tools: \
 # TODO: replace click (unmaintained) with k9s
 # Installed tools:
 #  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
-#  - bitcli:  Simple CLI tool for URL shortening via Bitly
+#  - bitcli: Simple CLI tool for URL shortening via Bitly
 #    (https://github.com/matyama/bitcli)
+#  - caligula: A user-friendly, lightweight TUI for disk imaging
+#    (https://github.com/ifd3f/caligula)
 #  - click: Command Line Interactive Controller for Kubernetes
 #    (https://github.com/databricks/click)
 #  - cross: “Zero setup” cross compilation and “cross testing” of Rust crates
@@ -1177,6 +1179,8 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
 	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
 	cargo install --locked --git https://github.com/matyama/bitcli
+	@echo ">>> Installing caligula: https://github.com/ifd3f/caligula"
+	cargo install --locked caligula
 	make -C $(CFG_DIR) cross
 	@echo ">>> Installing eza: https://eza.rocks"
 	cargo install eza
