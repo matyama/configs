@@ -59,8 +59,6 @@ STACK_ROOT ?= $(XDG_DATA_HOME)/stack
 
 NVM_DIR ?= $(XDG_DATA_HOME)/nvm
 
-SDKMAN_DIR ?= $(XDG_DATA_HOME)/sdkman
-
 GOPATH ?= $(XDG_DATA_HOME)/go
 
 MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
