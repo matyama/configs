@@ -1296,7 +1296,7 @@ cross: rust binfmt-support
 
 #  A modern, configurable, terminal based MPD client
 # TODO: revert to non-git install once support for abstract sockets is released
-.PHONY: cross
+.PHONY: rmpc
 rmpc: rust mpd $(XDG_CONFIG_HOME)/rmpc
 	@echo ">>> Installing $@: https://github.com/mierak/rmpc"
 	#cargo install --locked rmpc
