@@ -91,11 +91,16 @@ endif
 
 # Remove unused applications from the distribution and cleanup HOME
 .PHONY: clean
-clean: thunderbird
+clean: evince rhythmbox thunderbird
 	sudo apt autoremove --purge -y
 	sudo apt autoclean
 	@echo ">>> Purging dot files that are disallowed in HOME's root"
 	@rm -f $(BANNED_HOME_DOT_FILES)
+
+.PHONY: evince rhythmbox
+evince rhythmbox:
+	@echo ">>> Uninstalling $@"
+	sudo apt purge -y $@
 
 .PHONY: thunderbird
 thunderbird:
@@ -133,6 +138,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/fd \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/gtk-3.0 \
+	$(XDG_CONFIG_HOME)/mpd \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
 	$(XDG_CONFIG_HOME)/nvidia-settings \
@@ -140,6 +146,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
 	$(XDG_CONFIG_HOME)/nvim/spell \
 	$(XDG_CONFIG_HOME)/python \
+	$(XDG_CONFIG_HOME)/rmpc \
 	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/tinted-theming/tinty \
@@ -162,6 +169,7 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(GOPATH) \
 	$(XDG_BIN_HOME) \
 	$(XDG_APPS_HOME) \
+	$(XDG_CONFIG_HOME)/mpd/playlists \
 	$(XDG_DEV_HOME) \
 	$(XDG_FONTS_HOME) \
 	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
@@ -169,6 +177,7 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(XDG_MAN_HOME)/man5 \
 	$(XDG_THEMES_HOME) \
 	$(XDG_TMP_HOME) \
+	$(XDG_STATE_HOME)/mpd \
 	$(XDG_STATE_HOME)/sqlite3:
 	mkdir -p $@
 
@@ -457,6 +466,7 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - tesseract-ocr: Tesseract Open Source OCR Engine
 #    (https://github.com/tesseract-ocr/tesseract)
 #  - tshark: Terminal version of wireshark
+#  - mpd: Music Player Daemon (https://www.musicpd.org)
 #  - musl-tools: tools for cross-compilation to musl target
 #  - capnproto, libcapnp-dev: Cap'N Proto compiler tools (https://capnproto.org)
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
@@ -477,6 +487,7 @@ basic-tools: \
 	fastfetch \
 	fzf \
 	tmux \
+	mpd \
 	neovim \
 	pandoc \
 	$(XDG_CONFIG_HOME)/btop \
@@ -490,7 +501,6 @@ basic-tools: \
 		iotop \
 		iftop \
 		tshark \
-		mc \
 		tree \
 		entr \
 		chafa \
@@ -536,6 +546,17 @@ fastfetch:
 	sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
 	sudo apt update
 	sudo apt install -y $@
+
+# Music Player Daemon (https://www.musicpd.org)
+.PHONY: mpd
+mpd: $(XDG_CONFIG_HOME)/mpd/playlists $(XDG_STATE_HOME)/mpd
+	@echo ">>> Installing $@"
+	sudo apt update
+	sudo apt install -y $@
+	@echo ">>> Linking $@ confg..."
+	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/*
+	@echo ">>> Enabling $@ systemd user service"
+	systemctl --user enable --now $@
 
 .PHONY: pandoc
 pandoc: $(ZSH_COMPLETIONS)
@@ -1151,6 +1172,8 @@ cargo-tools: \
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - ripgrep: Recursively searches directories for a regex pattern
 #    (https://github.com/BurntSushi/ripgrep)
+#  - rmpc: A modern, configurable, terminal based MPD client
+#    (https://github.com/mierak/rmpc)
 #  - samply: Command-line sampling profiler for macOS and Linux
 #    (https://github.com/mstange/samply)
 #  - sd: Intuitive find & replace CLI (sed alternative)
@@ -1237,6 +1260,7 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	cargo install ripgrep
 	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
 	@rg --generate man | gzip -c > $(XDG_MAN_HOME)/man1/rg.1.gz
+	make -C $(CFG_DIR) rmpc
 	@echo ">>> Installing samply: https://github.com/mstange/samply"
 	cargo install --locked samply
 	@echo ">>> Installing sd: https://github.com/chmln/sd"
@@ -1271,6 +1295,14 @@ rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 cross: rust binfmt-support
 	@echo ">>> Installing $@: https://github.com/cross-rs/cross"
 	cargo install --locked cross --git https://github.com/cross-rs/cross
+
+#  A modern, configurable, terminal based MPD client
+# TODO: revert to non-git install once support for abstract sockets is released
+.PHONY: cross
+rmpc: rust mpd $(XDG_CONFIG_HOME)/rmpc
+	@echo ">>> Installing $@: https://github.com/mierak/rmpc"
+	#cargo install --locked rmpc
+	cargo install --locked --git https://github.com/mierak/rmpc
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
