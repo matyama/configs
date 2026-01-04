@@ -440,6 +440,7 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #    (https://www.gnu.org/software/autoconf)
 #  - btop: command line resource monitor that shows usage and stats
 #    (https://github.com/aristocratos/btop)
+#  - cava: Cross-platform Audio Visualizer (https://github.com/karlstav/cava)
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
 #  - default-jdk: Standard Java or Java compatible Development Kit
 #  - entr: Run arbitrary commands when files change
@@ -502,6 +503,7 @@ basic-tools: \
 		tree \
 		entr \
 		chafa \
+		cava \
 		gparted \
 		gnome-tweaks \
 		blueman \
