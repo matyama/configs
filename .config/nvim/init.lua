@@ -5,6 +5,13 @@ vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 require("options")
 require("mappings")
 
+-------------------------------------------------------------------------------
+-- Configuring diagnostics
+-------------------------------------------------------------------------------
+
+-- Allow virtual text
+vim.diagnostic.config({ virtual_text = true, virtual_lines = true })
+
 -- Setup plugin manager (https://github.com/folke/lazy.nvim)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 

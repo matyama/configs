@@ -10,6 +10,18 @@ local g = vim.g
 
 g.mapleader = " "
 
+-- Netrw (File Explorer)
+-- See: https://vonheikemen.github.io/devlog/using-netrw-vim-builtin-file-explorer
+
+-- Keep the current directory and the browsing directory synced
+g.netrw_keepdir = 0
+-- Change the size of the Netrw window when it creates a split
+g.netrw_winsize = 30
+-- Hide the banner (to show it temporarity you can use `I` inside Netrw)
+g.netrw_banner = 0
+-- Change the copy command (mostly to enable recursive copy of directories)
+g.netrw_localcopydircmd = "cp -r"
+
 -------------------------------------------------------------------------------
 -- Options
 -------------------------------------------------------------------------------

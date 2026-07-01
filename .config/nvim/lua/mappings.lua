@@ -21,6 +21,8 @@ map("n", "zf", "z=", { desc = "spell check hint/correction" })
 -- nnoremap <leader>sv :source $VIMRC<CR>
 
 map("", "<C-p>", ":Files<CR>", { desc = "quick-open" })
+map("", "<C-e>", ":Lexplore<CR>", { desc = "file explorer in current working directory" })
+map("n", "<leader>e", ":Lexplore<CR> %:p:h<CR>", { desc = "file explorer in directory of current file" })
 map("n", "<C-q>", ":confirm qall", { desc = "quick-quit" })
 map("n", "<leader>w", ":w<CR>", { desc = "quick-save" })
 
