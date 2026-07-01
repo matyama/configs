@@ -1302,7 +1302,7 @@ cross: rust binfmt-support
 rmpc: rust mpd $(XDG_CONFIG_HOME)/rmpc
 	@echo ">>> Installing $@: https://github.com/mierak/rmpc"
 	#cargo install --locked rmpc
-	cargo install --locked --git https://github.com/mierak/rmpc
+	cargo install --locked --bins --git https://github.com/mierak/rmpc
 
 # TOML linter, formatter, and LSP
 .PHONY: taplo
