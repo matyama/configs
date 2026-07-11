@@ -33,7 +33,8 @@ map("n", "<leader>e", ':e <C-R>=expand("%:p:h") . "/" <cr>', {
 -- clipboard copy/paste
 -- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
 map("v", "<leader>y", '"+y', { desc = "copy selection into clipboard" })
-map("v", "<leader>d", '"+d', { desc = "move selection into clipboard" })
+-- FIXME: <leader>d currenlty conflicts with vim.diagnostics.open_float in lsp
+--map("v", "<leader>d", '"+d', { desc = "move selection into clipboard" })
 map({ "n", "v" }, "<leader>p", '"+p', { desc = "paste clipboard after cursor" })
 map({ "n", "v" }, "<leader>P", '"+P', { desc = "paste clipboard before cursor" })
 
@@ -130,6 +131,31 @@ map("", "L", "$", { desc = "jump to the end of the line" })
 -- move by visual line, not actual line, when text is soft-wrapped
 map("n", "j", "gj", { desc = "move down by visual line" })
 map("n", "k", "gk", { desc = "move up by visual line" })
+
+-------------------------------------------------------------------------------
+-- Diagnostics
+-------------------------------------------------------------------------------
+
+map("n", "<leader>d", vim.diagnostic.open_float, {
+  desc = "Open diagnostic in a floating window",
+})
+
+map("n", "[d", function()
+  vim.diagnostic.jump({ count = -1 })
+end, { desc = "Jump to previous diagnostic" })
+
+map("n", "]d", function()
+  vim.diagnostic.jump({ count = 1 })
+end, { desc = "Jump to next diagnostic" })
+
+map("n", "<leader>q", vim.diagnostic.setloclist, {
+  desc = "Open a diagnostic location list",
+})
+
+map("n", "gK", function()
+  local new_config = not vim.diagnostic.config().virtual_lines
+  vim.diagnostic.config({ virtual_lines = new_config })
+end, { desc = "Toggle diagnostic virtual_lines" })
 
 -------------------------------------------------------------------------------
 -- Search
