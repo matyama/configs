@@ -46,6 +46,9 @@ autoload -Uz ${ZSH_FUNCTIONS}/*
 
 export ZSH_CACHE_DIR="${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zinit}"
 
+# TODO: switch to zstyle ZINIT config
+# https://github.com/zdharma-continuum/zinit/commit/8f89f88cfdda42afbf5e1f7a3f2d510caff7354d
+
 # Set up zinit variables
 #  - https://github.com/zdharma-continuum/zinit#customizing-paths
 #  - https://github.com/zdharma-continuum/zinit#using-zpfx-variable
@@ -347,6 +350,11 @@ function _history_substring_search_config() {
   bindkey '^[[B' history-substring-search-down
 }
 
+# FIXME: Warning: wait ice received invalid suffix letter `d`.
+#  - https://github.com/zdharma-continuum/zinit/pull/778
+#  - `wait'0d'` silently drops d
+#  - Maybe use `wait'[[ ... ]]'` or `wait'(( ... ))'`
+#    (loading is done when given condition is meet)
 # NOTE: must be load after zsh-syntax-highlighting
 zinit wait'0d' lucid for \
   atload"
