@@ -2,9 +2,10 @@
 # Bash aliases sourced by ~/.config/bash/bashrc
 
 # some more ls aliases
+alias ls='ls --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# vim is actually vi, but use custom vimrc
-alias vim="vi -u ~/.config/vim/vimrc"
+# grep colors
+alias grep='grep --color=auto'

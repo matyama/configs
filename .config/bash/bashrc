@@ -15,6 +15,13 @@ elif [ -f /etc/bash.bashrc ]; then
   source /etc/bash.bashrc
 fi
 
+# Configure prompt
+PS1='[\u@\h \W]\$ '
+
+# TODO: adapt from zsh
+#PS1="%F{#d65d0e}[%n@%m]%f %F{#458588}%5~%f %F{#3c3836}|%f "
+#PS4=$'%D{%M%S%.} %N:%i> '
+
 # History management
 HISTCONTROL=ignoreboth
 HISTSIZE=5000
@@ -22,11 +29,17 @@ HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
 HISTFILESIZE=10000
 HISTIGNORE="clear:bg:fg:cd:cd -:cd ..:cd ~:exit:date:w:* --help:h:ls:la:l:ll:eza"
 
+# Python
+export PYTHON_HISTORY=${XDG_STATE_HOME:-$HOME/.local/state}/python_history
+export PYTHONPYCACHEPREFIX=${XDG_CACHE_HOME:-$HOME/.cache}/python
+export PYTHONUSERBASE=${XDG_DATA_HOME:-$HOME/.local/share}/python
+
 # Append to the history file, don't overwrite it
 shopt -s histappend
 
-# Make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+if [[ $(command -v wget) ]]; then
+  export WGETRC="${XDG_CONFIG_HOME:-$HOME/.config}/wget/wgetrc"
+fi
 
 # Source alias definitions
 if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/bash/bash_aliases" ]; then

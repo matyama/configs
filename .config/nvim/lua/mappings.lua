@@ -21,8 +21,7 @@ map("n", "zf", "z=", { desc = "spell check hint/correction" })
 -- nnoremap <leader>sv :source $VIMRC<CR>
 
 map("", "<C-p>", ":Files<CR>", { desc = "quick-open" })
-map("", "<C-e>", ":Lexplore<CR>", { desc = "file explorer in current working directory" })
-map("n", "<leader>e", ":Lexplore<CR> %:p:h<CR>", { desc = "file explorer in directory of current file" })
+map("", "<C-e>", ":Lexplore<CR>", { desc = "toggle file explorer in CWD" })
 map("n", "<C-q>", ":confirm qall", { desc = "quick-quit" })
 map("n", "<leader>w", ":w<CR>", { desc = "quick-save" })
 
@@ -33,8 +32,7 @@ map("n", "<leader>e", ':e <C-R>=expand("%:p:h") . "/" <cr>', {
 -- clipboard copy/paste
 -- https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity
 map("v", "<leader>y", '"+y', { desc = "copy selection into clipboard" })
--- FIXME: <leader>d currenlty conflicts with vim.diagnostics.open_float in lsp
---map("v", "<leader>d", '"+d', { desc = "move selection into clipboard" })
+map("v", "<leader>d", '"+d', { desc = "move selection into clipboard" })
 map({ "n", "v" }, "<leader>p", '"+p', { desc = "paste clipboard after cursor" })
 map({ "n", "v" }, "<leader>P", '"+P', { desc = "paste clipboard before cursor" })
 
@@ -140,13 +138,19 @@ map("n", "<leader>d", vim.diagnostic.open_float, {
   desc = "Open diagnostic in a floating window",
 })
 
-map("n", "[d", function()
-  vim.diagnostic.jump({ count = -1 })
-end, { desc = "Jump to previous diagnostic" })
+-- FIXME
+--map("n", "[d", function()
+--  vim.diagnostic.jump({ count = -1 })
+--end, { desc = "Jump to previous diagnostic" })
+--
+--map("n", "]d", function()
+--  vim.diagnostic.jump({ count = 1 })
+--end, { desc = "Jump to next diagnostic" })
 
-map("n", "]d", function()
-  vim.diagnostic.jump({ count = 1 })
-end, { desc = "Jump to next diagnostic" })
+map("n", "[d", vim.diagnostic.goto_prev, {
+  desc = "Jump to previous diagnostic",
+})
+map("n", "]d", vim.diagnostic.goto_next, { desc = "Jump to next diagnostic" })
 
 map("n", "<leader>q", vim.diagnostic.setloclist, {
   desc = "Open a diagnostic location list",

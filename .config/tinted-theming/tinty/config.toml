@@ -1,13 +1,18 @@
 # Global settings
-shell = "zsh -c '{}'"
+#shell = "bash -c '{}'"
+#shell = "fish -c {}"
 defualt-scheme = "base16-gruvbox-dark-hard"
+
+# https://github.com/tinted-theming/tinted-fzf/issues/27
+#hooks = ["~/.local/share/tinted-theming/tinty/repos/tinted-fzf/ansi/ansi.sh"]
 
 # Item configuration
 [[items]]
 name = "tinted-shell"
 path = "https://github.com/tinted-theming/tinted-shell"
 themes-dir = "scripts"
-hook = "source %f"
+#hook = ". %f"
+hook = "source $TINTY_THEME_FILE_PATH"
 supported-systems = ["base16", "base24"]
 
 [[items]]
@@ -15,21 +20,26 @@ name = "tinted-tmux"
 path = "https://github.com/tinted-theming/tinted-tmux"
 themes-dir = "colors"
 # Check if tmux is in use and if it is, reload the config file
-hook = "tmux run 2> /dev/null && tmux source-file %f"
+#hook = "tmux run 2> /dev/null && tmux source-file %f"
+hook = "tmux run 2> /dev/null && tmux source-file $TINTY_THEME_FILE_PATH"
 supported-systems = ["base16", "base24"]
 
 [[items]]
 name = "tinted-fzf"
 path = "https://github.com/tinted-theming/tinted-fzf"
+#themes-dir = "fish"
 themes-dir = "sh"
-hook = ". %f"
+#hook = ". %f"
+hook = "source $TINTY_THEME_FILE_PATH"
 supported-systems = ["base16", "base24"]
 
 [[items]]
 name = "tinted-terminal"
 path = "https://github.com/tinted-theming/tinted-terminal"
 themes-dir = "themes/alacritty"
-hook = "mkdir -p ~/.config/alacritty && ln -sf %f ~/.config/alacritty/colors.toml"
+#hook = "ln -sf %f ~/.config/alacritty/colors.toml"
+#hook = "mkdir -p ~/.config/alacritty && ln -sf %f ~/.config/alacritty/colors.toml"
+hook = "mkdir -p ~/.config/alacritty && ln -sf $TINTY_THEME_FILE_PATH ~/.config/alacritty/colors.toml"
 supported-systems = ["base16", "base24"]
 
 #[[items]]
@@ -48,5 +58,7 @@ supported-systems = ["base16", "base24"]
 name = "base16-btop"
 path = "https://git.sr.ht/~blueingreen/base16-btop"
 themes-dir = "colors"
-hook = "mkdir -p ~/.config/btop/themes && ln -sf %f ~/.config/btop/themes/base16.theme"
+#hook = "ln -sf %f ~/.config/btop/themes/base16.theme"
+#hook = "mkdir -p ~/.config/btop/themes && ln -sf %f ~/.config/btop/themes/base16.theme"
+hook = "mkdir -p ~/.config/btop/themes && ln -sf $TINTY_THEME_FILE_PATH ~/.config/btop/themes/base16.theme"
 supported-systems = ["base16"]

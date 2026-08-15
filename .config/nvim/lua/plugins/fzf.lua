@@ -1,27 +1,9 @@
 -- Improved fzf.vim written in lua (https://github.com/ibhagwan/fzf-lua)
 return {
   "ibhagwan/fzf-lua",
-  dependencies = {
-    -- Command-line fuzzy finder (https://github.com/junegunn/fzf)
-    {
-      "junegunn/fzf",
-      dir = vim.env.FZF_BASE or "~/.local/share/fzf",
-      build = "./install --bin --no-update-rc",
-      cond = function()
-        return (vim.env.FZF or "fzf") == "fzf"
-      end,
-    },
-    -- Vim support for skim (https://github.com/lotabout/skim.vim)
-    {
-      "lotabout/skim",
-      tag = "v0.10.4",
-      dir = vim.env.SKIM_BASE or "~/.local/share/skim",
-      build = "./install",
-      cond = function()
-        return (vim.env.FZF or "fzf") == "sk"
-      end,
-    },
-  },
+  enabled = function()
+    return vim.fn.executable("fzf") == 1 or vim.fn.executable("sk") == 1
+  end,
   config = function()
     -- use native binary (fzf/sk), globally disable icons
     local profile = { "max-perf" }
@@ -33,7 +15,7 @@ return {
     require("fzf-lua").setup({
       profile,
       winopts = {
-        height = 0.2, -- start small, use Alt-f to toggle fullscreen
+        height = 0.4, -- start small, use Alt-f to toggle fullscreen
         width = 1, -- full width
         row = 1, -- show at the very bottom
         col = 0, -- show at the very left

@@ -36,7 +36,6 @@ BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
-SKIM_BASE ?= $(XDG_DATA_HOME)/skim
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
 RIPGREP_CONFIG_HOME ?= $(XDG_CONFIG_HOME)/rg
@@ -48,9 +47,6 @@ CARGO_TARGET_DIR=$(XDG_CACHE_HOME)/cargo-target
 CARGO_RELEASE_DIR=$(CARGO_TARGET_DIR)/release
 CARGO_ARTIFACTS_DIR=$(CARGO_RELEASE_DIR)/artifacts
 endif
-
-GEM_HOME ?= $(XDG_CONFIG_HOME)/gem
-GEM_SPEC_CACHE ?= $(XDG_CACHE_HOME)/gem
 
 GHCUP_USE_XDG_DIRS ?= 1
 CABAL_DIR ?= $(XDG_CONFIG_HOME)/cabal
@@ -69,7 +65,7 @@ DIST_ARCH ?= $(shell dpkg --print-architecture)
 
 # Aliases to make tools respect XDG specification
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
-WGET := wget --hsts-file=$(XDG_CACHE_HOME)/wget-hsts
+WGET := wget --hsts-file=$(XDG_STATE_HOME)/wget/wget-hsts
 
 DEBIAN_ISO := debian-12.7.0-$(DIST_ARCH)-netinst.iso
 
@@ -89,21 +85,9 @@ endif
 
 # Remove unused applications from the distribution and cleanup HOME
 .PHONY: clean
-clean: evince rhythmbox thunderbird
-	sudo apt autoremove --purge -y
-	sudo apt autoclean
+clean:
 	@echo ">>> Purging dot files that are disallowed in HOME's root"
 	@rm -f $(BANNED_HOME_DOT_FILES)
-
-.PHONY: evince rhythmbox
-evince rhythmbox:
-	@echo ">>> Uninstalling $@"
-	sudo apt purge -y $@
-
-.PHONY: thunderbird
-thunderbird:
-	@echo ">>> Uninstalling $@"
-	sudo snap remove $@
 
 # Don't pollute HOME with dot files: applications should either respect XDG
 # specification or be configured to do so.
@@ -112,9 +96,32 @@ BANNED_HOME_DOT_FILES := \
 	$(HOME)/.bashrc \
 	$(HOME)/.bash_history \
 	$(HOME)/.bash_logout \
-	$(HOME)/.lesshst \
-	$(HOME)/.zsh_history
+	$(HOME)/.lesshst
 
+# TODO: dependency on rustup, uv, tinty
+# TODO: check if the tinted-fzf patch is still necessary
+# TODO: other tools not installed via pacman
+.PHONY: update
+update: TINTED_FZF_HOME := \
+	$(XDG_DATA_HOME)/tinted-theming/tinty/repos/tinted-fzf
+update:
+	@echo ">>> Updating AUR packages..."
+	env -u CARGO_TARGET_DIR paru -Sua
+	@echo ">>> Updating Rust toolchains..."
+	rustup update
+	@echo ">>> Updating Rust tools..."
+	cargo install --locked proximity-sort
+	@echo ">>> Updating Python tools..."
+	uv tool upgrade --compile-bytecode --all
+	@echo ">>> Updating tinted themes..."
+	@git -C $(TINTED_FZF_HOME) reset --hard
+	tinty sync
+	@chmod +x $(TINTED_FZF_HOME)/ansi/ansi.sh
+
+# TODO: install
+#  - just: Just a command runner / simplified make
+#    (https://github.com/casey/just)
+#  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
 # TODO: add other tests
 .PHONY: test
 test: test-docker
@@ -123,8 +130,7 @@ CACHE_DIRS := \
 	$(CABAL_DIR) \
 	$(CARGO_ARTIFACTS_DIR) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
-	$(XDG_CACHE_HOME)/newsboat/podcasts \
-	$(XDG_CACHE_HOME)/zsh
+	$(XDG_CACHE_HOME)/newsboat/podcasts
 
 CONFIG_DIRS := \
 	$(RIPGREP_CONFIG_HOME) \
@@ -133,24 +139,22 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/bitcli \
 	$(XDG_CONFIG_HOME)/btop \
 	$(XDG_CONFIG_HOME)/environment.d \
+	$(XDG_CONFIG_HOME)/fish \
 	$(XDG_CONFIG_HOME)/fd \
 	$(XDG_CONFIG_HOME)/git \
 	$(XDG_CONFIG_HOME)/gtk-3.0 \
 	$(XDG_CONFIG_HOME)/mpd \
 	$(XDG_CONFIG_HOME)/newsboat \
 	$(XDG_CONFIG_HOME)/npm \
-	$(XDG_CONFIG_HOME)/nvidia-settings \
 	$(XDG_CONFIG_HOME)/nvim/lua \
 	$(XDG_CONFIG_HOME)/nvim/lua/plugins \
-	$(XDG_CONFIG_HOME)/nvim/spell \
 	$(XDG_CONFIG_HOME)/python \
 	$(XDG_CONFIG_HOME)/rmpc \
 	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/tinted-theming/tinty \
-	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \
-	$(ZDOTDIR)
+	$(XDG_CONFIG_HOME)/wget
 
 DATA_DIRS := \
 	$(CARGO_HOME) \
@@ -158,9 +162,7 @@ DATA_DIRS := \
 	$(STACK_ROOT) \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
-	$(XDG_DATA_HOME)/newsboat \
-	$(ZSH_COMPLETIONS) \
-	$(ZSH_FUNCTIONS)
+	$(XDG_DATA_HOME)/newsboat
 
 # Ensure necessary paths exist
 $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
@@ -170,13 +172,15 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(XDG_CONFIG_HOME)/mpd/playlists \
 	$(XDG_DEV_HOME) \
 	$(XDG_FONTS_HOME) \
+	$(XDG_ICONS_HOME) \
 	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
 	$(XDG_MAN_HOME)/man1 \
 	$(XDG_MAN_HOME)/man5 \
 	$(XDG_THEMES_HOME) \
 	$(XDG_TMP_HOME) \
 	$(XDG_STATE_HOME)/mpd \
-	$(XDG_STATE_HOME)/sqlite3:
+	$(XDG_STATE_HOME)/sqlite3\
+	$(XDG_STATE_HOME)/wget:
 	mkdir -p $@
 
 $(APT_KEYRINGS) $(USR_KEYRINGS):
@@ -197,8 +201,6 @@ DOCKER_CMD := $(shell command -v docker 2> /dev/null)
 
 INTEL_CPU := $(shell egrep 'model name\s+: Intel' /proc/cpuinfo 2> /dev/null)
 
-NVIDIA_CTRL := $(shell lspci | grep -i nvidia 2> /dev/null)
-
 # Resources:
 #  - https://askubuntu.com/a/1263653
 #  - default timer: 00:00~24:00/4
@@ -207,17 +209,6 @@ snap:
 	@echo ">>> Configuring $@"
 	sudo snap set system refresh.timer=sun,18:00~20:00/2
 	sudo snap set core experimental.refresh-app-awareness=true
-
-# TODO: download fonts from nerdfonts.com instead
-.PHONY: install-fonts
-install-fonts: URL := https://github.com/romkatv/powerlevel10k-media/raw/master
-install-fonts: $(XDG_FONTS_HOME)
-	@echo ">>> Downloading Meslo Nerd Font"
-	curl -sSL "$(URL)/MesloLGS%20NF%20{Regular,Bold,Italic,Bold%20Italic}.ttf" \
-		-o $</"MesloLGS NF #1.ttf"
-	mv $</MesloLGS\ NF\ Bold%20Italic.ttf $</MesloLGS\ NF\ Bold\ Italic.ttf
-	@echo ">>> Reloading fonts cache"
-	@fc-cache -f
 
 # Resources:
 #  - https://github.com/Fausto-Korpsvart/Gruvbox-GTK-Theme#cli-installation
@@ -284,63 +275,6 @@ links: \
 /usr/bin/lldb-vscode:
 	@sudo ln -svf /usr/bin/lldb-vscode-15 $@
 
-# Kernel version locked tools (such as `perf` and `x86_energy_perf_policy`)
-.PHONY: linux-tools
-linux-tools: KERNEL_RELEASE := $(shell uname -r)
-linux-tools: PERF_BUILDID_DIR := /var/cache/perf-buildid
-linux-tools:
-	@echo ">>> Installing tools for kernel $(KERNEL_RELEASE)"
-	@sudo apt install -y $@-$(KERNEL_RELEASE)
-	@echo ">>> Configuring perf 'buildid.dir=$(PERF_BUILDID_DIR)'"
-	@sudo perf config --system buildid.dir=$(PERF_BUILDID_DIR)
-
-# Installed tools:
-#  - libssl-dev: secure sockets layer toolkit
-#  - pssh: asynchronous parallel SSH library (https://parallel-ssh.org)
-.PHONY: net-tools
-net-tools:
-	@echo ">>> Installing basic network tools"
-	sudo apt install -y \
-		curl \
-		jq \
-		libssl-dev \
-		net-tools \
-		ncat \
-		nmap \
-		pssh \
-		traceroute \
-		wget
-
-# Installed tools:
-#  - cpu-checker: tools to help evaluate certain CPU (or BIOS) features
-#    (e.g., kvm-ok)
-#  - libfuse2: Filesystem in Userspace
-#    [AppImage - FUSE](https://github.com/AppImage/AppImageKit/wiki/FUSE)
-.PHONY: core-tools
-core-utils:
-	@echo ">>> Installing core utilities"
-	sudo apt install -y cpu-checker git moreutils libfuse2
-
-.PHONY: apt-utils
-apt-utils:
-	@echo ">>> Installing utilities that let apt use packages over HTTPS"
-	sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-
-# Installed tools:
-#  - wl-clipboard: copy/paste utilities for Wayland
-.PHONY: wl-utils
-wl-utils:
-	@echo ">>> Installing Wayland copy/paste utilities"
-	sudo apt install -y wl-clipboard
-
-# System performance tools for Linux
-sysstat:
-	@echo ">>> Installing $@: https://github.com/sysstat/sysstat"
-	sudo apt install -y $@
-	@echo ">>> Starting $@ data collection"
-	sudo systemctl start $@
-	sudo systemctl enable $@
-
 # NOTE: python-is-python3 makes python available as python3
 python:
 	@echo ">>> Installing standard Python libraries"
@@ -379,74 +313,13 @@ endif
 	@gzip -c $(FZF_BASE)/man/man1/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
 	@gzip -c $(FZF_BASE)/man/man1/$@-tmux.1 > $(XDG_MAN_HOME)/man1/$@-tmux.1.gz
 
-# TODO: move completion linking and keybindings to zshrc (use `has'sk'`)
-# skim: Fuzzy Finder in rust!
-#  - https://github.com/skim-rs/skim
-#  - Note: installs version given by SKIM_TAG
-.PHONY: skim
-skim: SKIM_REPO := https://github.com/skim-rs/skim
-skim: SKIM_TAG := $(shell gh_latest_release skim-rs/skim)
-skim: core-utils rust zsh $(XDG_BIN_HOME) $(XDG_MAN_HOME)/man1
-ifneq ($(shell which sk 2> /dev/null),)
-	@echo ">>> Updating $@"
-ifneq ($(shell sk -V | sed 's|sk |v|'),$(SKIM_TAG))
-	@git -C $(SKIM_BASE) fetch --all --tags --prune
-	git -C $(SKIM_BASE) checkout tags/$(SKIM_TAG)
-endif
-	git -C $(SKIM_BASE) pull
-else
-	@echo ">>> Installing $@ to '$(SKIM_BASE)'"
-	git clone --depth 1 --branch $(SKIM_TAG) $(SKIM_REPO) $(SKIM_BASE)
-endif
-	cargo build --release --locked --manifest-path "$(SKIM_BASE)/Cargo.toml"
-	@cp $(CARGO_TARGET_DIR)/release/sk $(XDG_BIN_HOME)
-	@ln -svf $(SKIM_BASE)/bin/sk-tmux $(XDG_BIN_HOME)/sk-tmux
-	@ln -svf $(SKIM_BASE)/shell/completion.zsh $(ZSH_COMPLETIONS)/_sk
-	@gzip -c $(SKIM_BASE)/man/man1/sk.1 > $(XDG_MAN_HOME)/man1/sk.1.gz
-	@gzip -c $(SKIM_BASE)/man/man1/sk-tmux.1 > $(XDG_MAN_HOME)/man1/sk-tmux.1.gz
-
-# lesspipe.sh: display more with less (https://github.com/wofr06/lesspipe)
-#  - Note: lesspipe.sh is installed system-wide and thus requires sudo
-.PHONY: lesspipe
-lesspipe: LESSPIPE_REPO := wofr06/lesspipe
-lesspipe: LESSPIPE_DIR := $(shell mktemp -d)
-lesspipe: net-tools
-	@curl -sSL "$$(gh_latest_release --tar $(LESSPIPE_REPO))" | \
-		tar -xzf - --strip-components=1 -C $(LESSPIPE_DIR)
-ifneq ($(shell which zsh),)
-	cd $(LESSPIPE_DIR) && \
-		./configure --shell=$(shell which zsh) && \
-		sudo make install
-else
-	cd $(LESSPIPE_DIR) && ./configure && sudo make install
-endif
-	@rm -rf "$(LESSPIPE_DIR)"
-
-# TODO: non-snap installation, man page
-# Resources:
-#  - https://github.com/neovim/neovim/wiki/Installing-Neovim
-#  - https://linuxhint.com/vim_spell_check
-# Notes:
-#  - PPA repository contains an quite old stable release compared to GitHub and
-#    Snap (Neovim team does not maintain the PPA packages)
-.PHONY: neovim
-neovim: $(XDG_CONFIG_HOME)/nvim/spell
-	@echo ">>> Installing $@"
-	sudo snap install --beta nvim --classic
-	touch $(XDG_CONFIG_HOME)/nvim/spell/en.utf-8.add
-
 # Installed tools:
 #  - autoconf: automatic configure script builder
 #    (https://www.gnu.org/software/autoconf)
-#  - btop: command line resource monitor that shows usage and stats
-#    (https://github.com/aristocratos/btop)
-#  - cava: Cross-platform Audio Visualizer (https://github.com/karlstav/cava)
 #  - coz-profiler: Coz: Causal Profiling (https://github.com/plasma-umass/coz)
 #  - default-jdk: Standard Java or Java compatible Development Kit
 #  - entr: Run arbitrary commands when files change
 #    (https://github.com/eradman/entr)
-#  - fastfetch: A command-line system information tool
-#    (https://github.com/fastfetch-cli/fastfetch)
 #  - fzf: A command-line fuzzy finder (https://github.com/junegunn/fzf)
 #  - git-lfs: Git extension for versioning large files (https://git-lfs.com)
 #  - heaptrack(-gui): A heap memory profiler for Linux
@@ -465,7 +338,6 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - tesseract-ocr: Tesseract Open Source OCR Engine
 #    (https://github.com/tesseract-ocr/tesseract)
 #  - tshark: Terminal version of wireshark
-#  - mpd: Music Player Daemon (https://www.musicpd.org)
 #  - musl-tools: tools for cross-compilation to musl target
 #  - capnproto, libcapnp-dev: Cap'N Proto compiler tools (https://capnproto.org)
 #  - protobuf-compiler: `protoc`, compiler for protocol buffer definition files
@@ -476,37 +348,17 @@ neovim: $(XDG_CONFIG_HOME)/nvim/spell
 #  - zathura: document viewer (https://pwmt.org/projects/zathura)
 .PHONY: basic-tools
 basic-tools: \
-	linux-tools \
-	net-tools \
-	core-utils \
-	apt-utils \
-	wl-utils \
-	sysstat \
-	btop \
-	fastfetch \
 	fzf \
-	tmux \
-	mpd \
-	neovim \
 	pandoc \
-	$(XDG_CONFIG_HOME)/btop \
 	$(XDG_STATE_HOME)/sqlite3
 	@echo ">>> Installing basic tools"
 	sudo apt install -y \
 		autoconf \
 		git-lfs \
-		btop \
-		htop \
-		iotop \
-		iftop \
 		tshark \
-		tree \
 		entr \
 		chafa \
-		cava \
 		gparted \
-		gnome-tweaks \
-		blueman \
 		mypaint \
 		tlp \
 		dos2unix \
@@ -540,56 +392,13 @@ basic-tools: \
 		wireguard \
 		zathura
 
-.PHONY: fastfetch
-fastfetch:
-	@echo ">>> Installing $@"
-	sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch
-	sudo apt update
-	sudo apt install -y $@
-
-# Music Player Daemon (https://www.musicpd.org)
-.PHONY: mpd
-mpd: $(XDG_CONFIG_HOME)/mpd/playlists $(XDG_STATE_HOME)/mpd
-	@echo ">>> Installing $@"
-	sudo apt update
-	sudo apt install -y $@
-	@echo ">>> Linking $@ confg..."
-	@ln -svft $(XDG_CONFIG_HOME)/$@ $(CFG_CONFIG_HOME)/$@/*
-	@echo ">>> Enabling $@ systemd user service"
-	systemctl --user enable --now $@
-
-.PHONY: pandoc
-pandoc: $(ZSH_COMPLETIONS)
-	@echo ">>> Installing $@"
-	sudo apt install -y $@
-	@echo ">>> Setting up $@ completions"
-	$@ --bash-completion > $</_$@
-
-.PHONY: tmux
-tmux: $(XDG_CONFIG_HOME)/tmux
-	@echo ">>> Installing $@: https://github.com/tmux/tmux"
-	sudo apt install -y $@
-	@echo ">>> Linking $@ confg..."
-	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
-	make -C $(CFG_DIR) tinted-$@
-
-# rsync for cloud storage
-.PHONY: rclone
-rclone: DOWNLOAD_URL := \
-	https://downloads.rclone.org/rclone-current-linux-$(DIST_ARCH).zip
-rclone: DOWNLOAD_DIR := $(shell mktemp -d)
-rclone: net-tools $(XDG_MAN_HOME)/man1
-	@echo ">>> Downloading $@: $(DOWNLOAD_URL)"
-	@curl -sSL "$(DOWNLOAD_URL)" > "$(DOWNLOAD_DIR)/$@.zip"
-	@echo ">>> Installing $@: https://rclone.org"
-	@unzip -j \
-		"$(DOWNLOAD_DIR)/$@.zip" \
-		$@-*-linux-$(DIST_ARCH)/$@* \
-		-d "$(DOWNLOAD_DIR)"
-	@mv "$(DOWNLOAD_DIR)/$@" $(XDG_BIN_HOME)
-	@gzip -c "$(DOWNLOAD_DIR)/$@.1" > $(XDG_MAN_HOME)/man1/$@.1.gz
-	@echo ">>> Using $$($@ -V)"
-	rm -rf "$(DOWNLOAD_DIR)"
+# TODO: either remove or install via pacman (and setup fish/bash completions)
+#.PHONY: pandoc
+#pandoc:
+#	@echo ">>> Installing $@"
+#	sudo apt install -y $@
+#	@echo ">>> Setting up $@ completions"
+#	$@ --bash-completion > $</_$@
 
 # Resources:
 #  - [Simple tutorial](https://phoenixnap.com/kb/ubuntu-install-kvm)
@@ -717,7 +526,7 @@ endif
 .PHONY: k8s
 k8s: KVM2_DRIVER_URL := https://storage.googleapis.com/minikube/releases/latest
 k8s: KVM2_DRIVER := docker-machine-driver-kvm2
-k8s: apt-utils binenv kvm
+k8s: binenv kvm
 ifndef DOCKER_CMD
 	@echo ">>> Docker is not installed"
 	exit 1
@@ -799,60 +608,6 @@ test-k8s: net-tools
 	minikube status || true
 	@echo ">>> Verified kubectl $$(kubectl version --client -o json | jq -r '.clientVersion.gitVersion')"
 
-.PHONY: terraform
-terraform: binenv
-	@echo ">>> Installing $@: https://developer.hashicorp.com/terraform"
-	@binenv update
-	binenv install $@
-	@echo ">>> Installed: $$($@ -version)"
-
-# Code snippet to be used by test-terraform
-# editorconfig-checker-disable
-define MAIN_TF
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0.1"
-    }
-  }
-}
-
-provider "docker" {}
-
-resource "docker_image" "nginx" {
-  name         = "nginx"
-  keep_locally = false
-}
-
-resource "docker_container" "nginx" {
-  image = docker_image.nginx.image_id
-  name  = "tutorial"
-
-  ports {
-    internal = 80
-    external = 8000
-  }
-}
-endef
-# editorconfig-checker-enable
-
-export MAIN_TF
-
-.PHONY: test-terraform
-test-terraform: TF_TEST_DIR := $(shell mktemp -d)
-test-terraform:
-ifeq ($(shell which terraform 2> /dev/null),)
-	$(error terraform command not found)
-else
-	@echo ">>> Testing $$(terraform -version)"
-	@echo "$$MAIN_TF" > $(TF_TEST_DIR)/main.tf
-	terraform -chdir="$(TF_TEST_DIR)" init
-	terraform -chdir="$(TF_TEST_DIR)" apply -auto-approve
-	terraform -chdir="$(TF_TEST_DIR)" destroy -auto-approve
-endif
-	rm -rf "$(TF_TEST_DIR)"
-
 # Installation resources:
 #  - https://github.com/devops-works/binenv#linux-bashzsh
 #
@@ -884,50 +639,9 @@ else
 endif
 	@rm -rf $(DOWNLOAD_DIR)
 
-.PHONY: zsh
-zsh: $(XDG_CACHE_HOME)/zsh $(ZSH_COMPLETIONS) core-utils net-tools
-ifneq ($(shell which zsh 2> /dev/null),)
-	@echo ">>> $@ already installed"
-else
-	@echo ">>> Installing zsh"
-	sudo apt install -y $@ fonts-powerline
-	$@ --version
-	sudo chsh -s $$(which $@)
-endif
-
-# Installation resources:
-#  - cmake: software build system for C/C++ (https://cmake.org)
-#  - bash-language-server: language server for Bash
-#    (https://github.com/bash-lsp/bash-language-server)
-.PHONY: cmake bash-language-server slack
-cmake bash-language-server slack:
-	@echo ">>> Installing $@: https://snapcraft.io/$@"
-	sudo snap install --classic $@
-
-# Installation resources:
-#  - dbeaver-ce: universal database tool (https://dbeaver.io)
-#  - gimp: GNU Image Manipulation Program (https://www.gimp.org)
-#  - netron: visualizer for neural network, deep learning & ML models
-#    (https://github.com/lutzroeder/netron)
-#  - postman: API platform for building & using APIs (https://www.postman.com)
-.PHONY: dbeaver-ce gimp netron postman spotify zoom-client
-dbeaver-ce gimp netron postman spotify zoom-client:
-	@echo ">>> Installing $@: https://snapcraft.io/$@"
-	sudo snap install $@
-
 .PHONY: uv
-uv: $(ZSH_COMPLETIONS)
-ifneq ($(shell which uv 2> /dev/null),)
-	@echo ">>> Updating $@"
-	@env UV_NO_MODIFY_PATH=1 $@ self update
-else
-	@echo ">>> Installing $@"
-	@curl -LsSf https://astral.sh/uv/install.sh | sh
-endif
-	@echo ">>> Setting up $@ completions"
-	@$@ generate-shell-completion zsh > $</_$@
-	@echo ">>> Setting up $@x completions"
-	@$@x --generate-shell-completion zsh > $</_$@x
+uv:
+	sudo pacman -Sy --needed --noconfirm uv
 
 .PHONY: python-tools
 python-tools: uv
@@ -971,7 +685,6 @@ python-lsp-server: uv
 #  - [stack](https://docs.haskellstack.org/en/stable/README/)
 # Additional notes:
 #  - ghcup also installs the Haskell Language Server and Stack
-#  - ghcup-zsh instegration is already present in .zshrc
 .PHONY: haskell
 haskell: ghcup
 
@@ -1012,23 +725,6 @@ haskell-tools: haskell
 	@echo ">>> Installing hlint: https://github.com/ndmitchell/hlint"
 	stack install hlint apply-refact
 
-.PHONY: rust
-rust: net-tools
-ifeq ($(shell which rustc 2> /dev/null),)
-	@echo ">>> Installing Rust toolchain"
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-	. $(XDG_DATA_HOME)/cargo/env
-	@echo ">>> Installing Rust nightly toolchain"
-	rustup install nightly
-	@echo ">>> Installing rust-src"
-	rustup component add rust-src
-	@echo ">>> Installing rust-analyzer"
-	rustup component add rust-analyzer
-	@echo ">>> Installing miri"
-	rustup +nightly component add miri
-endif
-	rustup show
-
 # Cargo subcommands:
 #  - auditable: make production Rust binaries auditable
 #  - bloat: find out what takes most of the space in your executable
@@ -1041,6 +737,7 @@ endif
 #  - llvm-lines: count lines of LLVM IR per generic function
 #  - modules: visualize/analyze a Rust crate's internal structure
 #  - msrv: find the minimum supported Rust version (MSRV)
+#  - nextest: a next-generation test runner for Rust
 #  - readme: generate README.md content from doc comments
 #  - tarpaulin: a code coverage tool for Rust projects
 #  - workspaces: a tool for managing cargo workspaces and their crates
@@ -1056,6 +753,7 @@ CARGO_EXTENSIONS := \
 	cargo-llvm-lines \
 	cargo-modules \
 	cargo-msrv \
+	cargo-nextest \
 	cargo-readme \
 	cargo-tarpaulin \
 	cargo-workspaces
@@ -1067,7 +765,6 @@ CARGO_EXTENSIONS := \
 #  - deny: lint dependencies
 #  - insta: review tool for insta, a snapshot testing library for Rust
 #  - machete: find unused dependencies
-#  - nextest: a next-generation test runner for Rust
 #  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
 #  - sort:  check if tables and items in a .toml file are lexically sorted
@@ -1078,7 +775,6 @@ CARGO_EXTENSIONS_LOCKED := \
 	cargo-deny \
 	cargo-insta \
 	cargo-machete \
-	cargo-nextest \
 	cargo-outdated \
 	cargo-semver-checks \
 	cargo-show-asm \
@@ -1109,332 +805,36 @@ cargo-llvm-cov:
 	cargo install --locked $@
 	rustup component add llvm-tools-preview --toolchain nightly
 
-# TODO: archived, replace with either bacon or watchexec
-# Watches over project's source for changes & runs commands when they occur
-.PHONY: cargo-watch
-cargo-watch: DOWNLOAD_URL := https://github.com/watchexec/cargo-watch/releases/download
-cargo-watch: DOWNLOAD_DIR := $(shell mktemp -d)
-cargo-watch: TARBALL := $(ARCH)-unknown-linux-gnu.tar.xz
-cargo-watch: $(ZSH_COMPLETIONS) $(XDG_MAN_HOME)/man1 net-tools rust
-	@echo ">>> Installing $@: https://github.com/watchexec/cargo-watch"
-	cargo install $@
-	@echo ">>> Downloading man pages and zsh completions for $$($@ -V)"
-	@curl -sSL "$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/$$($@ -V | sed 's| |-v|')-$(TARBALL)" | \
-		tar -C $(DOWNLOAD_DIR) -xJf - --strip-components=1 --wildcards */$@.1 */completions/zsh
-	@gzip -c $(DOWNLOAD_DIR)/$@.1 > $(XDG_MAN_HOME)/man1/$@.1.gz
-	@mv $(DOWNLOAD_DIR)/completions/zsh $</_$@
-	@echo ">>> Finish $@ completion setup by reloading zsh"
-	@rm -rf $(DOWNLOAD_DIR)
-
 .PHONY: cargo-tools
 cargo-tools: \
 	rust \
 	cargo-audit \
 	cargo-llvm-cov \
-	cargo-watch \
 	$(CARGO_EXTENSIONS) \
 	$(CARGO_EXTENSIONS_LOCKED)
 
 # TODO: replace click (unmaintained) with k9s
 # Installed tools:
-#  - bat: A cat(1) clone with wings (https://github.com/sharkdp/bat)
-#  - bitcli: Simple CLI tool for URL shortening via Bitly
-#    (https://github.com/matyama/bitcli)
-#  - caligula: A user-friendly, lightweight TUI for disk imaging
-#    (https://github.com/ifd3f/caligula)
 #  - click: Command Line Interactive Controller for Kubernetes
 #    (https://github.com/databricks/click)
 #  - cross: “Zero setup” cross compilation and “cross testing” of Rust crates
 #    (https://github.com/cross-rs/cross)
-#  - eza: A modern, maintained replacement for 'ls'
-#    (https://github.com/eza-community/eza)
-#  - fd: A simple, fast and user-friendly alternative to 'find'
-#    (https://github.com/sharkdp/fd)
-#  - git-delta: A syntax-highlighting pager for git, diff, and grep output
-#    (https://github.com/dandavison/delta)
-#  - gping: Ping, but with a graph (https://github.com/orf/gping)
-#  - hexyl: A command-line hex viewer (https://github.com/sharkdp/hexyl)
-#  - hyperfine: A command-line benchmarking tool
-#    (https://github.com/sharkdp/hyperfine)
 #  - junitify: takes JSON tests from stdin and writes JUnit XML
 #    (https://gitlab.com/Kores/junitify)
-#  - just: Just a command runner / simplified make
-#    (https://github.com/casey/just)
-#  - mcfly: an upgraded ctrl-r where history results make sense for what you're
-#    working on right now (https://github.com/cantino/mcfly)
-#  - mdbook: Build a book from Markdown files
-#    (https://github.com/rust-lang/mdBook)
-#  - onefetch: Command-line Git information tool
-#    (https://github.com/o2sh/onefetch)
-#  - procs: A modern replacement for ps written in Rust
-#    (https://github.com/dalance/procs)
-#  - proximity-search: Simple command-line utility for sorting inputs by
-#    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
-#  - ripgrep: Recursively searches directories for a regex pattern
-#    (https://github.com/BurntSushi/ripgrep)
-#  - rmpc: A modern, configurable, terminal based MPD client
-#    (https://github.com/mierak/rmpc)
-#  - samply: Command-line sampling profiler for macOS and Linux
-#    (https://github.com/mstange/samply)
-#  - sd: Intuitive find & replace CLI (sed alternative)
-#    (https://github.com/chmln/sd)
-#  - stylua: An opinionated Lua code formatter
-#    (https://github.com/JohnnyMorganz/StyLua)
-#  - tealdeer: A very fast implementation of tldr in Rust
-#    (https://github.com/dbrgn/tealdeer)
-#  - tinty: A base16 and base24 color scheme manager
-#    (https://github.com/tinted-theming/tinty)
-#  - tokio-console: A debugger for async Rust
-#    (https://github.com/tokio-rs/console)
-#  - xh: Friendly and fast tool for sending HTTP requests
-#    (https://github.com/ducaale/xh)
-#  - zoxide: A smarter cd command (https://github.com/ajeetdsouza/zoxide)
-#
 # TODO: remove the dependency on CRATES_SRC / crates.io index
 .PHONY: rust-tools
 rust-tools: CRATES_SRC := $(CARGO_HOME)/registry/src/index.crates.io-1949cf8c6b5b557f
-rust-tools: zsh rust pandoc $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
-	@echo ">>> Installing bat: https://github.com/sharkdp/bat"
-	env BAT_ASSETS_GEN_DIR=$(CARGO_ARTIFACTS_DIR) \
-		cargo install --locked --force bat
-	@gzip -c "$(CARGO_ARTIFACTS_DIR)/assets/manual/bat.1" \
-		> $(XDG_MAN_HOME)/man1/bat.1.gz
-	@cp "$(CARGO_ARTIFACTS_DIR)/assets/completions/bat.zsh" "$(ZSH_COMPLETIONS)/_bat"
-	@echo ">>> Installing bitcli: https://github.com/matyama/bitcli"
-	cargo install --locked --git https://github.com/matyama/bitcli
-	@echo ">>> Installing caligula: https://github.com/ifd3f/caligula"
-	cargo install --locked caligula
-	make -C $(CFG_DIR) cross
-	@echo ">>> Installing eza: https://eza.rocks"
-	cargo install eza
-	@cp "$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/completions/zsh/_eza" "$(ZSH_COMPLETIONS)/_eza"
-	@pandoc  -s -t man \
-		$(CRATES_SRC)/eza-$$(eza -v | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')/man/eza.1.md \
-		| gzip -c > $(XDG_MAN_HOME)/man1/eza.1.gz
-	@echo ">>> Installing dust: https://github.com/bootandy/dust"
-	cargo install du-dust
-	@echo ">>> Installing fd: https://github.com/sharkdp/fd"
-	cargo install fd-find
-	@cp \
-		$(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/contrib/completion/_fd \
-		$(ZSH_COMPLETIONS)
-	@gzip -c $(CRATES_SRC)/$$(fd -V | sed 's| |-find-|')/doc/fd.1 \
-		> $(XDG_MAN_HOME)/man1/fd.1.gz
-	@echo ">>> Installing git-delta: https://github.com/dandavison/delta"
-	cargo install git-delta
-	@echo ">>> Installing gping: https://github.com/orf/gping"
-	cargo install gping
-	@echo ">>> Installing hexyl: https://github.com/sharkdp/hexyl"
-	cargo install hexyl
-	@pandoc  -s -f markdown -t man \
-		$(CRATES_SRC)/$$(hexyl --version | sed 's| |-|g')/doc/hexyl.1.md \
-		| gzip -c > $(XDG_MAN_HOME)/man1/hexyl.1.gz
-	@echo ">>> Installing hyperfine: https://github.com/sharkdp/hyperfine"
-	env SHELL_COMPLETIONS_DIR=$(CARGO_ARTIFACTS_DIR) \
-		cargo install --locked --force hyperfine
-	@cp "$(CARGO_ARTIFACTS_DIR)/_hyperfine" $(ZSH_COMPLETIONS)
-	@gzip -c $(CRATES_SRC)/$$(hyperfine --version | sed 's| |-|g')/doc/hyperfine.1 \
-		> $(XDG_MAN_HOME)/man1/hyperfine.1.gz
+rust-tools: rust $(CARGO_ARTIFACTS_DIR) $(XDG_MAN_HOME)/man1
 	@echo ">>> Installing junitify: https://gitlab.com/Kores/junitify"
 	cargo install junitify
-	@echo ">>> Installing just: https://github.com/casey/just"
-	cargo install --locked just
-	@just --completions zsh > "$(ZSH_COMPLETIONS)/_just"
-	@just --man | gzip -c > $(XDG_MAN_HOME)/man1/just.1.gz
-	@echo ">>> Installing mcfly: https://github.com/cantino/mcfly"
-	cargo install mcfly
-	@echo ">>> Installing mdbook: https://github.com/rust-lang/mdBook"
-	cargo install mdbook
-	@echo ">>> Installing onefetch: https://github.com/o2sh/onefetch"
-	cargo install onefetch
-	@gzip -c $(CRATES_SRC)/$$(onefetch --version | sed 's| |-|g')/docs/onefetch.1 \
-		> $(XDG_MAN_HOME)/man1/onefetch.1.gz
-	@echo ">>> Installing procs: https://github.com/dalance/procs"
-	cargo install procs
-	@procs --gen-completion-out zsh > "$(ZSH_COMPLETIONS)/_procs"
-	@echo ">>> Installing proximity-sort: https://github.com/jonhoo/proximity-sort"
-	cargo install proximity-sort
 	@echo ">>> Installing click: https://github.com/databricks/click"
 	cargo install click
-	@echo ">>> Installing ripgrep: https://github.com/BurntSushi/ripgrep"
-	cargo install ripgrep
-	@rg --generate complete-zsh > "$(ZSH_COMPLETIONS)/_rg"
-	@rg --generate man | gzip -c > $(XDG_MAN_HOME)/man1/rg.1.gz
-	make -C $(CFG_DIR) rmpc
-	@echo ">>> Installing samply: https://github.com/mstange/samply"
-	cargo install --locked samply
-	@echo ">>> Installing sd: https://github.com/chmln/sd"
-	cargo install sd
-	@cp "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/completions/_sd" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CRATES_SRC)/$$(sd -V | sd ' ' -)/gen/sd.1" \
-		> $(XDG_MAN_HOME)/man1/sd.1.gz
 	@echo ">>> Installing sqlx-cli: https://crates.io/crates/sqlx-cli"
 	cargo install sqlx-cli
 	@sqlx completions zsh > "$(ZSH_COMPLETIONS)/_sqlx"
-	@echo ">>> Installing stylua: https://github.com/JohnnyMorganz/StyLua"
-	cargo install stylua
-	make -C $(CFG_DIR) tinty
-	make -C $(CFG_DIR) tldr
-	@echo ">>> Installing tokio-console: https://github.com/tokio-rs/console"
-	cargo install --locked tokio-console
-	@tokio-console gen-completion zsh > "$(ZSH_COMPLETIONS)/_tokio-console"
-	@echo ">>> Installing xh: https://github.com/ducaale/xh"
-	cargo install --locked xh
-	@cp "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/completions/_xh" $(ZSH_COMPLETIONS)
-	@gzip -c "$(CRATES_SRC)/$$(xh -V | sed 's| |-|g')/doc/xh.1" \
-		> $(XDG_MAN_HOME)/man1/xh.1.gz
-	@echo ">>> Installing zoxide: https://github.com/ajeetdsouza/zoxide"
-	cargo install zoxide --locked
-	@gzip -c "$(CRATES_SRC)/$$(zoxide -V | sed 's| |-|g')/man/man1/zoxide.1" \
-		> $(XDG_MAN_HOME)/man1/zoxide.1.gz
 
-# “Zero setup” cross compilation and “cross testing” of Rust crates
-#  - Requires: docker, binfmt-support (for testing)
-#  - Installing from git, because the latest release is ~2y old
-.PHONY: cross
-cross: rust binfmt-support
-	@echo ">>> Installing $@: https://github.com/cross-rs/cross"
-	cargo install --locked cross --git https://github.com/cross-rs/cross
-
-#  A modern, configurable, terminal based MPD client
-# TODO: revert to non-git install once support for abstract sockets is released
-.PHONY: rmpc
-rmpc: rust mpd $(XDG_CONFIG_HOME)/rmpc
-	@echo ">>> Installing $@: https://github.com/mierak/rmpc"
-	#cargo install --locked rmpc
-	cargo install \
-		--locked \
-		--bins \
-		--git https://github.com/mierak/rmpc \
-		rmpcd rmpc
-
-# TOML linter, formatter, and LSP
-.PHONY: taplo
-taplo: rust
-	@echo ">>> Installing $@ CLI & LSP: https://github.com/tamasfe/taplo"
-	cargo install --features lsp --locked taplo-cli
-
-# Base16 and base24 color scheme manager
-.PHONY: tinty
-tinty: BASE16_THEME_DEFAULT ?= gruvbox-dark-hard
-tinty: BASE16_THEME ?= $(BASE16_THEME_DEFAULT)
-tinty: $(XDG_CONFIG_HOME)/tinted-theming/tinty rust
-	@echo ">>> Installing $@: https://github.com/tinted-theming/tinty"
-	cargo install --locked $@
-	@echo ">>> Configuring $$($@ -V)"
-	@ln -svft $< $(CFG_CONFIG_HOME)/tinted-theming/$@/*
-	@echo ">>> Synchronizing managed configurations"
-	@tinty sync
-	@echo ">>> Applying color scheme: $(BASE16_THEME)"
-	@tinty apply base16-$(BASE16_THEME)
-
-.PHONY: tldr
-tldr: DOWNLOAD_URL := https://github.com/tealdeer-rs/tealdeer/releases/download
-tldr: $(ZSH_COMPLETIONS) $(XDG_CONFIG_HOME)/tealdeer net-tools rust
-	@echo ">>> Installing $@: https://github.com/tealdeer-rs/tealdeer"
-	cargo install tealdeer
-	@echo ">>> Configuring $$($@ -v)"
-	@ln -svft $(XDG_CONFIG_HOME)/tealdeer $(CFG_CONFIG_HOME)/tealdeer/*
-	@echo ">>> Downloading zsh completions for $$($@ -v)"
-	@curl -sSL -o $</_$@ \
-		"$(DOWNLOAD_URL)/v$$($@ -v | awk {'print $$2'})/completions_zsh"
-	@echo ">>> Updating local $@ cache"
-	@tldr --update
-
-# TUI for managing bluetooth on Linux
-#  - Requires: bluez, libdbus-1-dev (build)
-.PHONY: bluetui
-bluetui: rust
-	@echo ">>> Installing system dependencies: bluez, libdbus-1-dev"
-	@sudo apt update
-	@sudo apt install -y bluez libdbus-1-dev
-	@echo ">>> Installing $@: https://github.com/pythops/bluetui"
-	cargo install --locked $@
-
-# Resources:
-#  - https://github.com/alacritty/alacritty/blob/master/INSTALL.md
-# TODO: run alacritty on GPU (e.g., using `switcherooctl launch <CMD>`)
-#  - https://github.com/alacritty/alacritty/issues/3587
-.PHONY: alacritty
-alacritty: DOWNLOAD_URL := https://github.com/alacritty/alacritty/releases/download
-alacritty: DOWNLOAD_DIR := $(shell mktemp -d)
-alacritty: \
-	$(XDG_APPS_HOME) \
-	$(XDG_CONFIG_HOME)/alacritty \
-	$(XDG_ICONS_HOME)/hicolor/scalable/apps \
-	$(XDG_MAN_HOME)/man1 \
-	$(XDG_MAN_HOME)/man5 \
-	$(ZSH_COMPLETIONS) \
-	net-tools \
-	rust \
-	tinty
-ifeq ($(shell which alacritty 2> /dev/null),)
-	@echo ">>> Installing $@ dependencies: https://github.com/alacritty/alacritty"
-	@sudo apt install -y \
-		pkg-config \
-		libfreetype6-dev \
-		libfontconfig1-dev \
-		libxcb-xfixes0-dev \
-		libxkbcommon-dev
-	@echo ">>> Configuring $@"
-	@{ \
-		for cfg in $$(find $(CFG_CONFIG_HOME)/$@ -type f); do \
-			ln -svf $$cfg "$(HOME)$${cfg#$(CFG_DIR)}";\
-		done;\
-	}
-else
-	@echo ">>> Updating $@: https://github.com/alacritty/alacritty"
-endif
-	@cargo install $@
-	@echo ">>> Fetching release assets for $$($@ -V)"
-	@curl -sLO --output-dir $(DOWNLOAD_DIR) \
-		"$(DOWNLOAD_URL)/v$$($@ -V | awk {'print $$2'})/{$@.1.gz,$@-msg.1.gz,$@.5.gz,$@-bindings.5.gz,_$@,$@.info,Alacritty.desktop,Alacritty.svg}"
-	@echo ">>> Configuring $@ terminfo"
-	@sudo tic -xe $@,$@-direct "$(DOWNLOAD_DIR)/$@.info"
-	@echo ">>> Configuring $@ desktop entry"
-	@mv "$(DOWNLOAD_DIR)/Alacritty.svg" $(XDG_ICONS_HOME)/hicolor/scalable/apps
-	@desktop-file-install --dir $(XDG_APPS_HOME) --rebuild-mime-info-cache \
-		"$(DOWNLOAD_DIR)/Alacritty.desktop"
-	@echo ">>> Configuring $@ man pages"
-	@mv "$(DOWNLOAD_DIR)/$@"*.1.gz $(XDG_MAN_HOME)/man1
-	@mv "$(DOWNLOAD_DIR)/$@"*.5.gz $(XDG_MAN_HOME)/man5
-	@echo ">>> Configuring $@ zsh completions"
-	@mv "$(DOWNLOAD_DIR)/_$@" $(ZSH_COMPLETIONS)
-	@echo ">>> Finish $@ completion setup by reloading zsh"
-	@rm -rf $(DOWNLOAD_DIR)
-
-# Notes:
-#  - Configures the toggle button to be F1
-#  - Gnome session must be restarted to pick up the extension, so one has to
-#    reboot (or logout & login) and re-run this target to finish the setup
-#
-# TODO
-#  - enable the extension without restarting Gnome session
-.PHONY: alacritty-toggle
-alacritty-toggle: EXT_REPO := https://github.com/axxapy/gnome-alacritty-toggle
-alacritty-toggle: EXT_NAME := toggle-alacritty@itstime.tech
-alacritty-toggle: EXT_HOME := $(XDG_DATA_HOME)/gnome-shell/extensions/$(EXT_NAME)
-alacritty-toggle: EXT_SCHEMA := org.gnome.shell.extensions.toggle-alacritty
-alacritty-toggle:
-	@echo ">>> Configuring $@: $(EXT_REPO)"
-ifeq ($(shell test -d $(EXT_HOME) && echo -n yes 2> /dev/null),yes)
-	@echo ">>> Updating $@ repository in '$(EXT_HOME)'"
-	@git -C $(EXT_HOME) pull
-else
-	@echo ">>> Cloning $@ repository to '$(EXT_HOME)'"
-	@git clone $(EXT_REPO) $(EXT_HOME)
-endif
-	@echo ">>> Validating the integrity of compiled $@ schemas"
-	@glib-compile-schemas $(EXT_HOME)/schemas && \
-		git -C $(EXT_HOME) status --porcelain --untracked-files=no
-	@gsettings --schemadir $(EXT_HOME)/schemas \
-		set $(EXT_SCHEMA) toggle-key "['F1']"
-	@gsettings --schemadir $(EXT_HOME)/schemas \
-		set $(EXT_SCHEMA) command $$(which alacritty)
-	@gnome-extensions enable $(EXT_NAME) || \
-		echo ">>> Restart Gnome session (logout & login) and run this command again"
-
-# TODO: git install instead of curl bash script
+# TODO: install via pacman
+#  - https://github.com/nvm-sh/nvm?tab=readme-ov-file#deeper-shell-integration
 #
 # Resources:
 #  - https://github.com/nvm-sh/nvm#installing-and-updating
@@ -1512,52 +912,6 @@ yaml-language-server: nodejs
 		npm install -g $@;\
 	}
 
-.PHONY: lua-language-server
-lua-language-server: VERSION := $(shell gh_latest_release LuaLS/lua-language-server)
-lua-language-server: PLATFORM := linux-x64
-lua-language-server: REPO := https://github.com/LuaLS/lua-language-server
-lua-language-server: $(XDG_DATA_HOME)/lua-language-server luajit
-	@echo ">>> Installing $@ (v$(VERSION)): https://luals.github.io"
-	@curl -sSL \
-		"$(REPO)/releases/download/$(VERSION)/$@-$(VERSION)-$(PLATFORM).tar.gz" \
-		| tar -C $< -xzf -
-	@ln -svf $</bin/$@ $(XDG_BIN_HOME)/$@
-
-# Install ruby using apt instead of snap
-#  - With ruby from snap, `gem install` does not respect cusom `$GEM_HOME` even
-#    with `--no-user-install`, see: https://stackoverflow.com/a/70101849
-#  - https://www.ruby-lang.org/en/documentation/installation
-#  - TODO: try https://www.ruby-lang.org/en/documentation/installation/#rbenv
-.PHONY: ruby
-ruby:
-	@echo ">>> Installing Ruby"
-	sudo apt install -y $@-full
-
-.PHONY: golang
-golang: $(GOPATH)
-	@echo ">>> Installing Go"
-	sudo snap install --classic go
-
-# Formatter for shell programs
-#  - used by `prettybat` from [bat-extras](https://github.com/eth-p/bat-extras)
-.PHONY: shfmt
-shfmt: SHFMT_MOD := mvdan.cc/sh
-shfmt: SHFMT_API := v3
-shfmt: SHFMT_TAG := latest
-shfmt: golang pandoc $(XDG_MAN_HOME)/man1
-	@echo ">>> Installing $@: https://github.com/mvdan/sh"
-	go install "$(SHFMT_MOD)/$(SHFMT_API)/cmd/$@@$(SHFMT_TAG)"
-	@pandoc -s -t man \
-		"$(GOPATH)/pkg/mod/$(SHFMT_MOD)/$(SHFMT_API)@$$($@ --version)/cmd/$@/$@.1.scd" \
-		| gzip -c > $(XDG_MAN_HOME)/man1/$@.1.gz
-
-# YAML formatter
-.PHONY: yamlfmt
-yamlfmt: YAMLFMT_TAG := latest
-yamlfmt: golang
-	@echo ">>> Installing $@: https://github.com/google/yamlfmt"
-	go install "github.com/google/yamlfmt/cmd/$@@$(YAMLFMT_TAG)"
-
 # Makefile linter
 #
 # FIXME: use `CHECKMAKE_TAG := latest` when `checkmake --version` is fixed
@@ -1585,77 +939,6 @@ grpcurl: golang
 	@echo ">>> Installing $@: https://github.com/fullstorydev/grpcurl"
 	go install "github.com/fullstorydev/grpcurl/cmd/grpcurl@$(GRPCURL_TAG)"
 
-# Installtion resources:
-#  - [Official documentation](https://docs.docker.com/engine/install/ubuntu)
-#  - [Official post-installation](https://docs.docker.com/engine/install/linux-postinstall)
-#  - Note: `docker-compose` is now a sub-command `docker compose`
-.PHONY: docker
-docker: DOCKER_URL := https://download.docker.com/linux/ubuntu
-docker: DOCKER_GPG := $(USR_KEYRINGS)/docker-archive-keyring.gpg
-docker: core-utils apt-utils $(USR_KEYRINGS)
-	@echo ">>> Downloading GPG key as '$(DOCKER_GPG)' & configuring apt sources"
-	curl -fsSL $(DOCKER_URL)/gpg | sudo gpg --dearmor -o "$(DOCKER_GPG)"
-	echo "deb [arch=$(DIST_ARCH) signed-by=$(DOCKER_GPG)] $(DOCKER_URL) $$(lsb_release -cs) stable" \
-		| sudo tee /etc/apt/sources.list.d/$@.list > /dev/null
-	@echo ">>> Installing $@: https://docs.docker.com/engine/install/ubuntu"
-	sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
-	@echo ">>> Setting up '$@' user group with current user '$(USER)'"
-	sudo groupadd -f $@
-	sudo gpasswd -a $(USER) $@
-	sudo usermod -aG $@ $(USER)
-	@echo ">>> Configuring Docker to start on boot"
-	sudo systemctl enable $@.service containerd.service
-	@echo ">>> Finishing Docker installation"
-	sudo service $@ restart
-	newgrp $@
-
-.PHONY: test-docker
-test-docker:
-ifndef DOCKER_CMD
-	$(error docker command not found)
-else
-	@echo ">>> Testing $$(docker --version)"
-	docker run --rm hello-world:latest
-	docker rmi -f hello-world:latest
-endif
-
-# FIXME: Unable to locate package nvidia-docker2
-#  - possibly follow
-#    https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-# Installation resources:
-#  - [Official documentation](https://bit.ly/3tcye5b)
-#  - [Package info](https://bit.ly/3nISlqx)
-#  - [k8s](https://bit.ly/3ta2ttu) and the [plugin](https://github.com/NVIDIA/k8s-device-plugin)
-# TL;DR
-#  - k8s depends on a runtime => install nvidia-docker2 and use --runtime=nvidia (--gpus might work)
-#  - otherwise install just nvidia-container-toolkit and use --gpus
-.PHONY: nvidia-docker
-nvidia-docker: NVIDIA_DOCKER_PKG := nvidia-docker2
-nvidia-docker: NVIDIA_DOCKER_URL := https://nvidia.github.io/nvidia-docker
-nvidia-docker: NVIDIA_DOCKER_GPG := $(USR_KEYRINGS)/nvidia-docker-archive-keyring.gpg
-nvidia-docker: DOCKERD_CFG := /etc/docker/daemon.json
-nvidia-docker: core-utils net-tools apt-utils $(USR_KEYRINGS)
-ifdef NVIDIA_CTRL
-	@echo ">>> Installing NVIDIA Docker"
-	@echo ">>> Downloading GPG key as '$(NVIDIA_DOCKER_GPG)' and configuring apt sources"
-	curl -fsSL "$(NVIDIA_DOCKER_URL)/gpgkey" \
-		| sudo gpg --dearmor -o "$(NVIDIA_DOCKER_GPG)"
-	@{ \
-		DISTRIBUTION=$$(lsb_release -sir | tr -d '\n' | tr '[:upper:]' '[:lower:]');\
-		curl -sL "$(NVIDIA_DOCKER_URL)/$$DISTRIBUTION/nvidia-docker.list" \
-			| sed "s|deb|deb [signed-by=$(NVIDIA_DOCKER_GPG)]|g" \
-			| sudo tee /etc/apt/sources.list.d/nvidia-docker.list > /dev/null;\
-	}
-	sudo apt update
-	sudo apt install -y $(NVIDIA_DOCKER_PKG)
-	sudo jq --arg r nvidia '{"default-runtime": $$r} + .' $(DOCKERD_CFG) | sudo sponge $(DOCKERD_CFG)
-	sudo systemctl restart docker
-	@echo ">>> Testing NVIDIA Docker installation"
-	docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
-else
-	$(error >>> No NVIDIA GPU available)
-endif
-
 # Hadolint: Dockerfile linter
 .PHONY: hadolint
 hadolint: REPO_URL := https://github.com/hadolint/hadolint
@@ -1680,31 +963,6 @@ else
 	@cd $(INSTALL_DIR) && curl $(CLICKHOUSE_URL) | sh && cd -
 	@echo ">>> Using $$($@ client --version)"
 endif
-
-# GitHub CLI (https://cli.github.com)
-#  - https://github.com/cli/cli/blob/trunk/docs/install_linux.md
-.PHONY: gh
-gh: GH_URL := https://cli.github.com/packages
-gh: GH_GPG := $(USR_KEYRINGS)/githubcli-archive-keyring.gpg
-gh: zsh $(USR_KEYRINGS)
-ifneq ($(shell which gh 2> /dev/null),)
-	@echo ">>> $@ already installed"
-else
-	@echo ">>> Installing Github CLI: https://cli.github.com"
-	@curl -fsSL $(GH_URL)/githubcli-archive-keyring.gpg | sudo dd of=$(GH_GPG)
-	sudo chmod go+r $(GH_GPG)
-	echo "deb [arch=$(DIST_ARCH) signed-by=$(GH_GPG)] $(GH_URL) stable main" | \
-		sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-	sudo apt update
-	sudo apt install -y $@
-	@echo ">>> Installed $$($@ --version)"
-endif
-
-.PHONY: aws-cli
-aws-cli:
-	@echo ">>> Installing $@: https://docs.aws.amazon.com/cli/latest"
-	@sudo snap install $@ --classic
-	@echo ">>> Installed $$(aws --version)"
 
 .PHONY: aws-vault
 aws-vault: binenv
@@ -1753,22 +1011,10 @@ $(BASH_CONFIGS): $(XDG_CONFIG_HOME)/bash
 #  - The default location (HOME) for user's files is compiled in, so the only
 #    option how to change it is this hack using system-wide configs
 #  - Check man bash for supported files (SYSTEM_BASHRC, SYSTEM_BASH_LOGOUT)
-#
-# TODO: figure out a way how to avoid explicit line ranges when (un)commenting
 .PHONY: bash
 bash: SYSTEM_BASHRC := /etc/bash.bashrc
 bash: SYSTEM_BASH_LOGOUT := /etc/bash.bash.logout
 bash: $(BASH_CONFIGS)
-	@echo ">>> Enabling bash completion in interactive shells system-wide"
-	@{ \
-		LINE=$$(grep -in "enable bash completion" $(SYSTEM_BASHRC) | cut -d: -f1);\
-		sudo sed -i "$$((LINE + 1)),$$((LINE + 7))"' s|^#||' "$(SYSTEM_BASHRC)";\
-	}
-	@echo ">>> Disabling sudo hint system-wide"
-	@{ \
-		LINE=$$(grep -in "sudo hint" $(SYSTEM_BASHRC) | cut -d: -f1);\
-		sudo sed -i "$$((LINE + 1)),$$((LINE + 11))"' s|^#*|#|' "$(SYSTEM_BASHRC)";\
-	}
 ifeq ($(shell grep USER_BASHRC_RUN /etc/bash.bashrc),)
 	@echo ">>> Adding custom bashrc loading to '$(SYSTEM_BASHRC)'"
 	@echo "$$RUN_USER_BASHRC" | sudo tee -a "$(SYSTEM_BASHRC)" > /dev/null
@@ -1779,84 +1025,17 @@ ifeq ($(shell grep -i "load bash_logout" /etc/bash.bash.logout),)
 		| sudo tee -a "$(SYSTEM_BASH_LOGOUT)" > /dev/null
 endif
 
-define DISABLE_ADMIN_FILE_IN_HOME
-# Disable ~/.sudo_as_admin_successful file
-Defaults !admin_flag
-endef
-
-export DISABLE_ADMIN_FILE_IN_HOME
-
-# Resources:
-#  - https://github.com/sudo-project/sudo/issues/56
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
-#
-# Notes:
-#  - Requires sudo >= 1.9.6
-#  - Contents of the output file is defined by DISABLE_ADMIN_FILE_IN_HOME
-.PHONY: disable-sudo-admin-file
-disable-sudo-admin-file: OUT_FILE := /etc/sudoers.d/disable_admin_file_in_home
-disable-sudo-admin-file:
-	@echo ">>> Creating or rewriting file '$(OUT_FILE)'"
-	@echo "$$DISABLE_ADMIN_FILE_IN_HOME" | sudo tee $(OUT_FILE) > /dev/null
-
-# Disable crash reporting service altogether to increase privacy & security
-#  - Note that it also prevents the service from polluting HOME with the
-#    ~/.apport-ignore.xml file
-#  - https://askubuntu.com/a/93467
-#  - XXX: `sudo apt purge -y apport apport-gtk apport-retrace apport-symptoms`
-.PHONY: disable-apport-service
-disable-apport-service:
-	@echo ">>> Disabling apport service"
-	sudo systemctl disable apport.service
-	@echo ">>> Preventing apport service from starting after boot"
-	@sudo sed -ri 's|^enabled\=(.+)$$|enabled\=0|g' /etc/default/apport
-	@echo ">>> Purging configuration files"
-	@rm -f ~/.apport-ignore.xml
-
-# Notes:
-#  - Modifies /etc/ubuntu-advantage/uaclient.conf
-.PHONY: disable-ubuntu-news
-disable-ubuntu-news:
-	@echo ">>> Disabling Ubuntu news in apt output"
-	sudo pro config set apt_news=false
-
-# Resources:
-#  - https://github.com/NVIDIA/nvidia-settings/issues/30
-#  - https://wiki.archlinux.org/title/XDG_Base_Directory
-.PHONY: nvidia-settings-rc-xdg-path
-nvidia-settings-rc-xdg-path: NVIDIA_SETTINGS_DESKTOP := /usr/share/applications/nvidia-settings.desktop
-nvidia-settings-rc-xdg-path: NVIDIA_SETTINGS_RC := ~/.config/nvidia-settings/nvidia-settings-rc
-nvidia-settings-rc-xdg-path: $(XDG_CONFIG_HOME)/nvidia-settings
-ifeq ($(shell which nvidia-settings 2> /dev/null),)
-	@echo ">>> Nothing to do, nvidia-settings is not installed"
-else
-	@echo ">>> Setting nvidia-settings config file to '$(NVIDIA_SETTINGS_RC)'"
-	@sudo desktop-file-edit \
-		--set-key=Exec \
-		--set-value='nvidia-settings --config "$(NVIDIA_SETTINGS_RC)"' \
-		$(NVIDIA_SETTINGS_DESKTOP)
-	@sudo update-desktop-database
-endif
-
 # Configuration for various GNOME applications
 # https://wiki.archlinux.org/title/GNOME
 .PHONY: gnome
 gnome: \
 	nautilus \
-	com.ubuntu.update-notifier \
 	org.gnome.calculator \
 	org.gnome.calendar \
 	org.gnome.desktop.interface \
 	org.gnome.desktop.notifications \
 	org.gnome.desktop.privacy \
-	org.gnome.shell.ubuntu \
 	org.gnome.system
-
-.PHONY: com.ubuntu.update-notifier
-com.ubuntu.update-notifier:
-	@echo ">>> Configuring $@"
-	@gsettings set $@ hide-reboot-notification true
-	@gsettings set $@ show-apport-crashes false
 
 .PHONY: org.gnome.calculator
 org.gnome.calculator:
@@ -1904,11 +1083,6 @@ org.gnome.desktop.privacy:
 	@gsettings set $@ remove-old-trash-files true
 	@gsettings set $@ report-technical-problems false
 	@gsettings set $@ send-software-usage-stats false
-
-.PHONY: org.gnome.shell.ubuntu
-org.gnome.shell.ubuntu:
-	@echo ">>> Configuring $@"
-	@gsettings set $@ color-scheme 'default'
 
 .PHONY: org.gnome.system
 org.gnome.system:
@@ -2015,53 +1189,11 @@ endif
 	rm -f $(KEYBASE_PKG)
 
 # Installation resources:
-#  - binfmt-support: support for extra binary formats
-#    (https://www.nongnu.org/binfmt-support)
 #  - calibre: ebook manager (https://calibre-ebook.com)
-#  - inkscape: vector graphics editor (https://inkscape.org)
-#  - luajit: Just-In-Time Compiler for Lua (https://luajit.org)
-#  - mpv: command line video player (https://mpv.io)
-#  - shellcheck: static analysis tool for shell scripts (https://shellcheck.net)
-.PHONY: binfmt-support calibre inkscape luajit mpv shellcheck
-binfmt-support calibre inkscape luajit mpv shellcheck:
+.PHONY: calibre
+calibre:
 	@echo ">>> Installing $@"
 	sudo apt install -y $@
-
-# Installation resources:
-#  - Needs pre-existing config directory to pick it up instead of HOME, see:
-#    https://github.com/newsboat/newsboat/issues/2658#issuecomment-1886815612
-#  - FIXME: snap install does not work, so this is a hacky workaround that
-#    installs newsboat directly from an older (22.04) deb package
-#  - TODO: consider installing latest version from source or fix snap install
-#  - TODO: link default `urls` config file once it supports private includes
-.PHONY: newsboat
-newsboat: DEB_PKG := newsboat_2.21-1_$(DIST_ARCH).deb
-newsboat: DOWNLOAD_URL := https://cz.archive.ubuntu.com/ubuntu/pool/universe/n
-newsboat: DOWNLOAD_DIR := $(shell mktemp -d)
-newsboat: \
-	$(XDG_CONFIG_HOME)/newsboat \
-	$(XDG_CACHE_HOME)/newsboat/articles \
-	$(XDG_CACHE_HOME)/newsboat/podcasts \
-	$(XDG_DATA_HOME)/newsboat \
-	mpv
-ifeq ($(shell which newsboat 2> /dev/null),)
-	@echo ">>> Installing $@ dependencies"
-	sudo apt install -y libstfl0
-	@echo ">>> Downloading $@"
-	$(WGET) -q -P $(DOWNLOAD_DIR) "$(DOWNLOAD_URL)/$@/$(DEB_PKG)"
-	@echo ">>> Verifying dowloaded $@ file integrity"
-	@(echo -n \
-		"8522128a78c6ef705b825cabd712e06a28616d216a2788f653c2bec821f4673c $(DOWNLOAD_DIR)/$(DEB_PKG)" \
-		| sha256sum -c --strict --status --ignore-missing -) || \
-		(echo ">>> Failed to verify checksum" && rm -rf $(DOWNLOAD_DIR) && exit 1)
-	@echo ">>> Installing $@"
-	sudo dpkg -i "$(DOWNLOAD_DIR)/$(DEB_PKG)" \
-		|| (rm -rf $(DOWNLOAD_DIR) && exit 1)
-endif
-	@echo ">>>> Configuring $@ (note: edit '$</urls' manually)"
-	@touch $</urls && chmod u=rw,g=r,o= $</urls
-	@ln -svft $< $(CFG_CONFIG_HOME)/$@/*
-	@echo ">>> Installed $$($@ -v | head -1)"
 
 # Android Debug Bridge (adb)
 #  - https://developer.android.com/tools/adb
@@ -2077,11 +1209,11 @@ adb:
 fix-ssh-perms: SSH_DIR := $(HOME)/.ssh
 fix-ssh-perms:
 	@echo ">>> Setting appropriate file permissions for files in '$(SSH_DIR)'"
-	chmod 700 $(SSH_DIR)
-	chmod 644 "$(SSH_DIR)/authorized_keys"
-	chmod 644 "$(SSH_DIR)/*.pub"
-	chmod 600 "$(SSH_DIR)/id_rsa*"
-	chmod 600 "$(SSH_DIR)/config"
-	chmod 700 "$(SSH_DIR)/config.d"
-	chmod 600 "$(SSH_DIR)/known_hosts*"
-	chmod 400 "$(SSH_DIR)/*.pem"
+	chmod -f 700 $(SSH_DIR)
+	chmod -f 644 "$(SSH_DIR)/authorized_keys"
+	chmod -f 600 "$(SSH_DIR)/id_*"
+	chmod -f 644 "$(SSH_DIR)/id_*.pub"
+	chmod -f 600 "$(SSH_DIR)/config"
+	chmod -f 700 "$(SSH_DIR)/config.d"
+	chmod -f 600 "$(SSH_DIR)/known_hosts*"
+	chmod -f 400 "$(SSH_DIR)/*.pem"

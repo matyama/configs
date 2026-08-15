@@ -8,28 +8,35 @@ require("mappings")
 -------------------------------------------------------------------------------
 -- Configuring diagnostics
 -------------------------------------------------------------------------------
-local diagnostic_jump_ns = vim.api.nvim_create_namespace("on_diagnostic_jump")
-
 vim.diagnostic.config({
-  jump = {
-    -- Show the diagnostic in as a floating text window
-    -- float = true,
-
-    -- Setup implicit callback for vim.diagnostic.jump() calls
-    on_jump = function(diagnostic, bufnr)
-      if not diagnostic then
-        return
-      end
-
-      vim.diagnostic.show(diagnostic_jump_ns, bufnr, { diagnostic }, {
-        -- Allow virtual text
-        virtual_text = true,
-        -- Disable virtual lines
-        virtual_lines = false,
-      })
-    end,
-  },
+  virtual_text = true,
+  virtual_lines = false,
+  update_in_insert = true,
 })
+
+-- FIXME
+--local diagnostic_jump_ns = vim.api.nvim_create_namespace("on_diagnostic_jump")
+--
+--vim.diagnostic.config({
+--  jump = {
+--    -- Show the diagnostic in as a floating text window
+--    -- float = true,
+--
+--    -- Setup implicit callback for vim.diagnostic.jump() calls
+--    on_jump = function(diagnostic, bufnr)
+--      if not diagnostic then
+--        return
+--      end
+--
+--      vim.diagnostic.show(diagnostic_jump_ns, bufnr, { diagnostic }, {
+--        -- Allow virtual text
+--        virtual_text = true,
+--        -- Disable virtual lines
+--        virtual_lines = false,
+--      })
+--    end,
+--  },
+--})
 
 -- Setup plugin manager (https://github.com/folke/lazy.nvim)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

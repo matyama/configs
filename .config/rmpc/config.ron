@@ -3,6 +3,9 @@
 #![enable(unwrap_newtypes)]
 #![enable(unwrap_variant_newtypes)]
 (
+    // version <= 0.10.0
+    //address: "/run/user/1000/mpd/socket",
+    // version > 0.10.0
     address: "@mpd",
     password: None,
     theme: None,

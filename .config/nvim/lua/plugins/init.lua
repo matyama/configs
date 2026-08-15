@@ -43,6 +43,7 @@ return {
     end,
   },
 
+  -- TODO: unmaintained, so remove or replace
   -- Use RipGrep in Vim via <leader>s
   {
     "jremmen/vim-ripgrep",
@@ -57,19 +58,12 @@ return {
   -- Better syntax support
   "sheerun/vim-polyglot",
 
+  -- TODO: condition on hlint being installed
   -- Bindings for Haskell hlint code refactoring
   -- https://github.com/mpickering/hlint-refactor-vim
   {
     "mpickering/hlint-refactor-vim",
     ft = { "haskell" },
-  },
-
-  {
-    "cuducos/yaml.nvim",
-    ft = { "yaml" },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
   },
 
   {

@@ -1,7 +1,7 @@
 " Plain vimrc (no plugins, no external dependencies)
 
 " Necessary for lots of cool vim things
-"set nocompatible
+set nocompatible
 
 " Change <leader> from '/' to '<Space>'
 map <Space> <Leader>

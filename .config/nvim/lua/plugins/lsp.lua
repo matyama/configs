@@ -130,6 +130,11 @@ return {
         vim.lsp.enable("bashls")
       end
 
+      -- just LSP (https://github.com/terror/just-lsp)
+      if vim.fn.executable("just") == 1 then
+        vim.lsp.enable("just")
+      end
+
       -- TOML LSP (https://taplo.tamasfe.dev)
       vim.lsp.enable("taplo")
 
