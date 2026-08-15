@@ -49,9 +49,7 @@ CARGO_ARTIFACTS_DIR=$(CARGO_RELEASE_DIR)/artifacts
 endif
 
 GHCUP_USE_XDG_DIRS ?= 1
-CABAL_DIR ?= $(XDG_CONFIG_HOME)/cabal
-CABAL_CONFIG ?= $(CABAL_DIR)/config
-STACK_ROOT ?= $(XDG_DATA_HOME)/stack
+STACK_XDG ?= 1
 
 NVM_DIR ?= $(XDG_DATA_HOME)/nvm
 
@@ -185,10 +183,6 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 
 $(APT_KEYRINGS) $(USR_KEYRINGS):
 	sudo mkdir -p $@
-
-$(CABAL_CONFIG):
-	@mkdir -p $$(dirname $@)
-	@touch $@
 
 /var/lib/libvirt/images/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.7.0/$(DIST_ARCH)/iso-cd
 /var/lib/libvirt/images/$(DEBIAN_ISO): net-tools
@@ -683,47 +677,31 @@ python-lsp-server: uv
 # Haskell toolchain and project builder
 #  - [ghcup](https://www.haskell.org/ghcup/)
 #  - [stack](https://docs.haskellstack.org/en/stable/README/)
-# Additional notes:
-#  - ghcup also installs the Haskell Language Server and Stack
-.PHONY: haskell
-haskell: ghcup
-
-.PHONY: ghcup-deps
-ghcup-deps: net-tools
-	@echo ">>> Installing ghcup distro packages"
-	sudo apt install -y \
-		build-essential \
-		curl \
-		libffi-dev \
-		libffi8ubuntu1 \
-		libgmp-dev \
-		libgmp10 \
-		libncurses-dev
-
-.PHONY: ghcup
-ghcup: GHCUP_URL := https://gitlab.haskell.org/haskell/ghcup-hs
-ghcup: $(ZSH_COMPLETIONS) $(CABAL_CONFIG) ghcup-deps
-ifneq ($(shell which ghcup 2> /dev/null),)
-	@echo ">>> $$($@ --version) already installed"
-else
-	@echo ">>> Installing Haskell toolchain installer"
-	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-	@echo ">>> Dowloading zsh completions for $@"
-	curl -sSL -o $</_$@ \
-		"$(GHCUP_URL)/-/raw/v$$($@ --numeric-version)/shell-completions/zsh"
-	@echo ">>> Finish $@ completion setup by reloading zsh"
-endif
-
 # Installed tools:
 #  - fourmolu: Haskell source code formatter
 #  - hlint: Haskell source code suggestions
-#  - apply-refact: Refactor Haskell source files
-.PHONY: haskell-tools
-haskell-tools: haskell
-	@echo ">>> Installing fourmolu: https://github.com/fourmolu/fourmolu"
-	stack install fourmolu
-	@echo ">>> Installing hlint: https://github.com/ndmitchell/hlint"
-	stack install hlint apply-refact
+#  - TODO apply-refact: Refactor Haskell source files
+# Additional notes:
+#  - ghcup also installs the Haskell Language Server and Stack
+.PHONY: haskell
+haskell: ghc cabal hls stack fourmolu hlint
+
+.PHONY: ghc cabal hls stack fourmolu hlint
+ghc cabal hls stack fourmolu hlint: ghcup
+	ghcup install $@ latest
+
+.PHONY: ghcup
+ghcup:
+ifneq ($(shell which ghcup 2> /dev/null),)
+	@echo ">>> $$($@ --version) already installed"
+else
+	@echo ">>> Installing ghcup distro packages"
+	sudo pacman -S --needed --noconfirm base-devel gmp
+	@echo ">>> Installing Haskell toolchain installer"
+	paru -S --needed ghcup-hs-bin
+	@echo ">>> Enabling 3rd party tools (fourmolu, hlint, etc.)"
+	ghcup config add-release-channel 3rdparty
+endif
 
 # Cargo subcommands:
 #  - auditable: make production Rust binaries auditable
@@ -941,13 +919,8 @@ grpcurl: golang
 
 # Hadolint: Dockerfile linter
 .PHONY: hadolint
-hadolint: REPO_URL := https://github.com/hadolint/hadolint
-hadolint: VERSION := $(shell gh_latest_release hadolint/hadolint)
-hadolint: $(XDG_BIN_HOME) net-tools
-	@echo ">>> Downloading $@ ($(VERSION)) from $(REPO_URL)"
-	$(WGET) -qO $</$@ $(REPO_URL)/releases/download/$(VERSION)/$@-Linux-$(ARCH)
-	@chmod +x $</$@
-	@echo ">>> Installed: $$($@ -v)"
+hadolint: $(XDG_BIN_HOME)
+	paru -S --needed hadolint-bin
 
 # ClickHouse
 #  - https://clickhouse.com/docs/en/integrations/sql-clients/cli/

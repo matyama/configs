@@ -36,7 +36,7 @@ echo ">>> Installing bootstrap tools..."
 # XXX: curl ...although, how else would we get this script
 # Installed packages
 #  - base-devel: autoconf  automake  binutils, gcc, make, grep, gzip, etc.
-sudo pacman -S base-devel curl git neovim just
+sudo pacman -S base-devel git neovim just
 
 # TODO: move this to make
 # TODO: make a checklist of binaries that should be installed after all of this
@@ -240,7 +240,7 @@ echo ">>> Installing AUR packages..."
 git clone https://aur.archlinux.org/paru "${XDG_DEV_HOME}/paru"
 makepkg -si --dir "${XDG_DEV_HOME}/paru"
 
-# XXX: checkmake, grpcurl, hadolint from AUR
+# XXX: checkmake, grpcurl from AUR
 
 # tinty: Base16 and base24 color scheme manager
 paru -S tinty-git
@@ -339,6 +339,24 @@ cargo install --features lsp --locked taplo-cli
 cargo install --locked tokio-console
 tokio-console gen-completion fish \
   >"${XDG_CONFIG_HOME}/fish/completions/tokio-console.fish"
+
+echo ">>> Installing Haskell tools..."
+export GHCUP_USE_XDG_DIRS=1
+export STACK_XDG=1
+
+sudo pacman -S --needed --noconfirm base-devel gmp
+paru -S ghcup-hs-bin hadolint-bin
+# enable additional tools (fourmolu, hlint, etc.)
+ghcup config add-release-channel 3rdparty
+
+# Installed tools:
+#  - fourmolu: Haskell source code formatter
+#  - hlint: Haskell source code suggestions
+#  - TODO apply-refact: Refactor Haskell source files
+for tool in ghc cabal hls stack fourmolu hlint; do
+  echo ">>> Installing latest ${tool}..."
+  ghcup install "${tool}" latest
+done
 
 echo ">>> Installing custom apps..."
 # XXX: slack, zoom-client
