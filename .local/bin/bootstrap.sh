@@ -240,7 +240,7 @@ echo ">>> Installing AUR packages..."
 git clone https://aur.archlinux.org/paru "${XDG_DEV_HOME}/paru"
 makepkg -si --dir "${XDG_DEV_HOME}/paru"
 
-# XXX: checkmake, grpcurl from AUR
+# XXX: grpcurl from AUR
 
 # tinty: Base16 and base24 color scheme manager
 paru -S tinty-git

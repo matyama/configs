@@ -890,19 +890,6 @@ yaml-language-server: nodejs
 		npm install -g $@;\
 	}
 
-# Makefile linter
-#
-# FIXME: use `CHECKMAKE_TAG := latest` when `checkmake --version` is fixed
-.PHONY: checkmake
-checkmake: CHECKMAKE_TAG := $(shell gh_latest_release mrtazz/checkmake)
-checkmake: DOWNLOAD_URL := https://github.com/mrtazz/checkmake/releases/download
-checkmake: golang $(XDG_MAN_HOME)/man1
-	@echo ">>> Installing $@ (v$(CHECKMAKE_TAG)): https://github.com/mrtazz/checkmake"
-	go install "github.com/mrtazz/checkmake/cmd/$@@$(CHECKMAKE_TAG)"
-	@echo ">>> Downloading man pages for $@ $(CHECKMAKE_TAG)"
-	@curl -sSL "$(DOWNLOAD_URL)/$(CHECKMAKE_TAG)/$@.1" \
-		| gzip -c > $(XDG_MAN_HOME)/man1/$@.1.gz
-
 # Fast cross-platform HTTP benchmarking tool
 .PHONY: bombardier
 bombardier: BOMBARDIER_TAG := latest

@@ -34,6 +34,13 @@ repos:
       - id: editorconfig-checker
         alias: ec
 
+  - repo: https://github.com/checkmake/checkmake
+    # v0.3.2
+    rev: 59931d556f8f5cf4fbacf2c8390a8122ef7a881d
+    hooks:
+      - id: checkmake
+        stages: [manual]
+
   - repo: https://github.com/adrienverge/yamllint
     # v1.37.1
     rev: 79a6b2b1392eaf49cdd32ac4f14be1a809bbd8f7
