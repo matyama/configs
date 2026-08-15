@@ -240,10 +240,14 @@ echo ">>> Installing AUR packages..."
 git clone https://aur.archlinux.org/paru "${XDG_DEV_HOME}/paru"
 makepkg -si --dir "${XDG_DEV_HOME}/paru"
 
-# XXX: grpcurl from AUR
+# AUR packages distributing pre-built binaries:
+#  - grpcurl: Like cURL, but for gRPC
+#  - hadolint: Dockerfile linter
+paru -S --needed grpcurl-bin hadolint-bin
 
-# tinty: Base16 and base24 color scheme manager
-paru -S tinty-git
+# AUR packages building from sources:
+#  - tinty: Base16 and base24 color scheme manager
+paru -S --needed tinty-git
 #tinty sync
 #tinty apply base16-gruvbox-dark-hard
 
@@ -345,7 +349,7 @@ export GHCUP_USE_XDG_DIRS=1
 export STACK_XDG=1
 
 sudo pacman -S --needed --noconfirm base-devel gmp
-paru -S ghcup-hs-bin hadolint-bin
+paru -S ghcup-hs-bin
 # enable additional tools (fourmolu, hlint, etc.)
 ghcup config add-release-channel 3rdparty
 

@@ -890,24 +890,12 @@ yaml-language-server: nodejs
 		npm install -g $@;\
 	}
 
-# Fast cross-platform HTTP benchmarking tool
-.PHONY: bombardier
-bombardier: BOMBARDIER_TAG := latest
-bombardier: golang
-	@echo ">>> Installing $@: https://github.com/codesenberg/bombardier"
-	go install "github.com/codesenberg/$@@$(BOMBARDIER_TAG)"
-
-# Like cURL, but for gRPC
-.PHONY: grpcurl
-grpcurl: GRPCURL_TAG := latest
-grpcurl: golang
-	@echo ">>> Installing $@: https://github.com/fullstorydev/grpcurl"
-	go install "github.com/fullstorydev/grpcurl/cmd/grpcurl@$(GRPCURL_TAG)"
-
-# Hadolint: Dockerfile linter
-.PHONY: hadolint
-hadolint: $(XDG_BIN_HOME)
-	paru -S --needed hadolint-bin
+# AUR packages distributing pre-built binaries:
+#  - grpcurl: Like cURL, but for gRPC
+#  - hadolint: Dockerfile linter
+.PHONY: grpcurl hadolint
+grpcurl hadolint: $(XDG_BIN_HOME)
+	paru -S --needed $@-bin
 
 # ClickHouse
 #  - https://clickhouse.com/docs/en/integrations/sql-clients/cli/
