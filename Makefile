@@ -911,16 +911,6 @@ aws-vault: binenv
 	@binenv update
 	binenv install $@
 
-.PHONY: set-swappiness
-set-swappiness: SWAPPINESS := 10
-set-swappiness:
-ifeq ($(shell grep "vm.swappiness" /etc/sysctl.conf),)
-	@echo ">>> Setting swappiness to $(SWAPPINESS)"
-	@echo "# Decrease swap usage to a more reasonable level\nvm.swappiness=$(SWAPPINESS)" | sudo tee -a /etc/sysctl.conf > /dev/null
-else
-	@echo ">>> Manually change value of 'vm.swappiness' in '/etc/sysctl.conf'"
-endif
-
 # Code snippet added to /etc/bash.bashrc by bash target
 define RUN_USER_BASHRC
 # Load bashrc from user's custom location instead of ~/.bashrc
