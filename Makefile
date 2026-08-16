@@ -28,10 +28,6 @@ XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
 
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
-ZDOTDIR ?= $(XDG_CONFIG_HOME)/zsh
-ZSH_COMPLETIONS ?= $(XDG_DATA_HOME)/zsh/completions
-ZSH_FUNCTIONS ?= $(XDG_DATA_HOME)/zsh/functions
-
 BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
 BINENV_LINKDIR ?= $(XDG_BIN_HOME)
 
@@ -58,8 +54,8 @@ GOPATH ?= $(XDG_DATA_HOME)/go
 MINIKUBE_HOME ?= $(XDG_DATA_HOME)/minikube
 KREW_ROOT ?= $(XDG_DATA_HOME)/krew
 
-ARCH ?= $(shell arch)
-DIST_ARCH ?= $(shell dpkg --print-architecture)
+ARCH ?= $(shell uname -m)
+DIST_ARCH ?= amd64
 
 # Aliases to make tools respect XDG specification
 #  - https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -69,7 +65,6 @@ DEBIAN_ISO := debian-12.7.0-$(DIST_ARCH)-netinst.iso
 
 LIBVIRT_DEFAULT_URI ?= ""
 
-APT_KEYRINGS := /etc/apt/keyrings
 USR_KEYRINGS := /usr/share/keyrings
 
 # TODO: run initial installation or ensure the upgrade script can do so
@@ -125,7 +120,6 @@ update:
 test: test-docker
 
 CACHE_DIRS := \
-	$(CABAL_DIR) \
 	$(CARGO_ARTIFACTS_DIR) \
 	$(XDG_CACHE_HOME)/newsboat/articles \
 	$(XDG_CACHE_HOME)/newsboat/podcasts
@@ -157,7 +151,6 @@ CONFIG_DIRS := \
 DATA_DIRS := \
 	$(CARGO_HOME) \
 	$(NVM_DIR) \
-	$(STACK_ROOT) \
 	$(XDG_DATA_HOME)/git-core/templates \
 	$(XDG_DATA_HOME)/lua-language-server \
 	$(XDG_DATA_HOME)/newsboat
@@ -181,7 +174,7 @@ $(CACHE_DIRS) $(CONFIG_DIRS) $(DATA_DIRS) \
 	$(XDG_STATE_HOME)/wget:
 	mkdir -p $@
 
-$(APT_KEYRINGS) $(USR_KEYRINGS):
+$(USR_KEYRINGS):
 	sudo mkdir -p $@
 
 /var/lib/libvirt/images/$(DEBIAN_ISO): ISO_URL := https://cdimage.debian.org/debian-cd/12.7.0/$(DIST_ARCH)/iso-cd

@@ -22,12 +22,12 @@ export CARGO_TARGET_DIR="${XDG_CACHE_HOME}/cargo-target"
 mkdir -p \
   "${XDG_DEV_HOME}" \
   "${XDG_TMP_HOME}" \
-  "${XDG_CONFIG_HOME}/fish/completions" \
   "${XDG_CONFIG_HOME}/newsboat" \
   "${XDG_CONFIG_HOME}/wget" \
   "${XDG_CACHE_HOME}/newsboat/articles" \
   "${XDG_CACHE_HOME}/newsboat/podcasts" \
   "${XDG_CACHE_HOME}/python" \
+  "${XDG_DATA_HOME}/fish/vendor_completions.d" \
   "${XDG_DATA_HOME}/newsboat" \
   "${XDG_DATA_HOME}/python" \
   "${XDG_STATE_HOME}/wget"
@@ -256,7 +256,7 @@ paru -S --noprovides forgit
 tar -xOzf \
   "${XDG_CACHE_HOME}/paru/clone/forgit/forgit-$(grep -oP '^pkgver=\K.*$' "${XDG_CACHE_HOME}/paru/clone/forgit/PKGBUILD").tar.gz" \
   --wildcards '**/completions/git-forgit.fish' \
-  >"${XDG_CONFIG_HOME}/fish/completions/git-forgit.fish"
+  >"${XDG_DATA_HOME}/fish/vendor_completions.d/git-forgit.fish"
 
 # TODO: https://wiki.archlinux.org/title/Keybase
 
@@ -342,7 +342,7 @@ cargo install --features lsp --locked taplo-cli
 
 cargo install --locked tokio-console
 tokio-console gen-completion fish \
-  >"${XDG_CONFIG_HOME}/fish/completions/tokio-console.fish"
+  >"${XDG_DATA_HOME}/fish/vendor_completions.d/tokio-console.fish"
 
 echo ">>> Installing Haskell tools..."
 export GHCUP_USE_XDG_DIRS=1

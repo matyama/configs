@@ -93,6 +93,7 @@ if command -v tinty > /dev/null
   setenv TINTED_TMUX_OPTION_STATUSBAR 1
 
   tinty init
+  # TODO: cache in $XDG_CACHE_HOME/fish/generated_completions/
   tinty generate-completion fish | source
 end
 
