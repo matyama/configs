@@ -28,9 +28,6 @@ XDG_TMP_HOME ?= $(XDG_CACHE_HOME)/tmp
 
 GIT_TEMPLATE_DIR ?= $(XDG_DATA_HOME)/git-core/templates
 
-BINENV_BINDIR ?= $(XDG_DATA_HOME)/binenv
-BINENV_LINKDIR ?= $(XDG_BIN_HOME)
-
 FZF_BASE ?= $(XDG_DATA_HOME)/fzf
 
 BAT_CONFIG_DIR ?= $(XDG_CONFIG_HOME)/bat
@@ -409,7 +406,7 @@ else
 kvm-pkgs: CPU_MODEL := amd
 endif
 kvm-pkgs: GRUB_CMDLINE_LINUX_DEFAULT := "quiet splash $(CPU_MODEL)_iommu=on systemd.unified_cgroup_hierarchy=0"
-kvm-pkgs: ARCH_FAMILY := $(shell arch | cut -d_ -f1)
+kvm-pkgs: ARCH_FAMILY := $(shell uname -m | cut -d_ -f1)
 kvm-pkgs:
 	@echo ">>> Installing KVM virtualization"
 	sudo apt install -y \
@@ -505,39 +502,37 @@ endif
 #  - [Minikube with KVM2 driver](https://bit.ly/3tBWEVI)
 #  - [Examples with Virtualbox](https://bit.ly/3vYkEnH)
 #  - [GitHub Gist](https://bit.ly/3bex2aW)
-#  - [Official docs](https://minikube.sigs.k8s.io/docs/start/)
+#  - [k8s tools](https://kubernetes.io/docs/tasks/tools)
+#  - [Minikube](https://minikube.sigs.k8s.io/docs)
 #  - [Helm docs](https://helm.sh/docs/)
 #  - [k8s krew](https://krew.sigs.k8s.io/)
+#  - [kubectx](https://github.com/ahmetb/kubectx)
 #  - [krew install warning](https://github.com/kubernetes-sigs/krew/issues/576)
 #  - TODO: https://minikube.sigs.k8s.io/docs/tutorials/nvidia
+# TODO: KVM
+#k8s: KVM2_DRIVER_URL := https://storage.googleapis.com/minikube/releases/latest
+#k8s: KVM2_DRIVER := docker-machine-driver-kvm2
+#k8s: kvm
 .PHONY: k8s
-k8s: KVM2_DRIVER_URL := https://storage.googleapis.com/minikube/releases/latest
-k8s: KVM2_DRIVER := docker-machine-driver-kvm2
-k8s: binenv kvm
+k8s:
 ifndef DOCKER_CMD
 	@echo ">>> Docker is not installed"
 	exit 1
 else
-	@echo ">>> Installing kubectl: https://kubernetes.io/docs/tasks/tools/"
-	binenv install kubectl
-	@echo ">>> Installing minikube: https://minikube.sigs.k8s.io/docs/"
-	binenv install minikube
-	@echo ">>> Installing krew: https://krew.sigs.k8s.io/"
-	binenv install kubectl-krew
-	@echo ">>> Installing kvm2 driver: https://minikube.sigs.k8s.io/docs/drivers/kvm2/"
-	curl -L -o "/tmp/$(KVM2_DRIVER)" "$(KVM2_DRIVER_URL)/$(KVM2_DRIVER)" \
-		&& sudo install "/tmp/$(KVM2_DRIVER)" /usr/local/bin/
-	@echo ">>> Starting minikube"
-	minikube start --cpus 2 --memory 2048 --vm-driver kvm2
-	minikube status
-	@echo ">>> Configure kvm2 as the default driver for minikube"
-	@minikube config set driver kvm2
-	@echo ">>> Installing and initializing helm: https://helm.sh/docs/"
-	binenv install helm
-	@echo ">>> Installing helm-operator: https://github.com/fluxcd/helm-operator"
-	binenv install helm-operator
-	@echo ">>> Installing kubectx: https://github.com/ahmetb/kubectx"
+	@echo ">>> Installing k8s, drivers, runtime & tools..."
+	sudo pacman -S --needed --noconfirm kubectl minikube krew helm
+	@echo ">>> Installing krew plugins..."
 	kubectl krew install ctx
+	# TODO: KVM
+	# @echo ">>> Installing kvm2 driver: https://minikube.sigs.k8s.io/docs/drivers/kvm2/"
+	# curl -L -o "/tmp/$(KVM2_DRIVER)" "$(KVM2_DRIVER_URL)/$(KVM2_DRIVER)" \
+	# 	&& sudo install "/tmp/$(KVM2_DRIVER)" /usr/local/bin/
+	@echo ">>> Starting minikube"
+	# minikube start --cpus 2 --memory 2048 --vm-driver kvm2
+	minikube start --cpus 2 --memory 2048 --vm-driver docker
+	minikube status
+	# @echo ">>> Configure kvm2 as the default driver for minikube"
+	# @minikube config set driver kvm2
 	@echo ">>> Current k8s context is '$$(kubectl ctx -c)'"
 	@echo ">>> Shutting down $$(minikube version --short)"
 	minikube stop
@@ -594,37 +589,6 @@ test-k8s: net-tools
 	minikube stop
 	minikube status || true
 	@echo ">>> Verified kubectl $$(kubectl version --client -o json | jq -r '.clientVersion.gitVersion')"
-
-# Installation resources:
-#  - https://github.com/devops-works/binenv#linux-bashzsh
-#
-# TODO: Verify (gpg) the signature of the checksum file if binenv releases one.
-.PHONY: binenv
-binenv: BINENV_URL := https://github.com/devops-works/binenv/releases/latest/download
-binenv: BINENV_BIN := binenv_linux_$(DIST_ARCH)
-binenv: DOWNLOAD_DIR := $(shell mktemp -d)
-binenv: $(ZSH_COMPLETIONS) net-tools
-ifneq ($(shell which binenv 2> /dev/null),)
-	@echo ">>> $@ already installed to '$(BINENV_BINDIR)'"
-else
-	@echo ">>> Downloading $@"
-	$(WGET) -q -P $(DOWNLOAD_DIR) \
-		"$(BINENV_URL)/$(BINENV_BIN)" \
-		"$(BINENV_URL)/checksums.txt"
-	@echo ">>> Verifying dowloaded $@ file integrity"
-	@(cd $(DOWNLOAD_DIR) && \
-		sha256sum -c --strict --status --ignore-missing checksums.txt) || \
-		(echo ">>> Failed to verify checksum" && rm -rf $(DOWNLOAD_DIR) && exit 1)
-	@echo ">>> Installing $@"
-	@mv "$(DOWNLOAD_DIR)/$(BINENV_BIN)" "$(DOWNLOAD_DIR)/$@"
-	@chmod +x "$(DOWNLOAD_DIR)/$@"
-	"$(DOWNLOAD_DIR)/$@" update
-	"$(DOWNLOAD_DIR)/$@" install $@
-	@echo ">>> Generating zsh completions for $@"
-	$@ completion zsh > $</_$@
-	@echo ">>> Finish $@ completion setup by reloading zsh"
-endif
-	@rm -rf $(DOWNLOAD_DIR)
 
 .PHONY: uv
 uv:
@@ -906,10 +870,9 @@ else
 endif
 
 .PHONY: aws-vault
-aws-vault: binenv
+aws-vault:
 	@echo ">>> Installing $@: https://github.com/99designs/aws-vault"
-	@binenv update
-	binenv install $@
+	sudo pacman -S --needed --noconfirm $@
 
 # Code snippet added to /etc/bash.bashrc by bash target
 define RUN_USER_BASHRC

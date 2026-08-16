@@ -2,6 +2,7 @@
 set -U fish_user_paths $XDG_BIN_HOME $fish_user_paths
 set -U fish_user_paths $CARGO_BIN $fish_user_paths
 set -U fish_user_paths $GOPATH $fish_user_paths
+set -U fish_user_paths $KREW_BIN $fish_user_paths
 
 # fzf
 #  - https://github.com/junegunn/fzf#layout
@@ -75,6 +76,10 @@ end
 
 if command -v just > /dev/null
   abbr -a j 'just'
+end
+
+if command -v kubectl > /dev/null
+  abbr -a k 'kubectl'
 end
 
 if command -v rucola > /dev/null

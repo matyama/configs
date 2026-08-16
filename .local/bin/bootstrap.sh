@@ -19,6 +19,20 @@ export CARGO_HOME="${XDG_DATA_HOME}/cargo"
 export CARGO_BIN="${CARGO_HOME}/bin"
 export CARGO_TARGET_DIR="${XDG_CACHE_HOME}/cargo-target"
 
+# Docker, k8s, minikube, krew
+export DOCKER_CONFIG="${XDG_CONFIG_HOME}/docker"
+export KUBECONFIG="${XDG_CONFIG_HOME}/kube"
+export KUBECACHEDIR="${XDG_CACHE_HOME}/kube"
+export MINIKUBE_HOME="${XDG_DATA_HOME}/minikube"
+export KREW_ROOT="${XDG_DATA_HOME}/krew"
+export KREW_BIN="${KREW_ROOT}/bin"
+
+# AWS CLI & Vault
+export AWS_CONFIG_FILE="${XDG_CONFIG_HOME}/aws/config"
+export AWS_CLI_HISTORY_FILE="${XDG_STATE_HOME}/aws/history"
+export AWS_SHARED_CREDENTIALS_FILE="${XDG_DATA_HOME}/aws/credentials}"
+export AWS_VAULT_FILE_DIR="${XDG_DATA_HOME}/awsvault/keys"
+
 mkdir -p \
   "${XDG_DEV_HOME}" \
   "${XDG_TMP_HOME}" \
@@ -145,9 +159,10 @@ echo ">>> Installing packages..."
 #  - xh: Friendly and fast tool for sending HTTP requests
 #  - yamlfmt: An extensible command line tool or library to format yaml files
 #  - zoxide: A smarter cd command
-sudo pacman -S \
+sudo pacman -S --needed \
   alacritty \
   aws-cli-v2 \
+  aws-vault \
   bash-completion \
   bash-language-server \
   bat \
@@ -398,3 +413,9 @@ fi
 
 # enable networkmanager
 sudo systemctl enable --now NetworkManager.service
+
+echo ">>> Installing k8s, drivers, runtime & tools..."
+sudo pacman -S --needed kubectl minikube krew helm
+
+echo ">>> Installing k8s krew plugins..."
+kubectl krew install ctx
