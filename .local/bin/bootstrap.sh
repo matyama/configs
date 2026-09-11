@@ -267,11 +267,6 @@ paru -S --needed tinty-git
 #tinty apply base16-gruvbox-dark-hard
 
 paru -S --noprovides forgit
-# TODO: ln instead, but need to deal with versions somehow
-tar -xOzf \
-  "${XDG_CACHE_HOME}/paru/clone/forgit/forgit-$(grep -oP '^pkgver=\K.*$' "${XDG_CACHE_HOME}/paru/clone/forgit/PKGBUILD").tar.gz" \
-  --wildcards '**/completions/git-forgit.fish' \
-  >"${XDG_DATA_HOME}/fish/vendor_completions.d/git-forgit.fish"
 
 # TODO: https://wiki.archlinux.org/title/Keybase
 
