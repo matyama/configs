@@ -179,4 +179,9 @@ if command -v mcfly > /dev/null
   mcfly init fish | source
 end
 
+# https://direnv.net/docs/hook.html#fish
+if command -v direnv > /dev/null
+  direnv hook fish | source
+end
+
 end
