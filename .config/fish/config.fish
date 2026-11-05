@@ -95,7 +95,7 @@ if command -v tinty > /dev/null
 
   # Tinted tmux (https://github.com/tinted-theming/tinted-tmux)
   #setenv TINTED_TMUX_OPTION_ACTIVE 1
-  setenv TINTED_TMUX_OPTION_STATUSBAR 1
+  setenv TINTED_TMUX_OPTION_STATUSBAR 0
 
   tinty init
   # TODO: cache in $XDG_CACHE_HOME/fish/generated_completions/
