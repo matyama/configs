@@ -161,6 +161,7 @@ echo ">>> Installing packages..."
 #  - zoxide: A smarter cd command
 sudo pacman -S --needed \
   alacritty \
+  ascii \
   aws-cli-v2 \
   aws-vault \
   bash-completion \
@@ -341,12 +342,15 @@ echo ">>> Installing Rust tools..."
 #  - cross: “Zero setup” cross compilation and “cross testing” of Rust crates
 #    - TODO: Requires: docker, binfmt-support (for testing)
 #    - Installing from git, because the latest release is ~2y old
+#  - mdbook-katex: Preprocessor for mdBook using KaTeX to render LaTeX math
+#    (https://github.com/lzanini/mdbook-katex)
 #  - proximity-sort: Simple command-line utility for sorting inputs by
 #    proximity to a path argument (https://github.com/jonhoo/proximity-sort)
 #  - taplo: TOML linter, formatter, and LSP
 #  - tokio-console: A debugger for async Rust
 # cargo install --locked --git https://github.com/matyama/bitcli
 #cargo install --locked cross --git https://github.com/cross-rs/cross
+cargo install --locked mdbook-katex
 cargo install --locked proximity-sort
 cargo install --features lsp --locked taplo-cli
 
