@@ -125,6 +125,11 @@ return {
 
       vim.lsp.enable("lua_ls")
 
+      -- Go LSP (https://go.dev/gopls)
+      if vim.fn.executable("gopls") == 1 then
+        vim.lsp.enable("gopls")
+      end
+
       -- Bash LSP (https://github.com/bash-lsp/bash-language-server)
       if vim.fn.executable("bash-language-server") == 1 then
         vim.lsp.enable("bashls")

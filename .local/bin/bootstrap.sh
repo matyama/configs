@@ -106,6 +106,7 @@ echo ">>> Installing packages..."
 #  - gimp: GNU Image Manipulation Program
 #  - git-delta: A syntax-highlighting pager for git, diff, and grep output
 #  - go: Core compiler tools for the Go programming language
+#  - gopls: Language server for Go programming language
 #  - gping: Ping, but with a graph
 #  - hexyl: A command-line hex viewer
 #  - hyperfine: A command-line benchmarking tool
@@ -186,6 +187,7 @@ sudo pacman -S --needed \
   git-delta \
   github-cli \
   go \
+  gopls \
   gping \
   hexyl \
   htop \
