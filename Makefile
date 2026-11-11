@@ -672,7 +672,6 @@ endif
 #  - llvm-lines: count lines of LLVM IR per generic function
 #  - modules: visualize/analyze a Rust crate's internal structure
 #  - msrv: find the minimum supported Rust version (MSRV)
-#  - nextest: a next-generation test runner for Rust
 #  - readme: generate README.md content from doc comments
 #  - tarpaulin: a code coverage tool for Rust projects
 #  - workspaces: a tool for managing cargo workspaces and their crates
@@ -686,9 +685,7 @@ CARGO_EXTENSIONS := \
 	cargo-expand \
 	cargo-hack \
 	cargo-llvm-lines \
-	cargo-modules \
 	cargo-msrv \
-	cargo-nextest \
 	cargo-readme \
 	cargo-tarpaulin \
 	cargo-workspaces
@@ -700,6 +697,7 @@ CARGO_EXTENSIONS := \
 #  - deny: lint dependencies
 #  - insta: review tool for insta, a snapshot testing library for Rust
 #  - machete: find unused dependencies
+#  - nextest: a next-generation test runner for Rust
 #  - outdated: display when dependencies are out of date
 #  - semver-checks: scan crate for semver violations
 #  - sort:  check if tables and items in a .toml file are lexically sorted
@@ -710,6 +708,7 @@ CARGO_EXTENSIONS_LOCKED := \
 	cargo-deny \
 	cargo-insta \
 	cargo-machete \
+	cargo-nextest \
 	cargo-outdated \
 	cargo-semver-checks \
 	cargo-show-asm \
