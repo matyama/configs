@@ -142,6 +142,7 @@ CONFIG_DIRS := \
 	$(XDG_CONFIG_HOME)/starship \
 	$(XDG_CONFIG_HOME)/tealdeer \
 	$(XDG_CONFIG_HOME)/tinted-theming/tinty \
+	$(XDG_CONFIG_HOME)/tmux \
 	$(XDG_CONFIG_HOME)/vim \
 	$(XDG_CONFIG_HOME)/wget
 

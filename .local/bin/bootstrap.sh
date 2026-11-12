@@ -144,6 +144,7 @@ echo ">>> Installing packages..."
 #  - shfmt: Formatter for shell programs
 #    - used by prettybat from bat-extras
 #  - skim: Fuzzy Finder in rust!
+#  - starship: The cross-shell prompt for astronauts
 #  - stylua: A Lua code formatter
 #  - sysstat: System performance tools for Linux
 #    (https://github.com/sysstat/sysstat)
@@ -180,6 +181,7 @@ sudo pacman -S --needed \
   dust \
   eza \
   fastfetch \
+  firefox \
   fd \
   fuse2 \
   fwupd \
@@ -224,6 +226,7 @@ sudo pacman -S --needed \
   sd \
   shellcheck \
   shfmt \
+  starship \
   stylua \
   sysstat \
   tealdeer \
@@ -322,7 +325,8 @@ echo ">>> Reloading fonts cache"
 fc-cache -f
 
 echo ">>> Setting up neovim spell-check"
-touch "${XDG_CONFIG_HOME}"/nvim/spell/en.utf-8.add
+mkdir -p "${XDG_CONFIG_HOME}"/nvim/spell &&
+  touch "${XDG_CONFIG_HOME}"/nvim/spell/en.utf-8.add
 
 echo ">>>> Configuring newsboat (note: edit 'urls' manually)"
 touch "${XDG_CONFIG_HOME}/newsboat/urls"
@@ -381,6 +385,7 @@ done
 echo ">>> Installing custom apps..."
 # XXX: slack, zoom-client
 #  - dbeaver-ce: universal database tool (https://dbeaver.io)
+#    alternatively: https://github.com/ShayanAbbas1/dbdelve
 
 echo ">>> Enabling systemd services..."
 # TODO: https://wiki.archlinux.org/title/Docker#Rootless_Docker_daemon
